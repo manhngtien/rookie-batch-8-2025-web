@@ -1,54 +1,32 @@
-# React + TypeScript + Vite
+# Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- IDE: Visual Studio Code
+- Linter: Prettier
 
-Currently, two official plugins are available:
+See [Environment Setup](#environment-setup) for guides on setting up these tools
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Frontend Stack
 
-## Expanding the ESLint configuration
+- Styling & UI Library: tailwindcss + shadcn/ui
+- State Management: Redux Roolkit
+- API Client: Axios
+- Router: React Router (using v6 styles). Use [v6 docs](https://reactrouter.com/6.30.0) or [v7 Data mode docs](https://reactrouter.com/start/data/installation)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# Environment Setup
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- Install this extension: [Prettier - VSCode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Recommeneded Extensions & Settings
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- [Format On Save](vscode://settings/editor.formatOnSave)
+- [SonarQube](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+# Naming Conventions
+
+- **kebab-case**: Components file name
+
+- **camelCase**: Hooks, helper functions
+
+- **PascalCase**: Component name, Page, Types, Interfaces
+
+**Remember to use .tsx extension if you use JSX. Mostly for components**
