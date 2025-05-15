@@ -5,6 +5,7 @@ import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
+import { NavUser } from "@/components/nav-user";
 
 const data = {
   navMain: [
@@ -85,6 +87,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser
+          user={{
+            email: "test@nashtechglobals.com",
+          }}
+          // logout={logout}
+        />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
