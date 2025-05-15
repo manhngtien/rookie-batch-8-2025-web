@@ -1,5 +1,5 @@
 function App() {
-  return <div>Asset management</div>;
+  return <div className="">Asset management</div>;
 }
 
 export default App;
