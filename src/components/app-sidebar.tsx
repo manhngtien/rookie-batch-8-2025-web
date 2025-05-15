@@ -1,7 +1,7 @@
-import * as React from "react"
+import * as React from "react";
 
-import { SearchForm } from "@/components/search-form"
-import { VersionSwitcher } from "@/components/version-switcher"
+import { SearchForm } from "@/components/search-form";
+import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -13,44 +13,69 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// This is sample data.
+import NashLogo from "@/assets/nash_tech_logo.png";
+
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: "Getting Started",
+      title: null,
       url: "#",
       items: [
         {
-          title: "Installation",
+          title: "Home",
+          url: "#",
+          isActive: true,
+        },
+        {
+          title: "Manage User",
           url: "#",
         },
         {
-          title: "Project Structure",
+          title: "Manage Asset",
           url: "#",
-          isActive:true,
+        },
+        {
+          title: "Manage Assignment",
+          url: "#",
+        },
+        {
+          title: "Request for Returning",
+          url: "#",
+        },
+        {
+          title: "Report",
+          url: "#",
         },
       ],
     },
-    
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
+      <SidebarHeader>
+        <img src={NashLogo} className="w-32" />
+        <span className="font-bold text-foreground">
+          Online Asset Management
+        </span>
+      </SidebarHeader>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            {/* <SidebarGroupLabel>{item.title}</SidebarGroupLabel> */}
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.isActive}
+                      className="data-[active=true]:bg-foreground data-[active=true]:text-white"
+                    >
                       <a href={item.url}>{item.title}</a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -62,5 +87,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
