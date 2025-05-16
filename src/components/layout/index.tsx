@@ -37,8 +37,9 @@ export default function Layout() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-
-        <Outlet />
+        <div className="p-6">
+          <Outlet />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
