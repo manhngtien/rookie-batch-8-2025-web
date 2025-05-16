@@ -18,6 +18,7 @@ import {
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { NavUser } from "@/components/nav-user";
+import { useLocation } from "react-router";
 
 const data = {
   navMain: [
@@ -27,28 +28,28 @@ const data = {
       items: [
         {
           title: "Home",
-          url: "#",
+          url: "/",
           isActive: true,
         },
         {
           title: "Manage User",
-          url: "#",
+          url: "/users",
         },
         {
           title: "Manage Asset",
-          url: "#",
+          url: "/assets",
         },
         {
           title: "Manage Assignment",
-          url: "#",
+          url: "/assignments",
         },
         {
           title: "Request for Returning",
-          url: "#",
+          url: "/returns",
         },
         {
           title: "Report",
-          url: "#",
+          url: "/reports",
         },
       ],
     },
@@ -56,6 +57,9 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -70,13 +74,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroup key={item.title}>
             {/* <SidebarGroupLabel>{item.title}</SidebarGroupLabel> */}
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="gap-2">
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={item.isActive}
-                      className="data-[active=true]:bg-foreground data-[active=true]:text-white"
+                      isActive={currentPath === item.url}
+                      className="data-[active=true]:bg-foreground data-[active=true]:text-white max-h-16 h-16 text-lg"
                     >
                       <a href={item.url}>{item.title}</a>
                     </SidebarMenuButton>
