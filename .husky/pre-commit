@@ -1,0 +1,2 @@
+which npm
+npm run lint && npm run format:write
