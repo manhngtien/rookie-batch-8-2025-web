@@ -1,2 +1,13 @@
-which npm
+#!/usr/bin/env bash
+
+# Very specific fix: Force WSL nvm to run, not Windows nvm
+
+set -e
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm use default >/dev/null
+
+# Actual hook
+
 npm run lint && npm run format:write
