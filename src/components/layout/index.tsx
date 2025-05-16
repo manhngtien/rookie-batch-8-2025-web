@@ -13,6 +13,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import UserLogout from "@/features/logout/components/user-logout";
+
 import { Outlet } from "react-router";
 
 export default function Layout() {
@@ -36,8 +38,8 @@ export default function Layout() {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <UserLogout userName="joe"/>
         </header>
-
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
