@@ -35,4 +35,4 @@ See [Environment Setup](#environment-setup) for guides on setting up these tools
 
 - **PascalCase**: Component name, Page, Types, Interfaces
 
-**Remember to use .tsx extension if you use JSX. Mostly for components**
+**Remember to use the .tsx extension if you use JSX. Mostly for components**
