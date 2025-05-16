@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Funnel } from "lucide-react";
+import UserDataTable from "@/features/users/components/UserDataTable";
 
 function UserManagement() {
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
@@ -26,7 +27,7 @@ function UserManagement() {
       <div className="flex justify-between items-center space-x-4 mb-4">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-between">
+            <Button variant="outline" className="w-[180px] justify-between hover:cursor-pointer">
               Type
               <span>
                 <Funnel />
@@ -63,13 +64,13 @@ function UserManagement() {
           </PopoverContent>
         </Popover>
         <div className="flex gap-2">
-          <Input className="  " placeholder="Search..." />
-          <Button className="bg-red-600 text-white hover:bg-red-700">
+          <Input className="" placeholder="Search..." />
+          <Button className="bg-red-600 text-white hover:bg-red-700 hover:cursor-pointer">
             Create new user
           </Button>
         </div>
       </div>
-      <div className="overflow-x-auto"></div>
+      <UserDataTable />
     </div>
   );
 }
