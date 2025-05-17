@@ -3,5 +3,5 @@ export type UserLogoutProps = {
 };
 export type LogoutPopupProps = {
   onCancel: () => void;
-  onLogout: () => void
-}
+  onLogout: () => void;
+};

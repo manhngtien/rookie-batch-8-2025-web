@@ -1,19 +1,35 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { format, isWeekend, differenceInYears, isBefore } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { format, isWeekend, differenceInYears, isBefore } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -30,7 +46,7 @@ const formSchema = z.object({
   type: z.string({
     required_error: "Type is required",
   }),
-})
+});
 
 export default function UserForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,74 +57,93 @@ export default function UserForm() {
       gender: undefined,
       type: "",
     },
-  })
+  });
 
-  const [dobError, setDobError] = useState<string | null>(null)
-  const [joinedDateError, setJoinedDateError] = useState<string | null>(null)
+  const [dobError, setDobError] = useState<string | null>(null);
+  const [joinedDateError, setJoinedDateError] = useState<string | null>(null);
 
-  const validateDates = (dob: Date | undefined, joinedDate: Date | undefined) => {
+  const validateDates = (
+    dob: Date | undefined,
+    joinedDate: Date | undefined,
+  ) => {
     // Reset errors
-    setDobError(null)
-    setJoinedDateError(null)
+    setDobError(null);
+    setJoinedDateError(null);
 
-    if (!dob || !joinedDate) return
+    if (!dob || !joinedDate) return;
 
     // Check if user is at least 18 years old
-    const age = differenceInYears(new Date(), dob)
+    const age = differenceInYears(new Date(), dob);
     if (age < 18) {
-      setDobError("User is under 18. Please select a different date")
-      return false
+      setDobError("User is under 18. Please select a different date");
+      return false;
     }
 
     // Check if joined date is earlier than DOB
     if (isBefore(joinedDate, dob)) {
-      setJoinedDateError("Joined date is not later than Date of Birth. Please select a different date")
-      return false
+      setJoinedDateError(
+        "Joined date is not later than Date of Birth. Please select a different date",
+      );
+      return false;
     }
 
     // Check if joined date is a weekend
     if (isWeekend(joinedDate)) {
-      setJoinedDateError("Joined date is Saturday or Sunday. Please select a different date")
-      return false
+      setJoinedDateError(
+        "Joined date is Saturday or Sunday. Please select a different date",
+      );
+      return false;
     }
 
-    return true
-  }
+    return true;
+  };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const isValid = validateDates(values.dateOfBirth, values.joinedDate)
+    const isValid = validateDates(values.dateOfBirth, values.joinedDate);
     if (isValid) {
-      console.log(values)
+      console.log(values);
       // Submit the form data
-      alert("User created successfully!")
+      alert("User created successfully!");
     }
-  }
+  };
 
   // Watch date fields to validate in real-time
-  const dob = form.watch("dateOfBirth")
-  const joinedDate = form.watch("joinedDate")
+  const dob = form.watch("dateOfBirth");
+  const joinedDate = form.watch("joinedDate");
 
   useEffect(() => {
     if (dob && joinedDate) {
-      validateDates(dob, joinedDate)
+      validateDates(dob, joinedDate);
     }
-  }, [dob, joinedDate])
+  }, [dob, joinedDate]);
 
   // Check if all required fields are filled
   const isFormComplete = () => {
-    const values = form.getValues()
-    const requiredFields = ["firstName", "lastName", "dateOfBirth", "gender", "joinedDate", "type"]
+    const values = form.getValues();
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "dateOfBirth",
+      "gender",
+      "joinedDate",
+      "type",
+    ];
 
-    const allFieldsFilled = requiredFields.every((field) => values[field as keyof typeof values])
+    const allFieldsFilled = requiredFields.every(
+      (field) => values[field as keyof typeof values],
+    );
 
-    return allFieldsFilled && !dobError && !joinedDateError
-  }
+    return allFieldsFilled && !dobError && !joinedDateError;
+  };
 
   return (
-    <div className="min-w-md max-w-lg my-auto mx-auto p-6 bg-white">
-      <h1 className="text-xl font-bold text-red-600 mb-6">Create New User</h1>
+    <div className="mx-auto my-auto max-w-lg min-w-md bg-white p-6">
+      <h1 className="mb-6 text-xl font-bold text-red-600">Create New User</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 text-black">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 text-black"
+        >
           {/* First Name */}
           <FormField
             control={form.control}
@@ -153,13 +188,17 @@ export default function UserForm() {
                         <Button
                           variant="outline"
                           className={`w-full justify-between pl-3 text-left font-normal ${
-                            dobError ? "border-red-500 focus-visible:ring-red-500" : ""
+                            dobError
+                              ? "border-red-500 focus-visible:ring-red-500"
+                              : ""
                           }`}
                         >
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
-                            <span className="text-muted-foreground">Select date</span>
+                            <span className="text-muted-foreground">
+                              Select date
+                            </span>
                           )}
                           <CalendarIcon className="h-4 w-4 opacity-50" />
                         </Button>
@@ -175,7 +214,11 @@ export default function UserForm() {
                       />
                     </PopoverContent>
                   </Popover>
-                  {dobError && <p className="text-sm font-medium text-red-500 mt-1">{dobError}</p>}
+                  {dobError && (
+                    <p className="mt-1 text-sm font-medium text-red-500">
+                      {dobError}
+                    </p>
+                  )}
                   <FormMessage />
                 </div>
               </FormItem>
@@ -190,7 +233,11 @@ export default function UserForm() {
               <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
                 <div className="text-sm font-medium">Gender</div>
                 <FormControl>
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-6">
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex gap-6"
+                  >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="female" id="female" />
                       <label htmlFor="female" className="text-sm">
@@ -224,23 +271,36 @@ export default function UserForm() {
                         <Button
                           variant="outline"
                           className={`w-full justify-between pl-3 text-left font-normal ${
-                            joinedDateError ? "border-red-500 focus-visible:ring-red-500" : ""
+                            joinedDateError
+                              ? "border-red-500 focus-visible:ring-red-500"
+                              : ""
                           }`}
                         >
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
-                            <span className="text-muted-foreground">Select date</span>
+                            <span className="text-muted-foreground">
+                              Select date
+                            </span>
                           )}
                           <CalendarIcon className="h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
-                  {joinedDateError && <p className="text-sm font-medium text-red-500 mt-1">{joinedDateError}</p>}
+                  {joinedDateError && (
+                    <p className="mt-1 text-sm font-medium text-red-500">
+                      {joinedDateError}
+                    </p>
+                  )}
                   <FormMessage />
                 </div>
               </FormItem>
@@ -254,7 +314,10 @@ export default function UserForm() {
             render={({ field }) => (
               <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
                 <div className="text-sm font-medium">Type</div>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
@@ -272,8 +335,12 @@ export default function UserForm() {
           />
 
           {/* Buttons */}
-          <div className="flex gap-3 pt-4 justify-end">
-            <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white" disabled={!isFormComplete()}>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              type="submit"
+              className="bg-red-600 text-white hover:bg-red-700"
+              disabled={!isFormComplete()}
+            >
               Save
             </Button>
             <Button type="button" variant="outline">
@@ -283,5 +350,5 @@ export default function UserForm() {
         </form>
       </Form>
     </div>
-  )
+  );
 }
