@@ -1,7 +1,8 @@
 # Tools
 
 - IDE: Visual Studio Code
-- Linter: Prettier
+- Linter: ESLint
+- Code formatter: Prettier
 
 See [Environment Setup](#environment-setup) for guides on setting up these tools
 
