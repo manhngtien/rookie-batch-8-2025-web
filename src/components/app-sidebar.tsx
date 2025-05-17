@@ -64,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         <img src={NashLogo} className="w-32" />
-        <span className="font-bold text-foreground">
+        <span className="text-foreground font-bold">
           Online Asset Management
         </span>
       </SidebarHeader>
@@ -80,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton
                       asChild
                       isActive={currentPath === item.url}
-                      className="data-[active=true]:bg-foreground data-[active=true]:text-white max-h-16 h-16 text-lg"
+                      className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
                     >
                       <a href={item.url}>{item.title}</a>
                     </SidebarMenuButton>

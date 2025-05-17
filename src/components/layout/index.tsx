@@ -38,7 +38,7 @@ export default function Layout() {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <UserLogout userName="joe"/>
+          <UserLogout userName="joe" />
         </header>
         <div className="p-6">
           <Outlet />
