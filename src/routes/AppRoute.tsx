@@ -20,8 +20,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "returns",
-        element: <RequestPage/>
-      }
+        element: <RequestPage />,
+      },
     ],
   },
   {

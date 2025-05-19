@@ -1,20 +1,20 @@
 export default interface Request {
-  id: number
-  assetCode: string
-  assetName: string
-  requestedBy: string
-  assignedDate: string
-  acceptedBy: string | null
-  returnedDate: string | null
-  state: "Completed" | "Waiting for returning"
+  id: number;
+  assetCode: string;
+  assetName: string;
+  requestedBy: string;
+  assignedDate: string;
+  acceptedBy: string | null;
+  returnedDate: string | null;
+  state: "Completed" | "Waiting for returning";
 }
 
 export const State = {
   Completed: "Completed",
-  WaitingForReturning: "Waiting for returning"
+  WaitingForReturning: "Waiting for returning",
 } as const;
 
-export type State = typeof State[keyof typeof State];
+export type State = (typeof State)[keyof typeof State];
 
 export const initialRequests: Request[] = [
   {
@@ -47,4 +47,4 @@ export const initialRequests: Request[] = [
     returnedDate: null,
     state: "Waiting for returning",
   },
-]
+];

@@ -1,13 +1,7 @@
 import type Request from "@/features/requests/Type";
 import { initialRequests, State } from "@/features/requests/Type";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import {
-  Calendar,
-  Check,
-  ChevronDown,
-  Search,
-  X,
-} from "lucide-react";
+import { Calendar, Check, ChevronDown, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
@@ -19,38 +13,38 @@ import { Button } from "@/components/ui/button";
 
 export default function RequestPage() {
   const [requestsList, setRequestsList] = useState<Request[]>(initialRequests);
-  const [filteredRequests, setFilteredRequests] = useState<Request[]>(initialRequests)
+  const [filteredRequests, setFilteredRequests] =
+    useState<Request[]>(initialRequests);
   const [returnedDateFilter, setReturnedDateFilter] = useState<Date | null>(
-    null
+    null,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState<string | null>(null);
 
   const resetFilters = () => {
-    setSearchQuery("")
-    setSelectedState(null)
-    setReturnedDateFilter(null)
-  }
+    setSearchQuery("");
+    setSelectedState(null);
+    setReturnedDateFilter(null);
+  };
   useEffect(() => {
-    let result = [...requestsList]
-    if(searchQuery) {
-      const query = searchQuery.toLowerCase()
+    let result = [...requestsList];
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       result = result.filter(
         (request) =>
           request.assetCode.toLowerCase().includes(query) ||
           request.assetName.toLowerCase().includes(query) ||
           request.requestedBy.toLowerCase().includes(query),
-      )
+      );
     }
     if (returnedDateFilter) {
-      const filterDate = format(returnedDateFilter, "dd/MM/yyyy")
-      result = result.filter((request) => request.returnedDate === filterDate)
+      const filterDate = format(returnedDateFilter, "dd/MM/yyyy");
+      result = result.filter((request) => request.returnedDate === filterDate);
     }
-    if(selectedState)
-    {
-        result = result.filter((request) => request.state === selectedState)
+    if (selectedState) {
+      result = result.filter((request) => request.state === selectedState);
     }
-    setFilteredRequests(result)
+    setFilteredRequests(result);
   }, [requestsList, searchQuery, selectedState, returnedDateFilter]);
 
   return (
@@ -65,9 +59,11 @@ export default function RequestPage() {
               onChange={(e) => setSelectedState(e.target.value)}
               className="appearance-none rounded border border-gray-300 bg-white px-3 py-2 pr-8"
             >
-              <option >State</option>
+              <option>State</option>
               <option value={State.Completed}>{State.Completed}</option>
-              <option value={State.WaitingForReturning}>{State.WaitingForReturning}</option>
+              <option value={State.WaitingForReturning}>
+                {State.WaitingForReturning}
+              </option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
               <ChevronDown className="text-gray-500" />
@@ -96,7 +92,11 @@ export default function RequestPage() {
             </PopoverContent>
           </Popover>
           {(selectedState || returnedDateFilter) && (
-            <Button variant="ghost" onClick={resetFilters} className="text-red-600">
+            <Button
+              variant="ghost"
+              onClick={resetFilters}
+              className="text-red-600"
+            >
               Reset Filters
             </Button>
           )}
