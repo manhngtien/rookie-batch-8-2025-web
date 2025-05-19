@@ -31,7 +31,7 @@ export function LoginForm({
         </Button>
         <a
           href="#"
-          className="mx-auto block text-sm underline-offset-4 hover:underline text-center"
+          className="mx-auto block text-center text-sm underline-offset-4 hover:underline"
         >
           Forgot your password?
         </a>
