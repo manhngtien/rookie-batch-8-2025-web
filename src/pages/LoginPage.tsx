@@ -10,7 +10,7 @@ function LoginPage() {
           <img src={NashLogo} alt="Nash Tech Logo" className="h-24 w-auto" />
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-90">
             <LoginForm />
           </div>
         </div>
