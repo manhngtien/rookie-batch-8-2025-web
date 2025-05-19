@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import AssetDataTable from "@/features/asset-management/components/AssetDataTable";
 import { Funnel, Search } from "lucide-react";
 import React from "react";
 
@@ -68,6 +69,7 @@ function AssetManagementPage() {
           Create new asset
         </Button>
       </div>
+      <AssetDataTable />
     </div>
   );
 }
