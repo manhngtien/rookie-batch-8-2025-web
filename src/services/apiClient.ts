@@ -1,8 +1,9 @@
 import axios from "axios";
 import { authInterceptor } from "./apiInterceptors";
+import store from "@/store";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
@@ -10,6 +11,6 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-authInterceptor(apiClient);
+authInterceptor(apiClient, store.dispatch);
 
 export default apiClient;
