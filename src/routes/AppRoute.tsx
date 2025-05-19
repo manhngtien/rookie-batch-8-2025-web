@@ -1,6 +1,6 @@
 import Layout from "@/components/layout";
-import UserForm from "@/features/users/components/create-user";
-import UserMangement from "@/pages/UserMangement";
+import UserForm from "@/pages/users/CreateUserPage";
+import UserMangement from "@/pages/users/UserMangementPage";
 import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([

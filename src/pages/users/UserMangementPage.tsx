@@ -10,27 +10,30 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Funnel } from "lucide-react";
 import UserDataTable from "@/features/users/components/UserDataTable";
 
-function UserManagement() {
+function UserManagementPage() {
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
 
   const handleTypeChange = (type) => {
     setSelectedTypes((prev) =>
       prev.includes(type)
         ? prev.filter((t) => t !== type)
-        : [...prev.filter((t) => t !== "All"), type]
+        : [...prev.filter((t) => t !== "All"), type],
     );
   };
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-red-600">User List</h1>
-      <div className="flex justify-between items-center space-x-4 mb-4">
+      <h1 className="mb-4 text-2xl font-bold text-red-600">User List</h1>
+      <div className="mb-4 flex items-center justify-between space-x-4">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-between hover:cursor-pointer">
+            <Button
+              variant="outline"
+              className="w-[180px] justify-between text-black hover:cursor-pointer"
+            >
               Type
               <span>
-                <Funnel />
+                <Funnel color="black" />
               </span>
             </Button>
           </PopoverTrigger>
@@ -65,7 +68,7 @@ function UserManagement() {
         </Popover>
         <div className="flex gap-2">
           <Input className="" placeholder="Search..." />
-          <Button className="bg-red-600 text-white hover:bg-red-700 hover:cursor-pointer">
+          <Button className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700">
             Create new user
           </Button>
         </div>
@@ -75,4 +78,4 @@ function UserManagement() {
   );
 }
 
-export default UserManagement;
+export default UserManagementPage;
