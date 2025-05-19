@@ -1,7 +1,9 @@
 import Layout from "@/components/layout";
-import UserForm from "@/features/users/components/create-user";
 import LoginPage from "@/pages/LoginPage";
-import { createBrowserRouter, Navigate } from "react-router";
+import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
+import CreateUserPage from "@/pages/users/CreateUserPage";
+import UserManagementPage from "@/pages/users/UserMangementPage";
+import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
   {
@@ -9,8 +11,16 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/create-user",
-        element: <UserForm />,
+        path: "users",
+        element: <UserManagementPage />,
+      },
+      {
+        path: "create-user",
+        element: <CreateUserPage />,
+      },
+      {
+        path: "assets",
+        element: <AssetManagementPage />,
       },
     ],
   },

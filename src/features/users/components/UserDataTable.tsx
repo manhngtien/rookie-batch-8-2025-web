@@ -17,15 +17,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { users } from "./fake-data";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
+import UserDetailDialog from "./UserDetailDialog";
 import type { User, Location, UserType } from "@/features/users/types/User";
 
 const UserDataTable = () => {
@@ -43,6 +35,16 @@ const UserDataTable = () => {
 
   const closeModal = () => {
     setSelectedUser(null);
+  };
+
+  const handleEditClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    console.log("Edit button clicked");
+  };
+
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    console.log("Delete button clicked");
   };
 
   const getUserTypeLabel = (type: UserType) => {
@@ -116,7 +118,7 @@ const UserDataTable = () => {
           {currentUsers.map((user) => (
             <TableRow
               className="group border-none hover:cursor-pointer hover:bg-transparent"
-              key={user.staffCode} // Use staffCode as a unique key
+              key={user.staffCode}
               onClick={() => handleRowClick(user)}
             >
               <TableCell className="group-hover:bg-muted/50 border p-4">
@@ -135,11 +137,17 @@ const UserDataTable = () => {
                 {getUserTypeLabel(user.type)}
               </TableCell>
               <TableCell className="p-4 group-hover:bg-transparent">
-                <div className="flex gap-2">
-                  <button className="hover:cursor-pointer">
+                <div className="flex gap-4">
+                  <button
+                    className="duration-200 hover:scale-120 hover:cursor-pointer"
+                    onClick={handleEditClick}
+                  >
                     <Pencil size={20} />
                   </button>
-                  <button className="hover:cursor-pointer">
+                  <button
+                    className="duration-200 hover:scale-120 hover:cursor-pointer"
+                    onClick={handleDeleteClick}
+                  >
                     <CircleX size={20} />
                   </button>
                 </div>
@@ -167,51 +175,12 @@ const UserDataTable = () => {
         </PaginationContent>
       </Pagination>
 
-      {/* Modal for Detailed User Information */}
-      <Dialog open={!!selectedUser} onOpenChange={closeModal}>
-        <DialogContent className="max-w-md text-black">
-          <DialogHeader>
-            <DialogTitle>Detailed User Information</DialogTitle>
-          </DialogHeader>
-
-          {selectedUser && (
-            <div className="space-y-2">
-              <p>
-                <strong>Staff Code:</strong> {selectedUser.staffCode}
-              </p>
-              <p>
-                <strong>Full Name:</strong>{" "}
-                {`${selectedUser.firstName} ${selectedUser.lastName}`}
-              </p>
-              <p>
-                <strong>Username:</strong> {selectedUser.username}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong>{" "}
-                {selectedUser.dateOfBirth || "N/A"}
-              </p>
-              <p>
-                <strong>Gender:</strong>{" "}
-                {selectedUser.gender ? "Male" : "Female"}
-              </p>
-              <p>
-                <strong>Joined Date:</strong> {selectedUser.joinedDate}
-              </p>
-              <p>
-                <strong>Type:</strong> {getUserTypeLabel(selectedUser.type)}
-              </p>
-              <p>
-                <strong>Location:</strong>{" "}
-                {getLocationLabel(selectedUser.location)}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {selectedUser.isDisabled ? "Disabled" : "Active"}
-              </p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <UserDetailDialog
+        selectedUser={selectedUser}
+        closeModal={closeModal}
+        getUserTypeLabel={getUserTypeLabel}
+        getLocationLabel={getLocationLabel}
+      />
     </div>
   );
 };
