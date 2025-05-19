@@ -8,7 +8,7 @@ export const users: User[] = [
     dateOfBirth: "20/06/1995",
     joinedDate: "20/06/2019",
     gender: true, // Male
-    type: UserType.Staff , // 1
+    type: UserType.Staff, // 1
     location: Location.HCM, // 1
     isDisabled: false,
   },
