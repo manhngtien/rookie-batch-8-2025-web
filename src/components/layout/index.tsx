@@ -40,7 +40,9 @@ export default function Layout() {
           </Breadcrumb>
           <UserLogout userName="joe" />
         </header>
-        <Outlet />
+        <div className="p-6">
+          <Outlet />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
