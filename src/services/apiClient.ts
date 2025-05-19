@@ -1,4 +1,5 @@
 import axios from "axios";
+import { authInterceptor } from "./apiInterceptors";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,5 +9,7 @@ const apiClient = axios.create({
   },
   withCredentials: true,
 });
+
+authInterceptor(apiClient);
 
 export default apiClient;
