@@ -2,7 +2,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // TODO: Replace with actual type
 type User = {
-  abc: string;
+  userName: string;
+  roles: string[];
 };
 
 interface AuthState {

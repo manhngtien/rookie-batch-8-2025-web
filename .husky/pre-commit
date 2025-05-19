@@ -14,4 +14,3 @@ fi
 # Actual hook
 
 npx lint-staged
-# npm run lint && npm run format:write
