@@ -124,11 +124,10 @@ export function ChangePasswordForm({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="px-6 py-3 text-primary border-black"
+            className="text-primary border-black px-6 py-3"
           >
             Cancel
           </Button>
-          
         </div>
       </form>
     </Form>
