@@ -16,8 +16,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { users } from "./fake-data";
 import UserDetailDialog from "./UserDetailDialog";
+import { users } from "../types/fakeData";
+import { Button } from "@/components/ui/button";
+
 import type { User, Location, UserType } from "@/features/users/types/User";
 
 const UserDataTable = () => {
