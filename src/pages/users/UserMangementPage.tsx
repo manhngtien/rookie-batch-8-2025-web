@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Funnel } from "lucide-react";
-import UserDataTable from "@/features/users/components/UserDataTable";
+import UserDataTable from "@/features/users/components/user-data-table";
 
 function UserManagementPage() {
   const [selectedTypes, setSelectedTypes] = useState(["All"]);

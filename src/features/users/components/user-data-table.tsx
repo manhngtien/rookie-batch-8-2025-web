@@ -16,7 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { users } from "./fake-data";
+import { users } from "../types/fakeData";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
