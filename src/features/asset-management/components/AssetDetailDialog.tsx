@@ -19,7 +19,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
   return (
     <Dialog open={!!selectedAsset} onOpenChange={closeModal}>
       <DialogContent className="max-w-2xl p-0 text-black">
-        <DialogHeader className="w-full rounded-t-lg border-b-2 bg-gray-200 p-4">
+        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
           <DialogTitle className="border-red-500 pb-2 text-red-500">
             Detailed Asset Information
           </DialogTitle>

@@ -38,9 +38,8 @@ export default function Layout() {
   // }, [isAuthenticated, navigate]);
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
+    <div className="[--header-height:calc(theme(spacing.14))]">
+      <SidebarProvider className="flex flex-col">
         <header className="bg-foreground flex h-16 shrink-0 items-center gap-2 border-b px-4 text-white">
           <SidebarTrigger className="-ml-1 md:hidden" />
           <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
@@ -57,10 +56,15 @@ export default function Layout() {
           </Breadcrumb>
           <UserLogout userName="joe" />
         </header>
-        <div className="p-6">
-          <Outlet />
+        <div className="flex flex-1">
+          <AppSidebar />
+          <SidebarInset>
+            <div className="p-6">
+              <Outlet />
+            </div>
+          </SidebarInset>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   );
 }

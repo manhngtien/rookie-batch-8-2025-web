@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
+import { NavUser } from "@/components/nav-user";
 import { useLocation } from "react-router";
 
 const data = {
@@ -61,7 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar {...props}>
+    <Sidebar className="top-[4rem] !h-[calc(100svh-var(4rem))]" {...props}>
       <SidebarHeader>
         <img src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
