@@ -17,19 +17,19 @@ import UserLogout from "@/features/logout/components/user-logout";
 
 import { Outlet } from "react-router";
 
-import { useSelector } from "react-redux";
-import { type RootState } from "@/store";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { APP_ROUTES } from "@/lib/appRoutes";
+// import { useSelector } from "react-redux";
+// import { type RootState } from "@/store";
+// import { useEffect } from "react";
+// import { useNavigate } from "react-router";
+// import { APP_ROUTES } from "@/lib/appRoutes";
 
 export default function Layout() {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
-  );
-  const navigate = useNavigate();
-
   // COMMENTED TEMPORARILY FOR DEV. PLEASE DON'T REMOVE
+
+  // const isAuthenticated = useSelector(
+  //   (state: RootState) => state.auth.isAuthenticated,
+  // );
+  // const navigate = useNavigate();
 
   // useEffect(() => {
   //   if (!isAuthenticated) {

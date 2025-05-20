@@ -17,13 +17,11 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { users } from "../types/fakeData";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import type { User, Location, UserType } from "@/features/users/types/User";

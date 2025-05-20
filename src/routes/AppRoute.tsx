@@ -1,7 +1,6 @@
 import Layout from "@/components/layout";
 import LoginPage from "@/pages/auth/LoginPage";
-import UserDataTable from "@/features/users/components/user-data-table";
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter } from "react-router";
 import CreateUserPage from "@/pages/users/CreateUserPage";
 import UserManagementPage from "@/pages/users/UserMangementPage";
 
