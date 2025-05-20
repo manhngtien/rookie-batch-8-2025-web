@@ -1,4 +1,4 @@
-import { UserType, Location, type User } from "../types/User";
+import { UserType, Location, type User } from "./User";
 export const users: User[] = [
   {
     staffCode: "SD1901",
