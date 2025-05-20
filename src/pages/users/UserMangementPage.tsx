@@ -13,7 +13,7 @@ import UserDataTable from "@/features/users/components/user-data-table";
 function UserManagementPage() {
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
 
-  const handleTypeChange = (type) => {
+  const handleTypeChange = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type)
         ? prev.filter((t) => t !== type)
