@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { User, Location, UserType } from "@/features/users/types/User";
-import { DialogClose } from "@radix-ui/react-dialog";
 
 interface UserDetailDialogProps {
   selectedUser: User | null;

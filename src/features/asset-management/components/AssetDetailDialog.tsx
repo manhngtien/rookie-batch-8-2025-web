@@ -6,8 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
-import type { Assignment } from "@/features/assignments/types/Assignment";
-import { DialogClose } from "@radix-ui/react-dialog";
 
 interface AssetDetailDialogProps {
   selectedAsset: Asset | null;
@@ -18,78 +16,80 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
   selectedAsset,
   closeModal,
 }) => {
-  const getStateLabel = (state: string) => {
-    switch (state) {
-      case "Available":
-        return "Available";
-      case "Assigned":
-        return "Assigned";
-      case "Maintenance":
-        return "Maintenance";
-      default:
-        return state || "Unknown";
-    }
-  };
-
   return (
     <Dialog open={!!selectedAsset} onOpenChange={closeModal}>
-      <DialogContent className="max-w-md text-black">
-        <DialogHeader>
-          <DialogTitle>Detailed Asset Information</DialogTitle>
+      <DialogContent className="max-w-2xl p-0 text-black">
+        <DialogHeader className="w-full rounded-t-lg border-b-2 bg-gray-200 p-4">
+          <DialogTitle className="border-red-500 pb-2 text-red-500">
+            Detailed Asset Information
+          </DialogTitle>
         </DialogHeader>
 
         {selectedAsset && (
-          <div className="space-y-2">
-            <p>
-              <strong>Asset Code:</strong> {selectedAsset.assetCode}
-            </p>
-            <p>
-              <strong>Asset Name:</strong> {selectedAsset.assetName}
-            </p>
-            <p>
-              <strong>Category:</strong> {selectedAsset.category.categoryName}
-            </p>
-            <p>
-              <strong>Installed Date:</strong>{" "}
-              {selectedAsset.installedDate.toLocaleDateString()}
-            </p>
-            <p>
-              <strong>State:</strong> {getStateLabel(selectedAsset.state)}
-            </p>
-            <p>
-              <strong>Location:</strong> {selectedAsset.location}
-            </p>
-            <p>
-              <strong>Specification:</strong> {selectedAsset.specification}
-            </p>
+          <div className="space-y-4 px-8 py-2">
+            <div className="grid grid-cols-2 gap-4 text-gray-500">
+              <p className="font-medium">Asset Code:</p>
+              <p className="text-left">{selectedAsset.assetCode}</p>
+              <p className="font-medium">Asset Name:</p>
+              <p className="text-left">{selectedAsset.assetName}</p>
+              <p className="font-medium">Category:</p>
+              <p className="text-left">{selectedAsset.category.categoryName}</p>
+              <p className="font-medium">Installed Date:</p>
+              <p className="text-left">
+                {selectedAsset.installedDate.toLocaleDateString()}
+              </p>
+
+              <p className="font-medium">State:</p>
+              <p className="text-left">{selectedAsset.state}</p>
+              <p className="font-medium">Location:</p>
+              <p className="text-left">{selectedAsset.location}</p>
+              <p className="font-medium">Specification:</p>
+              <p className="text-left">{selectedAsset.specification}</p>
+            </div>
             <div>
-              <strong>History</strong>
-              <table className="mt-2 w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="p-2 text-left">Date</th>
-                    <th className="p-2 text-left">Assigned to</th>
-                    <th className="p-2 text-left">Assigned by</th>
-                    <th className="p-2 text-left">Return Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedAsset.assignments.map((assignment, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-2">
-                        {assignment.stateDate.toLocaleDateString()}
-                      </td>
-                      <td className="p-2">{assignment.assignedTo}</td>
-                      <td className="p-2">{assignment.assignedBy}</td>
-                      <td className="p-2">
-                        {assignment.returnDate
-                          ? assignment.returnDate.toLocaleDateString()
-                          : "N/A"}
-                      </td>
+              <div className="mb-2 flex items-start gap-5">
+                <h1 className="text-gray-500">History:</h1>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="p-2 text-left text-gray-500">Date</th>
+                      <th className="p-2 text-left text-gray-500">
+                        Assigned to
+                      </th>
+                      <th className="p-2 text-left text-gray-500">
+                        Assigned by
+                      </th>
+                      <th className="p-2 text-left text-gray-500">
+                        Return Date
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {selectedAsset.assignments.length > 0 ? (
+                      selectedAsset.assignments.map((assignment, index) => (
+                        <tr key={index} className="border-b">
+                          <td className="p-2">
+                            {assignment.stateDate.toLocaleDateString()}
+                          </td>
+                          <td className="p-2">{assignment.assignedTo}</td>
+                          <td className="p-2">{assignment.assignedBy}</td>
+                          <td className="p-2">
+                            {assignment.returnDate
+                              ? assignment.returnDate.toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="p-2 text-center">
+                          No assignment history
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

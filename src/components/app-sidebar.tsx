@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
-import { NavUser } from "@/components/nav-user";
 import { useLocation } from "react-router";
 
 const data = {
@@ -96,14 +95,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser
           user={{
             email: "test@nashtechglobals.com",
           }}
-          // logout={logout}
         />
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );
