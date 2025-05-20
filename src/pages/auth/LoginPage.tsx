@@ -1,5 +1,5 @@
-import { LoginForm } from "@/components/login-form";
 import NashLogo from "@/assets/nash_tech_logo.png";
+import { LoginForm } from "@/components/login-form";
 
 function LoginPage() {
   return (

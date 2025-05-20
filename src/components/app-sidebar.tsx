@@ -1,5 +1,8 @@
 import * as React from "react";
+import { useLocation } from "react-router";
 
+import NashLogo from "@/assets/nash_tech_logo.png";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -12,10 +15,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
-import NashLogo from "@/assets/nash_tech_logo.png";
-import { NavUser } from "@/components/nav-user";
-import { useLocation } from "react-router";
 
 const data = {
   navMain: [

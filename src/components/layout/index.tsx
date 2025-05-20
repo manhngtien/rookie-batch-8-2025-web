@@ -1,3 +1,5 @@
+import { Outlet } from "react-router";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -5,7 +7,6 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -14,8 +15,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import UserLogout from "@/features/logout/components/user-logout";
-
-import { Outlet } from "react-router";
 
 // import { useSelector } from "react-redux";
 // import { type RootState } from "@/store";

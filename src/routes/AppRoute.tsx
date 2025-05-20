@@ -1,6 +1,7 @@
+import { createBrowserRouter } from "react-router";
+
 import Layout from "@/components/layout";
 import LoginPage from "@/pages/auth/LoginPage";
-import { createBrowserRouter } from "react-router";
 import CreateUserPage from "@/pages/users/CreateUserPage";
 import UserManagementPage from "@/pages/users/UserMangementPage";
 

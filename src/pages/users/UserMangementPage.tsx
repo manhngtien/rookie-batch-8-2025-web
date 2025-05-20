@@ -1,13 +1,14 @@
+import { Funnel } from "lucide-react";
 import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Funnel } from "lucide-react";
 import UserDataTable from "@/features/users/components/user-data-table";
 
 function UserManagementPage() {

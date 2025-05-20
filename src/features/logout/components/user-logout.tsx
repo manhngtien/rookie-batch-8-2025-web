@@ -1,19 +1,12 @@
 import { ChevronDown } from "lucide-react";
-import type { UserLogoutProps } from "../types/types";
 import { useState } from "react";
-import Modal from "@/components/modal";
-import LogoutPopup from "./logout-popup";
-import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
 import { Link } from "react-router";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
-import { Button } from "@/components/ui/button";
+
+import Modal from "@/components/modal";
+import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
+
+import type { UserLogoutProps } from "../types/types";
+import LogoutPopup from "./logout-popup";
 export default function UserLogout({ userName }: UserLogoutProps) {
   const [openDropdown, setOpenDropDown] = useState(false);
   const [openModal, setOpenModal] = useState(false);
