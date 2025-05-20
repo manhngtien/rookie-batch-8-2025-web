@@ -1,5 +1,5 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import {
   Dialog,
