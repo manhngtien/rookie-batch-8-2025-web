@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  DialogChangePassword,
+  DialogChangePasswordContent,
+  DialogChangePasswordHeader,
+  DialogChangePasswordTitle,
+} from "@/components/ui/dialog-change-password";
 
 import ChangePasswordForm from "./change-password-form";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -32,25 +32,31 @@ export default function ChangePasswordDialog({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-primary mb-4">
+      <DialogChangePassword open={open} onOpenChange={onOpenChange}>
+        <DialogChangePasswordContent>
+          <DialogChangePasswordHeader>
+            <DialogChangePasswordTitle className="text-foreground mb-4">
               Change password
-            </DialogTitle>
-          </DialogHeader>
+            </DialogChangePasswordTitle>
+          </DialogChangePasswordHeader>
           <ChangePasswordForm
             onSuccess={handlePasswordChangeSuccess}
             onCancel={() => onOpenChange(false)}
           />
-        </DialogContent>
-      </Dialog>
+          {/* <ResetPasswordPreview/> */}
+        </DialogChangePasswordContent>
+      </DialogChangePassword>
 
-      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-primary">Change password</DialogTitle>
-          </DialogHeader>
+      <DialogChangePassword
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+      >
+        <DialogChangePasswordContent>
+          <DialogChangePasswordHeader>
+            <DialogChangePasswordTitle className="text-primary">
+              Change password
+            </DialogChangePasswordTitle>
+          </DialogChangePasswordHeader>
           <hr className="my-4 border-black" />
           <DialogDescription className="text-primary">
             Your password has been changed successfully!
@@ -63,8 +69,8 @@ export default function ChangePasswordDialog({
               Close
             </button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DialogChangePasswordContent>
+      </DialogChangePassword>
     </>
   );
 }

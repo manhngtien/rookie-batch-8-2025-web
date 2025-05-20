@@ -1,14 +1,41 @@
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
-import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type ChangePasswordFormValues = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(6, { message: "New password must be at least 6 characters" })
+      .regex(/[a-zA-Z0-9]/, {
+        message: "Password must be alphanumeric",
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+
+// type ChangePasswordFormValues = {
+//   currentPassword: string;
+//   newPassword: string;
+//   confirmPassword: string;
+// };
 
 export function ChangePasswordForm({
   onSubmit,
@@ -22,12 +49,21 @@ export function ChangePasswordForm({
   loading?: boolean;
 }) {
   const form = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
   });
+
+  // const form = useForm<ChangePasswordFormValues>({
+  //   defaultValues: {
+  //     currentPassword: "",
+  //     newPassword: "",
+  //     confirmPassword: "",
+  //   },
+  // });
 
   const handleSubmit = async (values: ChangePasswordFormValues) => {
     if (values.newPassword !== values.confirmPassword) {
@@ -62,13 +98,14 @@ export function ChangePasswordForm({
               <Label htmlFor="currentPassword" className="text-primary">
                 Current Password
               </Label>
-              <Input
-                className="text-primary"
-                id="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                {...field}
-              />
+              <FormControl>
+                <PasswordInput
+                  className="text-primary"
+                  id="currentPassword"
+                  autoComplete="new-password"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -85,18 +122,19 @@ export function ChangePasswordForm({
               <Label htmlFor="newPassword" className="text-primary">
                 New Password
               </Label>
-              <Input
-                className="text-primary"
-                id="newPassword"
-                type="password"
-                autoComplete="new-password"
-                {...field}
-              />
+              <FormControl>
+                <PasswordInput
+                  className="text-primary"
+                  id="newPassword"
+                  autoComplete="new-password"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="confirmPassword"
           rules={{ required: "Please confirm your new password" }}
@@ -105,7 +143,7 @@ export function ChangePasswordForm({
               <Label htmlFor="confirmPassword" className="text-primary">
                 Confirm New Password
               </Label>
-              <Input
+              <PasswordInput
                 className="text-primary"
                 id="confirmPassword"
                 type="password"
@@ -115,7 +153,7 @@ export function ChangePasswordForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <div className="flex justify-end gap-2 pt-2">
           <Button type="submit" disabled={loading} className="px-6 py-3">
             {loading ? "Saving..." : "Save"}
