@@ -6,11 +6,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import AssetDataTable from "@/features/asset-management/components/AssetDataTable";
+import AssetDataTable from "@/features/asset-management/components/asset-data-table";
 import { Funnel, Search } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router";
 
 function AssetManagementPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Asset List</h1>
@@ -65,7 +68,12 @@ function AssetManagementPage() {
 
           <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
-        <Button className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700">
+        <Button
+          onClick={() => {
+            navigate("/assets/create-asset");
+          }}
+          className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
+        >
           Create new asset
         </Button>
       </div>

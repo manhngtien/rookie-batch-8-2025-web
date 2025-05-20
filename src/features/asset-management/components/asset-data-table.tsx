@@ -16,7 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import AssetDetailDialog from "./AssetDetailDialog";
+import AssetDetailDialog from "./asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import { assets } from "./fake-asset";
 

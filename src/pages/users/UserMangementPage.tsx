@@ -9,13 +9,11 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Funnel, Search } from "lucide-react";
 import UserDataTable from "@/features/users/components/user-data-table";
+import { useNavigate } from "react-router";
 
 function UserManagementPage() {
+  const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
-
-  const navigateToCreateUser = () => {
-    window.location.href = "/create-user";
-  };
 
   const handleTypeChange = (type) => {
     setSelectedTypes((prev) =>
@@ -77,7 +75,9 @@ function UserManagementPage() {
             <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
           </div>
           <Button
-            onClick={navigateToCreateUser}
+            onClick={() => {
+              navigate("/users/create-user");
+            }}
             className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
           >
             Create new user

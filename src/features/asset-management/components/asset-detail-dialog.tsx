@@ -47,7 +47,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="text-left">{selectedAsset.specification}</p>
             </div>
             <div>
-              <div className="mb-2 flex items-start gap-5">
+              <div className="mb-2 flex flex-col items-start gap-5">
                 <h1 className="text-gray-500">History:</h1>
                 <table className="w-full text-sm">
                   <thead>

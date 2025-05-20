@@ -34,11 +34,12 @@ const data = {
         {
           title: "Manage User",
           url: "/users",
-          activePaths: ["/users", "/create-user", "/edit-user"],
+          activePaths: ["/users", "/users/create-user", "/users/edit-user"],
         },
         {
           title: "Manage Asset",
           url: "/assets",
+          activePaths: ["/assets", "/assets/create-asset"],
         },
         {
           title: "Manage Assignment",
@@ -62,9 +63,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar className="top-[4rem] !h-[calc(100svh-var(4rem))]" {...props}>
+    <Sidebar
+      className="top-[4rem] !h-[calc(100svh-var(4rem))] py-10"
+      {...props}
+    >
       <SidebarHeader>
-        <img src={NashLogo} className="w-32" />
+        <img alt="Nashtech Logo" src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
           Online Asset Management
         </span>

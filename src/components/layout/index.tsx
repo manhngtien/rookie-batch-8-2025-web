@@ -44,14 +44,13 @@ export default function Layout() {
           <SidebarTrigger className="-ml-1 md:hidden" />
           <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
           <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#"></BreadcrumbLink>
+            <BreadcrumbList className="text-white">
+              <BreadcrumbItem className="">
+                <BreadcrumbLink href="#" className="hover:text-white">
+                  Home
+                </BreadcrumbLink>
               </BreadcrumbItem>
-              {/* <BreadcrumbSeparator className="hidden md:block" /> */}
-              <BreadcrumbItem>
-                <BreadcrumbPage></BreadcrumbPage>
-              </BreadcrumbItem>
+              {/* <BreadcrumbSeparator className="" /> */}
             </BreadcrumbList>
           </Breadcrumb>
           <UserLogout userName="joe" />
