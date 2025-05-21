@@ -1,19 +1,20 @@
-import type Request from "@/features/requests/Type";
-import { initialRequests, State } from "@/features/requests/Type";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Calendar, Check, ChevronDown, Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { Calendar, Check, ChevronDown, Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import GeneralDialog from "@/components/general-dialog";
+import { Button } from "@/components/ui/button";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import type Request from "@/features/requests/Type";
+import { initialRequests, State } from "@/features/requests/Type";
 
 export default function RequestPage() {
-  const [requestsList, setRequestsList] = useState<Request[]>(initialRequests);
+  const [requestsList] = useState<Request[]>(initialRequests);
   const [filteredRequests, setFilteredRequests] =
     useState<Request[]>(initialRequests);
   const [returnedDateFilter, setReturnedDateFilter] = useState<Date | null>(

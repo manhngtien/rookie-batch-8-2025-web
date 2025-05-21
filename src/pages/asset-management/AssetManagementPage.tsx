@@ -1,5 +1,4 @@
 import { Funnel, Search } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";

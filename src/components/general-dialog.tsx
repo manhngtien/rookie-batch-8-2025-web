@@ -1,14 +1,15 @@
+import type { ReactNode } from "react";
+
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
+
 import { Button } from "./ui/button";
-import type { ReactNode } from "react";
 
 export default function GeneralDialog({
   header,
