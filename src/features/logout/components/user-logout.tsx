@@ -8,8 +8,13 @@ export default function UserLogout({ userName }: UserLogoutProps) {
   const [openModal, setOpenModal] = useState(false);
   return (
     <div className="w-full">
-      
-      <GeneralDialog content isOpen={openModal} onClose={() => setOpenModal(false)} header="Are you sure ?" description="Do you want to log out?"/>
+      <GeneralDialog
+        content
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        header="Are you sure ?"
+        description="Do you want to log out?"
+      />
       <button
         onClick={() => setOpenDropDown((prev) => !prev)}
         className="ml-auto flex"

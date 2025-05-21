@@ -187,12 +187,18 @@ export default function RequestPage() {
                   {request.state}
                 </td>
                 <td className="border-b px-2 py-2 text-center">
-                  <button onClick={() => setOpenDialogConfirm(true)} className="text-red-500 hover:text-red-700">
-                    <Check  />
+                  <button
+                    onClick={() => setOpenDialogConfirm(true)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Check />
                   </button>
                 </td>
                 <td className="border-b px-2 py-2 text-center">
-                  <button onClick={() => setOpenDialogCancel(true)} className="text-gray-500 hover:text-gray-700">
+                  <button
+                    onClick={() => setOpenDialogCancel(true)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
                     <X />
                   </button>
                 </td>
@@ -201,8 +207,20 @@ export default function RequestPage() {
           </tbody>
         </table>
       </div>
-      <GeneralDialog content description='Are you sure you want to mark this returning request as "Completed"' header="Confirm Return" isOpen={openDialogConfirm} onClose={() => setOpenDialogConfirm(false)}/>
-      <GeneralDialog content description='Are you sure you want to cancel this returning request' header="Cancel Return" isOpen={openDialogCancel} onClose={() => setOpenDialogCancel(false)}/>
+      <GeneralDialog
+        content
+        description='Are you sure you want to mark this returning request as "Completed"'
+        header="Confirm Return"
+        isOpen={openDialogConfirm}
+        onClose={() => setOpenDialogConfirm(false)}
+      />
+      <GeneralDialog
+        content
+        description="Are you sure you want to cancel this returning request"
+        header="Cancel Return"
+        isOpen={openDialogCancel}
+        onClose={() => setOpenDialogCancel(false)}
+      />
     </div>
   );
 }
