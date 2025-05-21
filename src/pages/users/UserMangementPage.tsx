@@ -1,20 +1,57 @@
 import { Funnel, Search } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import UserDataTable from "@/features/users/components/user-data-table";
+import { userColumns } from "@/features/users/components/user-columns";
+import UserDetailDialog from "@/features/users/components/user-detail-dialog";
+import { users } from "@/features/users/types/fakeData";
+import type { Location, User, UserType } from "@/features/users/types/User";
 
 function UserManagementPage() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
+  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+
+  const handleRowClick = (user: User) => {
+    setSelectedUser(user);
+  };
+
+  const closeModal = () => {
+    setSelectedUser(null);
+  };
+
+  const getUserTypeLabel = (type: UserType) => {
+    switch (type) {
+      case 1:
+        return "Staff";
+      case 2:
+        return "Admin";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getLocationLabel = (location: Location) => {
+    switch (location) {
+      case 1:
+        return "HCM";
+      case 2:
+        return "HN";
+      case 3:
+        return "DN";
+      default:
+        return "Unknown";
+    }
+  };
 
   const handleTypeChange = (type: string) => {
     setSelectedTypes((prev) =>
@@ -85,7 +122,23 @@ function UserManagementPage() {
           </Button>
         </div>
       </div>
-      <UserDataTable />
+
+      <DataTable
+        columns={userColumns}
+        data={users}
+        handleRowClick={(user) => handleRowClick(user)}
+      />
+
+      {/* Modal for Detailed User Information */}
+
+      {selectedUser && (
+        <UserDetailDialog
+          selectedUser={selectedUser}
+          closeModal={closeModal}
+          getUserTypeLabel={getUserTypeLabel}
+          getLocationLabel={getLocationLabel}
+        />
+      )}
     </div>
   );
 }

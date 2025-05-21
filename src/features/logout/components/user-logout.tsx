@@ -6,7 +6,6 @@ import GeneralDialog from "@/components/general-dialog";
 import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
 
 import type { UserLogoutProps } from "../types/types";
-
 export default function UserLogout({ userName }: UserLogoutProps) {
   const [openDropdown, setOpenDropDown] = useState(false);
   const [openModal, setOpenModal] = useState(false);

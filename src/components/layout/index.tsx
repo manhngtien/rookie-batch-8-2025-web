@@ -1,25 +1,14 @@
 import { Outlet } from "react-router";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import UserLogout from "@/features/logout/components/user-logout";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 // import { useSelector } from "react-redux";
 // import { type RootState } from "@/store";
 // import { useEffect } from "react";
 // import { useNavigate } from "react-router";
 // import { APP_ROUTES } from "@/lib/appRoutes";
+import SiteHeader from "../site-header";
 
 export default function Layout() {
   // COMMENTED TEMPORARILY FOR DEV. PLEASE DON'T REMOVE
@@ -38,21 +27,7 @@ export default function Layout() {
   return (
     <div className="[--header-height:calc(theme(spacing.14))]">
       <SidebarProvider className="flex flex-col">
-        <header className="bg-foreground flex h-16 shrink-0 items-center gap-2 border-b px-4 text-white">
-          <SidebarTrigger className="-ml-1 md:hidden" />
-          <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
-          <Breadcrumb>
-            <BreadcrumbList className="text-white">
-              <BreadcrumbItem className="">
-                <BreadcrumbLink href="#" className="hover:text-white">
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {/* <BreadcrumbSeparator className="" /> */}
-            </BreadcrumbList>
-          </Breadcrumb>
-          <UserLogout userName="joe" />
-        </header>
+        <SiteHeader />
         <div className="flex flex-1">
           <AppSidebar />
           <SidebarInset>

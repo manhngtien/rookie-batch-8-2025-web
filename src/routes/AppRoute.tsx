@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 
 import Layout from "@/components/layout";
+import { APP_ROUTES } from "@/lib/appRoutes";
 import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
 import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
 import LoginPage from "@/pages/auth/LoginPage";
@@ -15,29 +16,32 @@ export const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
+      // Users
       {
-        path: "users",
+        path: APP_ROUTES.users.path,
         element: <UserManagementPage />,
       },
       {
-        path: "users/create-user",
+        path: `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
         element: <CreateUserPage />,
       },
+      // Assets
       {
-        path: "assets",
+        path: APP_ROUTES.assets.path,
         element: <AssetManagementPage />,
       },
       {
-        path: "assets/create-asset",
+        path: `${APP_ROUTES.assets.path}/${APP_ROUTES.assets.create}`,
         element: <CreateNewAssetPage />,
       },
+      // Returns
       {
-        path: "returns",
+        path: APP_ROUTES.returns.path,
         element: <RequestPage />,
       },
+      // Assignments
       {
-        path: "returns",
-        element: <RequestPage />,
+        path: APP_ROUTES.assignment.path,
       },
     ],
   },

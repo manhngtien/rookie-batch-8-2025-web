@@ -4,6 +4,17 @@ export const APP_ROUTES = {
     logout: "/logout",
   },
   users: {
-    create: "/create-user",
+    path: "/users",
+    create: "create-user",
+  },
+  assets: {
+    path: "/assets",
+    create: "create-asset",
+  },
+  returns: {
+    path: "/returns",
+  },
+  assignment: {
+    path: "/assignment",
   },
 };
