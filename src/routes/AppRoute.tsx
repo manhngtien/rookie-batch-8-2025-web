@@ -1,9 +1,10 @@
 import Layout from "@/components/layout";
 import RequestPage from "@/pages/requests/RequestPage";
 import UserForm from "@/pages/users/CreateUserPage";
-import LoginPage from "@/pages/LoginPage";
-import UserMangement from "@/pages/users/UserMangementPage";
+import LoginPage from "@/pages/auth/LoginPage";
 import { createBrowserRouter, Navigate } from "react-router";
+import CreateUserPage from "@/pages/users/CreateUserPage";
+import UserManagementPage from "@/pages/users/UserMangementPage";
 
 export const router = createBrowserRouter([
   {
@@ -12,11 +13,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/create-user",
-        element: <UserForm />,
+        element: <CreateUserPage />,
       },
       {
-        path: "users",
-        element: <UserMangement />,
+        path: "/users",
+        element: <UserManagementPage />,
       },
       {
         path: "returns",
