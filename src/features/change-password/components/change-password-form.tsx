@@ -19,23 +19,17 @@ const changePasswordSchema = z
     newPassword: z
       .string()
       .min(6, { message: "New password must be at least 6 characters" })
-      .regex(/[a-zA-Z0-9]/, {
-        message: "Password must be alphanumeric",
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+        message:
+          "Password must be alphanumeric and contain at least one letter and one number",
       }),
-    confirmPassword: z.string(),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    path: ["newPassword"],
+    message: "New password must be different from current password",
   });
 
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
-
-// type ChangePasswordFormValues = {
-//   currentPassword: string;
-//   newPassword: string;
-//   confirmPassword: string;
-// };
 
 export function ChangePasswordForm({
   onSubmit,
@@ -53,7 +47,6 @@ export function ChangePasswordForm({
     defaultValues: {
       currentPassword: "",
       newPassword: "",
-      confirmPassword: "",
     },
   });
 
@@ -66,18 +59,11 @@ export function ChangePasswordForm({
   // });
 
   const handleSubmit = async (values: ChangePasswordFormValues) => {
-    if (values.newPassword !== values.confirmPassword) {
-      form.setError("confirmPassword", {
-        type: "manual",
-        message: "Passwords do not match",
-      });
-      return;
-    }
     try {
       await onSubmit?.(values);
+      console.log(values);
       onSuccess?.(); // 🎯 Call onSuccess after successful submit
     } catch (error) {
-      // Optionally handle errors here (e.g., set form errors)
       console.error("Change password failed:", error);
     }
   };
@@ -92,7 +78,6 @@ export function ChangePasswordForm({
         <FormField
           control={form.control}
           name="currentPassword"
-          rules={{ required: "Current password is required" }}
           render={({ field }) => (
             <FormItem>
               <Label htmlFor="currentPassword" className="text-primary">
@@ -102,7 +87,7 @@ export function ChangePasswordForm({
                 <PasswordInput
                   className="text-primary"
                   id="currentPassword"
-                  autoComplete="new-password"
+                  // autoComplete="current-password"
                   {...field}
                 />
               </FormControl>
@@ -113,10 +98,6 @@ export function ChangePasswordForm({
         <FormField
           control={form.control}
           name="newPassword"
-          rules={{
-            required: "New password is required",
-            minLength: { value: 6, message: "At least 6 characters" },
-          }}
           render={({ field }) => (
             <FormItem>
               <Label htmlFor="newPassword" className="text-primary">
@@ -126,7 +107,7 @@ export function ChangePasswordForm({
                 <PasswordInput
                   className="text-primary"
                   id="newPassword"
-                  autoComplete="new-password"
+                  // autoComplete="new-password"
                   {...field}
                 />
               </FormControl>
@@ -134,26 +115,6 @@ export function ChangePasswordForm({
             </FormItem>
           )}
         />
-        {/* <FormField
-          control={form.control}
-          name="confirmPassword"
-          rules={{ required: "Please confirm your new password" }}
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="confirmPassword" className="text-primary">
-                Confirm New Password
-              </Label>
-              <PasswordInput
-                className="text-primary"
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                {...field}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
         <div className="flex justify-end gap-2 pt-2">
           <Button type="submit" disabled={loading} className="px-6 py-3">
             {loading ? "Saving..." : "Save"}
