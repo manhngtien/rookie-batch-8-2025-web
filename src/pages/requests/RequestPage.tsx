@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Button } from "@/components/ui/button";
+import GeneralDialog from "@/components/general-dialog";
 
 export default function RequestPage() {
   const [requestsList, setRequestsList] = useState<Request[]>(initialRequests);
@@ -20,7 +21,8 @@ export default function RequestPage() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState<string | null>(null);
-
+  const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
+  const [openDialogCancel, setOpenDialogCancel] = useState<boolean>(false);
   const resetFilters = () => {
     setSearchQuery("");
     setSelectedState(null);
@@ -48,7 +50,7 @@ export default function RequestPage() {
   }, [requestsList, searchQuery, selectedState, returnedDateFilter]);
 
   return (
-    <div className="container mx-auto p-6 text-black">
+    <div className="mx-auto p-6 text-black">
       <h1 className="mb-6 text-2xl font-bold text-red-600">Request List</h1>
 
       <div className="mb-6 flex flex-wrap justify-between">
@@ -118,7 +120,7 @@ export default function RequestPage() {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-md border">
         <table className="min-w-full border border-gray-200 bg-white">
           <thead>
             <tr className="bg-gray-100">
@@ -185,12 +187,12 @@ export default function RequestPage() {
                   {request.state}
                 </td>
                 <td className="border-b px-2 py-2 text-center">
-                  <button className="text-red-500 hover:text-red-700">
-                    <Check />
+                  <button onClick={() => setOpenDialogConfirm(true)} className="text-red-500 hover:text-red-700">
+                    <Check  />
                   </button>
                 </td>
                 <td className="border-b px-2 py-2 text-center">
-                  <button className="text-gray-500 hover:text-gray-700">
+                  <button onClick={() => setOpenDialogCancel(true)} className="text-gray-500 hover:text-gray-700">
                     <X />
                   </button>
                 </td>
@@ -199,6 +201,8 @@ export default function RequestPage() {
           </tbody>
         </table>
       </div>
+      <GeneralDialog content description='Are you sure you want to mark this returning request as "Completed"' header="Confirm Return" isOpen={openDialogConfirm} onClose={() => setOpenDialogConfirm(false)}/>
+      <GeneralDialog content description='Are you sure you want to cancel this returning request' header="Cancel Return" isOpen={openDialogCancel} onClose={() => setOpenDialogCancel(false)}/>
     </div>
   );
 }

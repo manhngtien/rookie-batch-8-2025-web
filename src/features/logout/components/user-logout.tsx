@@ -1,22 +1,15 @@
 import { ChevronDown } from "lucide-react";
 import type { UserLogoutProps } from "../types/types";
 import { useState } from "react";
-import Modal from "@/components/modal";
-import LogoutPopup from "./logout-popup";
 import { Link } from "react-router";
+import GeneralDialog from "@/components/general-dialog";
 export default function UserLogout({ userName }: UserLogoutProps) {
   const [openDropdown, setOpenDropDown] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   return (
     <div className="w-full">
-      {openModal && (
-        <Modal>
-          <LogoutPopup
-            onLogout={() => {}}
-            onCancel={() => setOpenModal(false)}
-          />
-        </Modal>
-      )}
+      
+      <GeneralDialog content isOpen={openModal} onClose={() => setOpenModal(false)} header="Are you sure ?" description="Do you want to log out?"/>
       <button
         onClick={() => setOpenDropDown((prev) => !prev)}
         className="ml-auto flex"
