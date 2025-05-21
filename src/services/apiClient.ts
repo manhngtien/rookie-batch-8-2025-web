@@ -1,6 +1,8 @@
 import axios from "axios";
-import { authInterceptor } from "./apiInterceptors";
+
 import store from "@/store";
+
+import { authInterceptor } from "./apiInterceptors";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,

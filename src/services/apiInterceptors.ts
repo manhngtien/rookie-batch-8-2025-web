@@ -1,8 +1,9 @@
+import type { AxiosInstance } from "axios";
+
 import { API_ROUTES } from "@/lib/apiRoutes";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch } from "@/store";
 import { logout } from "@/store/slices/authSlice";
-import type { AxiosInstance } from "axios";
 
 export const authInterceptor = (
   axiosInstance: AxiosInstance,

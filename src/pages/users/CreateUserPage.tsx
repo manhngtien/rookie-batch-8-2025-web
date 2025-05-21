@@ -1,11 +1,9 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { differenceInYears, format, isBefore, isWeekend } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format, isWeekend, differenceInYears, isBefore } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,6 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -25,11 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -48,7 +46,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function UserForm() {
+export default function CreateUserPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,20 +64,17 @@ export default function UserForm() {
     dob: Date | undefined,
     joinedDate: Date | undefined,
   ) => {
-    // Reset errors
     setDobError(null);
     setJoinedDateError(null);
 
     if (!dob || !joinedDate) return;
 
-    // Check if user is at least 18 years old
     const age = differenceInYears(new Date(), dob);
     if (age < 18) {
       setDobError("User is under 18. Please select a different date");
       return false;
     }
 
-    // Check if joined date is earlier than DOB
     if (isBefore(joinedDate, dob)) {
       setJoinedDateError(
         "Joined date is not later than Date of Birth. Please select a different date",
@@ -87,7 +82,6 @@ export default function UserForm() {
       return false;
     }
 
-    // Check if joined date is a weekend
     if (isWeekend(joinedDate)) {
       setJoinedDateError(
         "Joined date is Saturday or Sunday. Please select a different date",

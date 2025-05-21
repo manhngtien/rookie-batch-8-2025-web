@@ -17,26 +17,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Location, User, UserType } from "@/features/users/types/User";
+import type { Asset } from "@/features/asset-management/types/Asset";
 
-import { users } from "../types/fakeData";
-import UserDetailDialog from "./user-detail-dialog";
+import AssetDetailDialog from "./asset-detail-dialog";
+import { assets } from "./fake-asset";
 
-const UserDataTable = () => {
+const AssetDataTable = () => {
   const itemsPerPage = 10;
   const [currentPage] = React.useState(1);
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+  const [selectedAsset, setSelectedAsset] = React.useState<Asset | null>(null);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
+  const currentAssets = assets.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleRowClick = (user: User) => {
-    setSelectedUser(user);
+  const handleRowClick = (asset: Asset) => {
+    setSelectedAsset(asset);
   };
 
   const closeModal = () => {
-    setSelectedUser(null);
+    setSelectedAsset(null);
   };
 
   const handleEditClick = (event: React.MouseEvent) => {
@@ -49,41 +49,17 @@ const UserDataTable = () => {
     console.log("Delete button clicked");
   };
 
-  const getUserTypeLabel = (type: UserType) => {
-    switch (type) {
-      case 1:
-        return "Staff";
-      case 2:
-        return "Admin";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getLocationLabel = (location: Location) => {
-    switch (location) {
-      case 1:
-        return "HCM";
-      case 2:
-        return "HN";
-      case 3:
-        return "DN";
-      default:
-        return "Unknown";
-    }
-  };
-
   return (
     <div className="overflow-x-auto">
       <Table className="text-black">
         <TableHeader>
           <TableRow className="border-b-white bg-gray-100">
             <TableHead className="border p-2 text-left text-black">
-              Staff Code
+              Asset Code
             </TableHead>
             <TableHead className="border p-2 text-left text-black">
               <div className="flex items-center gap-2 p-2">
-                Full Name
+                Asset Name
                 <span>
                   <ChevronDown size={20} />
                 </span>
@@ -91,7 +67,7 @@ const UserDataTable = () => {
             </TableHead>
             <TableHead className="border p-2 text-left text-black">
               <div className="flex items-center gap-2 p-2">
-                Username
+                Category
                 <span>
                   <ChevronDown size={20} />
                 </span>
@@ -99,15 +75,7 @@ const UserDataTable = () => {
             </TableHead>
             <TableHead className="border p-2 text-left text-black">
               <div className="flex items-center gap-2 p-2">
-                Joined Date
-                <span>
-                  <ChevronDown size={20} />
-                </span>
-              </div>
-            </TableHead>
-            <TableHead className="border p-2 text-left text-black">
-              <div className="flex items-center gap-2 p-2">
-                Type
+                State
                 <span>
                   <ChevronDown size={20} />
                 </span>
@@ -117,26 +85,23 @@ const UserDataTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentUsers.map((user) => (
+          {currentAssets.map((asset) => (
             <TableRow
               className="group border-none hover:cursor-pointer hover:bg-transparent"
-              key={user.staffCode}
-              onClick={() => handleRowClick(user)}
+              key={asset.assetCode}
+              onClick={() => handleRowClick(asset)}
             >
               <TableCell className="group-hover:bg-muted/50 border p-4">
-                {user.staffCode}
+                {asset.assetCode}
               </TableCell>
               <TableCell className="group-hover:bg-muted/50 border p-4">
-                {`${user.firstName} ${user.lastName}`}
+                {asset.assetName}
               </TableCell>
               <TableCell className="group-hover:bg-muted/50 border p-4">
-                {user.username}
+                {asset.category.categoryName}
               </TableCell>
               <TableCell className="group-hover:bg-muted/50 border p-4">
-                {user.joinedDate}
-              </TableCell>
-              <TableCell className="group-hover:bg-muted/50 border p-4">
-                {getUserTypeLabel(user.type)}
+                {asset.state}
               </TableCell>
               <TableCell className="p-4 group-hover:bg-transparent">
                 <div className="flex gap-4">
@@ -177,14 +142,12 @@ const UserDataTable = () => {
         </PaginationContent>
       </Pagination>
 
-      <UserDetailDialog
-        selectedUser={selectedUser}
+      <AssetDetailDialog
+        selectedAsset={selectedAsset}
         closeModal={closeModal}
-        getUserTypeLabel={getUserTypeLabel}
-        getLocationLabel={getLocationLabel}
       />
     </div>
   );
 };
 
-export default UserDataTable;
+export default AssetDataTable;
