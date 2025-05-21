@@ -83,10 +83,7 @@ export function DataTable<TData, TValue>({
                   .getVisibleCells()
                   .slice(-1)
                   .map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="group-hover:bg-muted/50 p-4"
-                    >
+                    <TableCell key={cell.id} className="group-hover:white p-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
