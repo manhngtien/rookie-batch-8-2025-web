@@ -1,3 +1,5 @@
+import { createBrowserRouter } from "react-router";
+
 import Layout from "@/components/layout";
 import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
 import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
@@ -5,7 +7,6 @@ import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
 import CreateUserPage from "@/pages/users/CreateUserPage";
 import UserManagementPage from "@/pages/users/UserMangementPage";
-import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
   {

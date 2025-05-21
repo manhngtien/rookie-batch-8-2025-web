@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import { Funnel, Search } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Funnel, Search } from "lucide-react";
 import UserDataTable from "@/features/users/components/user-data-table";
-import { useNavigate } from "react-router";
 
 function UserManagementPage() {
   const navigate = useNavigate();

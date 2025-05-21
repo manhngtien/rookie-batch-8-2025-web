@@ -1,24 +1,18 @@
 import * as React from "react";
+import { useLocation } from "react-router";
 
-import { SearchForm } from "@/components/search-form";
-import { VersionSwitcher } from "@/components/version-switcher";
+import NashLogo from "@/assets/nash_tech_logo.png";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
-import NashLogo from "@/assets/nash_tech_logo.png";
-import { NavUser } from "@/components/nav-user";
-import { useLocation } from "react-router";
 
 const data = {
   navMain: [

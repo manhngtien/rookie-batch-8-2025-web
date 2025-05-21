@@ -1,13 +1,6 @@
-import React from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { ChevronDown, CircleX, Pencil } from "lucide-react";
+import React from "react";
+
 import {
   Pagination,
   PaginationContent,
@@ -16,11 +9,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import UserDetailDialog from "./user-detail-dialog";
-import { users } from "../types/fakeData";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Location, User, UserType } from "@/features/users/types/User";
 
-import type { User, Location, UserType } from "@/features/users/types/User";
+import { users } from "../types/fakeData";
+import UserDetailDialog from "./user-detail-dialog";
 
 const UserDataTable = () => {
   const itemsPerPage = 10;
