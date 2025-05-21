@@ -1,0 +1,87 @@
+trigger:
+  - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  name: default
+  demands:
+    - Agent.Name -equals $(AGENT_NAME)
+
+variables:
+  - group: FrontendSecrets
+
+stages:
+  - stage: Build
+    displayName: "Build Stage"
+    jobs:
+      - job: BuildJob
+        displayName: "Build React App"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+            displayName: "Install Node.js"
+
+          - script: npm ci
+            displayName: "Install Dependencies"
+
+          - script: |
+              npm run lint:fix
+              npm run format:write
+            displayName: "Lint and Format"
+
+          - script: npm run build
+            displayName: "Build React App"
+
+  - stage: Publish
+    displayName: "Publish Stage"
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: PublishJob
+        displayName: "Publish Artifacts"
+        steps:
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: "$(Build.BinariesDirectory)"
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+              replaceExistingArchive: true
+            displayName: "Archive Build Artifacts"
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: "$(Build.ArtifactStagingDirectory)"
+              artifactName: "FrontendArtifact"
+              publishLocation: "Container"
+            displayName: "Publish Artifacts"
+
+  - stage: DeployToVercel
+    displayName: "Deploy to Vercel Stage"
+    dependsOn: Publish
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: DeployJob
+        displayName: "Deploy React App to Vercel"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+            displayName: "Install Node.js"
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: "FrontendArtifact"
+            displayName: "Download Artifacts from Publish Stage"
+
+          - task: vercel-deployment-task@1
+            inputs:
+              vercelProjectId: $(VERCEL_PRJ_ID)
+              vercelOrgId: $(VERCEL_ORG_ID)
+              vercelToken: $(VERCEL_TOKEN)
+              production: true
+            displayName: "Deploy to Vercel"

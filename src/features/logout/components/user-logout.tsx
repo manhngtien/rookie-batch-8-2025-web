@@ -2,11 +2,10 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 
-import Modal from "@/components/modal";
+import GeneralDialog from "@/components/general-dialog";
 import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
 
 import type { UserLogoutProps } from "../types/types";
-import LogoutPopup from "./logout-popup";
 export default function UserLogout({ userName }: UserLogoutProps) {
   const [openDropdown, setOpenDropDown] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -15,14 +14,13 @@ export default function UserLogout({ userName }: UserLogoutProps) {
 
   return (
     <div className="w-full">
-      {openModal && (
-        <Modal>
-          <LogoutPopup
-            onLogout={() => {}}
-            onCancel={() => setOpenModal(false)}
-          />
-        </Modal>
-      )}
+      <GeneralDialog
+        content
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        header="Are you sure ?"
+        description="Do you want to log out?"
+      />
 
       {openChangePasswordDialog && (
         <ChangePasswordDialog
