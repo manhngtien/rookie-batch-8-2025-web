@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { useState } from "react";
+
 import {
   DialogChangePassword,
   DialogChangePasswordContent,
@@ -7,7 +9,6 @@ import {
 } from "@/components/ui/dialog-change-password";
 
 import ChangePasswordForm from "./change-password-form";
-import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface ChangePasswordDialogProps {
   open: boolean;

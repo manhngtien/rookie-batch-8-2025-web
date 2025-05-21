@@ -1,4 +1,3 @@
-// Type definitions (move to a separate file like types.ts for better organization)
 export const UserType = {
   Staff: 1,
   Admin: 2,
