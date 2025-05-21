@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import {
@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { APP_ROUTES } from "@/lib/appRoutes";
 
 const data = {
   navMain: [
@@ -27,25 +28,32 @@ const data = {
         },
         {
           title: "Manage User",
-          url: "/users",
-          activePaths: ["/users", "/users/create-user", "/users/edit-user"],
+          url: APP_ROUTES.users.path,
+          activePaths: [
+            APP_ROUTES.users.path,
+            `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
+            `${APP_ROUTES.users.path}/${APP_ROUTES.users.edit}`,
+          ],
         },
         {
           title: "Manage Asset",
-          url: "/assets",
-          activePaths: ["/assets", "/assets/create-asset"],
+          url: APP_ROUTES.assets.path,
+          activePaths: [
+            APP_ROUTES.assets.path,
+            `${APP_ROUTES.assets.path}/${APP_ROUTES.assets.create}`,
+          ],
         },
         {
           title: "Manage Assignment",
-          url: "/assignments",
+          url: APP_ROUTES.assignment.path,
         },
         {
           title: "Request for Returning",
-          url: "/returns",
+          url: APP_ROUTES.returns.path,
         },
         {
           title: "Report",
-          url: "/reports",
+          url: APP_ROUTES.reports.path,
         },
       ],
     },
@@ -58,7 +66,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar
-      className="top-[4rem] !h-[calc(100svh-var(4rem))] py-10"
+      className="top-header-height !h-[calc(100svh-var(--spacing-header-height))] py-10"
       {...props}
     >
       <SidebarHeader>
@@ -84,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         isActive={isActive}
                         className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
                       >
-                        <a href={item.url}>{item.title}</a>
+                        <Link to={item.url}>{item.title}</Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );

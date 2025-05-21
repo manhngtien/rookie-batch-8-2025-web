@@ -10,7 +10,7 @@ import { SidebarTrigger } from "./ui/sidebar";
 
 export default function SiteHeader() {
   return (
-    <header className="bg-foreground flex h-16 shrink-0 items-center gap-2 border-b px-4 text-white">
+    <header className="bg-foreground h-header-height fixed z-20 flex w-screen shrink-0 items-center gap-2 border-b px-4 text-white">
       <SidebarTrigger className="-ml-1 md:hidden" />
       <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
       <Breadcrumb>

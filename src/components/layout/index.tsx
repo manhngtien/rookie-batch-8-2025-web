@@ -25,18 +25,16 @@ export default function Layout() {
   // }, [isAuthenticated, navigate]);
 
   return (
-    <div className="[--header-height:calc(theme(spacing.14))]">
-      <SidebarProvider className="flex flex-col">
-        <SiteHeader />
-        <div className="flex flex-1">
-          <AppSidebar />
-          <SidebarInset>
-            <div className="p-6">
-              <Outlet />
-            </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
+    <SidebarProvider className="flex flex-col">
+      <SiteHeader />
+      <div className="flex flex-1">
+        <AppSidebar />
+        <SidebarInset>
+          <div className="mt-header-height p-6">
+            <Outlet />
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
