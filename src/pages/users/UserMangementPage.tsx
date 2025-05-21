@@ -1,5 +1,6 @@
-import { Funnel } from "lucide-react";
+import { Funnel, Search } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +13,7 @@ import {
 import UserDataTable from "@/features/users/components/user-data-table";
 
 function UserManagementPage() {
+  const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState(["All"]);
 
   const handleTypeChange = (type: string) => {
@@ -23,7 +25,7 @@ function UserManagementPage() {
   };
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold text-red-600">User List</h1>
       <div className="mb-4 flex items-center justify-between space-x-4">
         <Popover>
@@ -68,8 +70,17 @@ function UserManagementPage() {
           </PopoverContent>
         </Popover>
         <div className="flex gap-2">
-          <Input className="" placeholder="Search..." />
-          <Button className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700">
+          <div className="relative w-50">
+            <Input className="" placeholder="Search..." />
+
+            <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
+          </div>
+          <Button
+            onClick={() => {
+              navigate("/users/create-user");
+            }}
+            className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
+          >
             Create new user
           </Button>
         </div>

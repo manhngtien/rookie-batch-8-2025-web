@@ -2,11 +2,9 @@ import * as React from "react";
 import { useLocation } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -30,10 +28,12 @@ const data = {
         {
           title: "Manage User",
           url: "/users",
+          activePaths: ["/users", "/users/create-user", "/users/edit-user"],
         },
         {
           title: "Manage Asset",
           url: "/assets",
+          activePaths: ["/assets", "/assets/create-asset"],
         },
         {
           title: "Manage Assignment",
@@ -57,9 +57,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      className="top-[4rem] !h-[calc(100svh-var(4rem))] py-10"
+      {...props}
+    >
       <SidebarHeader>
-        <img src={NashLogo} className="w-32" />
+        <img alt="Nashtech Logo" src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
           Online Asset Management
         </span>
@@ -68,33 +71,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* We create a SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
-            {/* <SidebarGroupLabel>{item.title}</SidebarGroupLabel> */}
             <SidebarGroupContent>
               <SidebarMenu className="gap-2">
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={currentPath === item.url}
-                      className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
-                    >
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {item.items.map((item) => {
+                  const isActive = item.activePaths
+                    ? item.activePaths.includes(currentPath)
+                    : currentPath === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
+                      >
+                        <a href={item.url}>{item.title}</a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser
           user={{
             email: "test@nashtechglobals.com",
           }}
-          // logout={logout}
         />
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );
