@@ -75,6 +75,7 @@ export function ChangePasswordForm({
   return (
     <Form {...form}>
       <form
+        id="change-password-form"
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4"
         autoComplete="off"
@@ -118,10 +119,16 @@ export function ChangePasswordForm({
           )}
         />
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="submit" disabled={loading} className="px-6 py-3">
+          <Button
+            id="password-change-save-button"
+            type="submit"
+            disabled={loading}
+            className="px-6 py-3"
+          >
             {loading ? "Saving..." : "Save"}
           </Button>
           <Button
+            id="password-change-cancel-button"
             type="button"
             variant="outline"
             onClick={onCancel}

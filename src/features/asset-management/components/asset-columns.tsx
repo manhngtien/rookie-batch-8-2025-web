@@ -35,6 +35,7 @@ export const assetColumns: ColumnDef<Asset>[] = [
       return (
         <div className="flex gap-2">
           <button
+            id="edit-asset"
             className="duration-200 hover:scale-120 hover:cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
@@ -43,6 +44,7 @@ export const assetColumns: ColumnDef<Asset>[] = [
             <Pencil size={20} />
           </button>
           <button
+            id="delete-asset"
             className="duration-200 hover:scale-120 hover:cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();

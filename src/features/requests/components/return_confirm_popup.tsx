@@ -15,6 +15,7 @@ export default function ReturnConfirmPopup({
   setConfirmDialogOpen: () => void;
 }) {
   return (
+    // TODO: Xài cái GeneralDialog đê
     <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -25,6 +26,7 @@ export default function ReturnConfirmPopup({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
+          {/* eslint-disable-next-line custom/require-id-on-important-elements */}
           <Button
             type="button"
             variant="secondary"
@@ -32,6 +34,7 @@ export default function ReturnConfirmPopup({
           >
             Cancel
           </Button>
+          {/* eslint-disable-next-line custom/require-id-on-important-elements */}
           <Button type="button">Confirm</Button>
         </DialogFooter>
       </DialogContent>

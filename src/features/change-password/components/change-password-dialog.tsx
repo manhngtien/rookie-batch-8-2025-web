@@ -65,6 +65,7 @@ export default function ChangePasswordDialog({
           </DialogDescription>
           <div className="mr-6 mb-4 flex justify-end">
             <Button
+              id="close-password-change-success"
               className="p-5"
               type="button"
               onClick={handleCloseSuccessDialog}

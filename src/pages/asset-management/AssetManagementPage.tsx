@@ -32,6 +32,7 @@ function AssetManagementPage() {
         <Popover>
           <PopoverTrigger asChild>
             <Button
+              id="asset-state-dropdown"
               variant="outline"
               className="w-[15rem] justify-between text-black hover:cursor-pointer"
             >
@@ -54,6 +55,7 @@ function AssetManagementPage() {
         <Popover>
           <PopoverTrigger asChild>
             <Button
+              id="category-filter-dropdown"
               variant="outline"
               className="w-[15rem] justify-between text-black hover:cursor-pointer"
             >
@@ -74,11 +76,16 @@ function AssetManagementPage() {
         </Popover>
 
         <div className="relative w-[20rem]">
-          <Input className="" placeholder="Search..." />
+          <Input
+            id="asset-assignment-search-bar"
+            className=""
+            placeholder="Search..."
+          />
 
           <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
         <Button
+          id="create-asset-button"
           onClick={() => {
             navigate("/assets/create-asset");
           }}

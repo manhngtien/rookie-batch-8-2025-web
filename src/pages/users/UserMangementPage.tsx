@@ -93,6 +93,7 @@ function UserManagementPage() {
         <Popover>
           <PopoverTrigger asChild>
             <Button
+              id="user-type-dropdown"
               variant="outline"
               className="w-[180px] justify-between text-black hover:cursor-pointer"
             >
@@ -134,6 +135,7 @@ function UserManagementPage() {
         <div className="flex gap-2">
           <div className="relative w-50">
             <Input
+              id="users-search-bar"
               className=""
               placeholder="Search..."
               value={searchTerm}
@@ -142,6 +144,7 @@ function UserManagementPage() {
             <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
           </div>
           <Button
+            id="create-new-user-button"
             onClick={() => {
               navigate("/users/create-user");
             }}

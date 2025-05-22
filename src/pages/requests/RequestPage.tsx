@@ -58,6 +58,7 @@ export default function RequestPage() {
         <div className="flex flex-wrap gap-4">
           <div className="relative">
             <select
+              id="return-state-dropdown"
               value={selectedState || ""}
               onChange={(e) => setSelectedState(e.target.value)}
               className="appearance-none rounded border border-gray-300 bg-white px-3 py-2 pr-8"
@@ -75,7 +76,11 @@ export default function RequestPage() {
 
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[180px] justify-between">
+              <Button
+                id="returned-date-filter"
+                variant="outline"
+                className="w-[180px] justify-between"
+              >
                 {returnedDateFilter
                   ? format(returnedDateFilter, "dd/MM/yyyy")
                   : "Returned Date"}
@@ -96,6 +101,7 @@ export default function RequestPage() {
           </Popover>
           {(selectedState || returnedDateFilter) && (
             <Button
+              id="reset-fillter-button"
               variant="ghost"
               onClick={resetFilters}
               className="text-red-600"
@@ -107,6 +113,7 @@ export default function RequestPage() {
 
         <div className="relative">
           <input
+            id="return-request-search-bar"
             value={searchQuery}
             type="text"
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -114,7 +121,7 @@ export default function RequestPage() {
             className="rounded border border-gray-300 px-3 py-2 pr-8"
           />
           <div className="absolute inset-y-0 right-0 flex items-center px-2">
-            <button>
+            <button id="return-request-search-button">
               <Search className="text-gray-500" />
             </button>
           </div>
@@ -122,6 +129,7 @@ export default function RequestPage() {
       </div>
 
       <div className="overflow-x-auto rounded-md border">
+        {/* TODO: Xài DataTable component nha */}
         <table className="min-w-full border border-gray-200 bg-white">
           <thead>
             <tr className="bg-gray-100">
@@ -188,6 +196,7 @@ export default function RequestPage() {
                   {request.state}
                 </td>
                 <td className="border-b px-2 py-2 text-center">
+                  {/* eslint-disable-next-line custom/require-id-on-important-elements */}
                   <button
                     onClick={() => setOpenDialogConfirm(true)}
                     className="text-red-500 hover:text-red-700"
@@ -196,6 +205,7 @@ export default function RequestPage() {
                   </button>
                 </td>
                 <td className="border-b px-2 py-2 text-center">
+                  {/* eslint-disable-next-line custom/require-id-on-important-elements */}
                   <button
                     onClick={() => setOpenDialogCancel(true)}
                     className="text-gray-500 hover:text-gray-700"

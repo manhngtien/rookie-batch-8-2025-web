@@ -62,6 +62,7 @@ function CreateNewAssetPage() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                id="installed-date"
                 variant={"outline"}
                 className={cn(
                   "flex-1 justify-start text-left font-normal",
@@ -96,8 +97,13 @@ function CreateNewAssetPage() {
           </RadioGroup>
         </div>
         <div className="flex justify-end space-x-4">
-          <Button variant="outline">Cancel</Button>
-          <Button className="bg-red-600 text-white hover:bg-red-700">
+          <Button id="cancel-button" variant="outline">
+            Cancel
+          </Button>
+          <Button
+            id="save-button"
+            className="bg-red-600 text-white hover:bg-red-700"
+          >
             Save
           </Button>
         </div>

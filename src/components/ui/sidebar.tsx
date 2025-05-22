@@ -262,6 +262,7 @@ function SidebarTrigger({
   const { toggleSidebar } = useSidebar();
 
   return (
+    // eslint-disable-next-line custom/require-id-on-important-elements
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
@@ -284,6 +285,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar();
 
   return (
+    // eslint-disable-next-line custom/require-id-on-important-elements
     <button
       data-sidebar="rail"
       data-slot="sidebar-rail"
@@ -324,6 +326,7 @@ function SidebarInput({
   ...props
 }: React.ComponentProps<typeof Input>) {
   return (
+    // eslint-disable-next-line custom/require-id-on-important-elements
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
