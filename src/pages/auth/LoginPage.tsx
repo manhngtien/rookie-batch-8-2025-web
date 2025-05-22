@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { LoginForm } from "@/components/login-form";
 import type { AppDispatch } from "@/store";
-import { loginUser } from "@/store/slices/authSlice";
+import { loginUser } from "@/store/thunks/authThunk";
 
 function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });

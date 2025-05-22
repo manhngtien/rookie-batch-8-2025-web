@@ -1,37 +1,7 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export const loginUser = createAsyncThunk<
-  User,
-  { username: string; password: string },
-  { rejectValue: string }
->("auth/loginUser", async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await axios.post<User>(
-      `${import.meta.env.VITE_API_BASE_URL}/api/Auth/login`,
-      credentials,
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true, // ✅ include cookies
-      },
-    );
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue(error.message || "Fail to login!");
-    }
-    return rejectWithValue("An unexpected error!");
-  }
-});
-
-type User = {
-  userName: string;
-  roles: string[];
-};
+import type { User } from "@/features/users/types/User";
+import { loginUser } from "@/store/thunks/authThunk";
 
 interface AuthState {
   user: User | null;
