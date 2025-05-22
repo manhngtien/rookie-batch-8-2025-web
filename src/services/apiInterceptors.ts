@@ -30,7 +30,6 @@ export const setupAuthInterceptor = (
           window.location.href = APP_ROUTES.auth.login;
         } else {
           try {
-            // Attempt to refresh the token
             await dispatch(refreshToken()).unwrap();
             return axiosInstance(originalRequest);
           } catch (err) {

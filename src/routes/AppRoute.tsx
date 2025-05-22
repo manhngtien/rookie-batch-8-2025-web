@@ -15,41 +15,42 @@ import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <Layout />
-      </ProtectedRoute>
-    ),
-    errorElement: <NotFound />,
+    element: <ProtectedRoute />,
     children: [
-      // Users
       {
-        path: APP_ROUTES.users.path,
-        element: <UserManagementPage />,
-      },
-      {
-        path: `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
-        element: <CreateUserPage />,
-      },
-      // Assets
-      {
-        path: APP_ROUTES.assets.path,
-        element: <AssetManagementPage />,
-      },
-      {
-        path: `${APP_ROUTES.assets.path}/${APP_ROUTES.assets.create}`,
-        element: <CreateNewAssetPage />,
-      },
-      // Returns
-      {
-        path: APP_ROUTES.returns.path,
-        element: <RequestPage />,
-      },
-      // Assignments
-      {
-        path: APP_ROUTES.assignment.path,
-        element: <div>Assignments Page</div>, // Placeholder until implemented
+        path: "/",
+        element: <Layout />,
+        errorElement: <NotFound />,
+        children: [
+          // Users
+          {
+            path: APP_ROUTES.users.path,
+            element: <UserManagementPage />,
+          },
+          {
+            path: `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
+            element: <CreateUserPage />,
+          },
+          // Assets
+          {
+            path: APP_ROUTES.assets.path,
+            element: <AssetManagementPage />,
+          },
+          {
+            path: `${APP_ROUTES.assets.path}/${APP_ROUTES.assets.create}`,
+            element: <CreateNewAssetPage />,
+          },
+          // Returns
+          {
+            path: APP_ROUTES.returns.path,
+            element: <RequestPage />,
+          },
+          // Assignments
+          {
+            path: APP_ROUTES.assignment.path,
+            element: <div>Assignments Page</div>,
+          },
+        ],
       },
     ],
   },

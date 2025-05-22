@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import {
@@ -83,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         isActive={isActive}
                         className="data-[active=true]:bg-foreground h-16 max-h-16 bg-[#F3F4F6] text-lg data-[active=true]:text-white"
                       >
-                        <a href={item.url}>{item.title}</a>
+                        <Link to={item.url}>{item.title}</Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
