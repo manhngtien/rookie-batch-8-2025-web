@@ -5,10 +5,9 @@ import {
 } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
-// TODO: Async function to create with login user
 export const loginUser = createAsyncThunk<
-  User, // Return type of the payload creator
-  { username: string; password: string }, // Argument type
+  User,
+  { username: string; password: string },
   { rejectValue: string }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
@@ -18,6 +17,7 @@ export const loginUser = createAsyncThunk<
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
+        credentials: "include",
       },
     );
     if (!response.ok) {
@@ -34,7 +34,6 @@ export const loginUser = createAsyncThunk<
   }
 });
 
-// TODO: Replace with actual type
 type User = {
   userName: string;
   roles: string[];

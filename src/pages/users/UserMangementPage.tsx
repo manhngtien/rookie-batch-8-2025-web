@@ -1,5 +1,7 @@
+// src/features/users/components/UserManagementPage.tsx
 import { Funnel, Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -13,13 +15,24 @@ import {
 } from "@/components/ui/popover";
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
-import { users } from "@/features/users/types/fakeData";
 import type { Location, User, UserType } from "@/features/users/types/User";
+import type { AppDispatch, RootState } from "@/store";
+import { fetchUsers } from "@/store/thunks/userThunk";
 
 function UserManagementPage() {
   const navigate = useNavigate();
-  const [selectedTypes, setSelectedTypes] = useState(["All"]);
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { users, loading, error } = useSelector(
+    (state: RootState) => state.users,
+  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(["All"]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+    console.log(users);
+  }, [dispatch]);
 
   const handleRowClick = (user: User) => {
     setSelectedUser(user);
@@ -60,6 +73,18 @@ function UserManagementPage() {
         : [...prev.filter((t) => t !== "All"), type],
     );
   };
+
+  // Filter users based on type and search term
+  const filteredUsers = users.filter((user) => {
+    const typeMatch =
+      selectedTypes.includes("All") ||
+      selectedTypes.includes(getUserTypeLabel(user.type));
+    const searchMatch =
+      searchTerm === "" ||
+      user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.staffCode.toLowerCase().includes(searchTerm.toLowerCase());
+    return typeMatch && searchMatch;
+  });
 
   return (
     <div className="container mx-auto p-4">
@@ -108,8 +133,12 @@ function UserManagementPage() {
         </Popover>
         <div className="flex gap-2">
           <div className="relative w-50">
-            <Input className="" placeholder="Search..." />
-
+            <Input
+              className=""
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
           </div>
           <Button
@@ -123,13 +152,15 @@ function UserManagementPage() {
         </div>
       </div>
 
-      <DataTable
-        columns={userColumns}
-        data={users}
-        handleRowClick={(user) => handleRowClick(user)}
-      />
-
-      {/* Modal for Detailed User Information */}
+      {loading && <p>Loading users...</p>}
+      {error && <p className="text-red-600">Error: {error}</p>}
+      {!loading && !error && (
+        <DataTable
+          columns={userColumns}
+          data={filteredUsers}
+          handleRowClick={(user) => handleRowClick(user)}
+        />
+      )}
 
       {selectedUser && (
         <UserDetailDialog
