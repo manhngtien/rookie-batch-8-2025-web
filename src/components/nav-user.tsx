@@ -45,7 +45,10 @@ export function NavUser({ user }: NavUserProps) {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex items-center gap-2 rounded-lg p-2 hover:cursor-pointer">
+          <button
+            id="user-dropdown"
+            className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex items-center gap-2 rounded-lg p-2 hover:cursor-pointer"
+          >
             <div className="grid text-left text-sm leading-tight">
               <span className="truncate font-medium">
                 {user.name ?? "User"}

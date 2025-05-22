@@ -7,7 +7,7 @@ export function LoginForm({
   className,
   username,
   password,
-  loading,
+  // loading,
   onChange,
   onSubmit,
 }: {
@@ -19,9 +19,13 @@ export function LoginForm({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
-  const isDisabled = loading || !username || !password;
+  // const isDisabled = loading || !username || !password;
   return (
-    <form className={cn("flex flex-col gap-6", className)} onSubmit={onSubmit}>
+    <form
+      id="login-form"
+      className={cn("flex flex-col gap-6", className)}
+      onSubmit={onSubmit}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-3xl font-bold">Login to your account</h1>
 
@@ -59,11 +63,11 @@ export function LoginForm({
           />
         </div>
         <Button
+          id="login-button"
           type="submit"
           className="w-full py-5 hover:cursor-pointer"
-          disabled={isDisabled}
         >
-          {loading ? "LOGGING IN..." : "LOGIN"}
+          LOGIN
         </Button>
       </div>
     </form>

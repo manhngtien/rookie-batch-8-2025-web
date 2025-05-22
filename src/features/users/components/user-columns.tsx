@@ -45,6 +45,7 @@ export const userColumns: ColumnDef<User>[] = [
       return (
         <div className="flex gap-2">
           <button
+            id="edit-user-button"
             className="duration-200 hover:scale-120 hover:cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
@@ -53,6 +54,7 @@ export const userColumns: ColumnDef<User>[] = [
             <Pencil size={20} />
           </button>
           <button
+            id="delete-user-button"
             className="duration-200 hover:scale-120 hover:cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();

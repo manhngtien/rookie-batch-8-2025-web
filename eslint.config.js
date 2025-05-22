@@ -5,6 +5,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 import unusedImports from "eslint-plugin-unused-imports";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import requireIdRule from "./eslint-rules/require-id-on-important-elements.js";
 
 export default tseslint.config(
   { ignores: ["dist"] },
@@ -16,13 +17,20 @@ export default tseslint.config(
       globals: globals.browser,
     },
     plugins: {
+      "simple-import-sort": simpleImportSort,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
       "unused-imports": unusedImports,
-      "simple-import-sort": simpleImportSort,
+      custom: {
+        rules: {
+          "require-id-on-important-elements": requireIdRule,
+        },
+      },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
@@ -39,8 +47,21 @@ export default tseslint.config(
         },
       ],
       "@typescript-eslint/consistent-type-imports": "error",
-      "simple-import-sort/imports": "error",
-      "simple-import-sort/exports": "error",
+      "custom/require-id-on-important-elements": [
+        "error",
+        {
+          tags: [
+            "input",
+            "button",
+            "select",
+            "textarea",
+            "Input",
+            "Button",
+            "SelectTrigger",
+            "Textarea",
+          ],
+        },
+      ],
     },
   },
 );

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
+    // eslint-disable-next-line custom/require-id-on-important-elements
     <input
       type={type}
       data-slot="input"

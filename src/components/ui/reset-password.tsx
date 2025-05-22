@@ -114,7 +114,11 @@ export default function ResetPasswordPreview() {
                   )}
                 />
 
-                <Button type="submit" className="w-full">
+                <Button
+                  id="reset-password-button"
+                  type="submit"
+                  className="w-full"
+                >
                   Reset Password
                 </Button>
               </div>

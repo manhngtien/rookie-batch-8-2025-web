@@ -18,12 +18,14 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         <Input
+          id="password-input"
           type={showPassword ? "text" : "password"}
           className={cn("hide-password-toggle pr-10", className)}
           ref={ref}
           {...props}
         />
         <Button
+          id="show-password-toggle"
           type="button"
           variant="ghost"
           size="sm"

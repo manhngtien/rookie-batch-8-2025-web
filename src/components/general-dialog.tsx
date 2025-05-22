@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { kebabCase } from "@/lib/utils";
 
 import { Button } from "./ui/button";
 
@@ -33,10 +34,17 @@ export default function GeneralDialog({
         </DialogHeader>
         {content}
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onClose}>
+          <Button
+            id={`${kebabCase(header)}-cancel-button`}
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+          >
             Cancel
           </Button>
-          <Button type="button">Confirm</Button>
+          <Button id={`${kebabCase(header)}-confirm-button`} type="button">
+            Confirm
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
