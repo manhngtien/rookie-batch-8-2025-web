@@ -1,54 +1,25 @@
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+import type { User } from "@/features/users/types/User";
 import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
-
-export const loginUser = createAsyncThunk<
-  User,
-  { username: string; password: string },
-  { rejectValue: string }
->("auth/loginUser", async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/Auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-        credentials: "include",
-      },
-    );
-    if (!response.ok) {
-      const error = await response.text();
-      return rejectWithValue(error);
-    }
-    const data: User = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue(error.message || "Fail to login!");
-    }
-    return rejectWithValue("An unexpected error!");
-  }
-});
-
-type User = {
-  userName: string;
-  roles: string[];
-};
+  changePassword,
+  checkAuth,
+  loginUser,
+  refreshToken,
+} from "@/store/thunks/authThunk";
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
+  isCheckingAuth: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
   loading: false,
+  isCheckingAuth: false,
 };
 
 const authSlice = createSlice({
@@ -62,10 +33,13 @@ const authSlice = createSlice({
     logoutUser(state) {
       state.user = null;
       state.isAuthenticated = false;
+      state.loading = false;
+      state.isCheckingAuth = false;
     },
   },
   extraReducers: (builder) => {
     builder
+      //login user
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
       })
@@ -78,9 +52,38 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.loading = false;
+      })
+      // check auth
+      .addCase(checkAuth.pending, (state) => {
+        state.isCheckingAuth = true;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.isCheckingAuth = false;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.isCheckingAuth = false;
+      })
+      // refreshToken
+      .addCase(refreshToken.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(refreshToken.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
       });
   },
 });
 
 export const { setUser, logoutUser } = authSlice.actions;
+export { changePassword };
 export default authSlice.reducer;
