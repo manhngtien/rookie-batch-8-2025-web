@@ -4,8 +4,7 @@ import type { AxiosInstance } from "axios";
 import { API_ROUTES } from "@/lib/apiRoutes";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch } from "@/store";
-import { logoutUser } from "@/store/slices/authSlice";
-import { refreshToken } from "@/store/thunks/authThunk";
+import { logoutUser, refreshToken } from "@/store/thunks/authThunk";
 
 export const setupAuthInterceptor = (
   axiosInstance: AxiosInstance,

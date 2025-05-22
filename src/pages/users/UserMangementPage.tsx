@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
-import type { Location, User, UserType } from "@/features/users/types/User";
+import type { User } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchUsers } from "@/store/thunks/userThunk";
 
@@ -42,30 +42,6 @@ function UserManagementPage() {
     setSelectedUser(null);
   };
 
-  const getUserTypeLabel = (type: UserType) => {
-    switch (type) {
-      case 1:
-        return "Staff";
-      case 2:
-        return "Admin";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getLocationLabel = (location: Location) => {
-    switch (location) {
-      case 1:
-        return "HCM";
-      case 2:
-        return "HN";
-      case 3:
-        return "DN";
-      default:
-        return "Unknown";
-    }
-  };
-
   const handleTypeChange = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type)
@@ -74,11 +50,9 @@ function UserManagementPage() {
     );
   };
 
-  // Filter users based on type and search term
   const filteredUsers = users.filter((user) => {
     const typeMatch =
-      selectedTypes.includes("All") ||
-      selectedTypes.includes(getUserTypeLabel(user.type));
+      selectedTypes.includes("All") || selectedTypes.includes(user.type);
     const searchMatch =
       searchTerm === "" ||
       user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -167,12 +141,7 @@ function UserManagementPage() {
       )}
 
       {selectedUser && (
-        <UserDetailDialog
-          selectedUser={selectedUser}
-          closeModal={closeModal}
-          getUserTypeLabel={getUserTypeLabel}
-          getLocationLabel={getLocationLabel}
-        />
+        <UserDetailDialog selectedUser={selectedUser} closeModal={closeModal} />
       )}
     </div>
   );

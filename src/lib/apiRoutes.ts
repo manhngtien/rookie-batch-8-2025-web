@@ -16,4 +16,10 @@ export const API_ROUTES = {
     updateUser: (userId: string) => addApiPrefix(`/User/${userId}`),
     deleteUser: (userId: string) => addApiPrefix(`/User/${userId}`),
   },
+  assets: {
+    getAssets: addApiPrefix("/Assets"),
+    createAsset: addApiPrefix("/Assets"),
+    updateAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
+    deleteAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
+  },
 };

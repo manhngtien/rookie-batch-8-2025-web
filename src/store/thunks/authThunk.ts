@@ -79,3 +79,21 @@ export const refreshToken = createAsyncThunk<
     return rejectWithValue("An unexpected error occurred");
   }
 });
+
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await authService.logout(); // Assuming authService has a logout method
+      console.info("User logged out successfully");
+      return;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Failed to logout",
+        );
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

@@ -1,7 +1,5 @@
 import type { Assignment } from "@/features/assignments/types/Assignment";
 
-import type { Category } from "./Category";
-
 export interface Asset {
   assetCode: string;
   assetName: string;
@@ -9,7 +7,8 @@ export interface Asset {
   type: number;
   location: number;
   installedDate: Date;
-  category: Category;
+  categoryId: number;
+  categoryName: string;
   state: string;
   assignments: Assignment[];
 }

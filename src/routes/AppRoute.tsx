@@ -16,6 +16,7 @@ import ProtectedRoute from "./ProtectedRoute";
 export const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
+    errorElement: <NotFound />,
     children: [
       {
         path: "/",
@@ -57,5 +58,6 @@ export const router = createBrowserRouter([
   {
     path: APP_ROUTES.auth.login,
     element: <LoginPage />,
+    errorElement: <NotFound />,
   },
 ]);

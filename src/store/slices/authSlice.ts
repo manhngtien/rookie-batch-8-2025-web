@@ -5,6 +5,7 @@ import {
   changePassword,
   checkAuth,
   loginUser,
+  logoutUser,
   refreshToken,
 } from "@/store/thunks/authThunk";
 
@@ -29,12 +30,6 @@ const authSlice = createSlice({
     setUser(state, action: PayloadAction<User | null>) {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
-    },
-    logoutUser(state) {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.isCheckingAuth = false;
     },
   },
   extraReducers: (builder) => {
@@ -80,10 +75,24 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.loading = false;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isCheckingAuth = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.isCheckingAuth = false;
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.isCheckingAuth = false;
+        // Optionally keep user logged in on failure, or reset state
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });
 
-export const { setUser, logoutUser } = authSlice.actions;
+export const { setUser } = authSlice.actions;
 export { changePassword };
 export default authSlice.reducer;
