@@ -9,4 +9,10 @@ export const API_ROUTES = {
     check: addApiPrefix("/check"),
     refreshToken: addApiPrefix("/refresh-token"),
   },
+  users: {
+    getUsers: addApiPrefix("/users"),
+    createUser: addApiPrefix("/users"),
+    updateUser: (userId: string) => addApiPrefix(`/users/${userId}`),
+    deleteUser: (userId: string) => addApiPrefix(`/users/${userId}`),
+  },
 };

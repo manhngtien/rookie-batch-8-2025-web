@@ -4,21 +4,30 @@ import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import AssetDataTable from "@/features/asset-management/components/asset-data-table";
+import { assetColumns } from "@/features/asset-management/components/asset-columns";
+import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
+import { assets } from "@/features/asset-management/components/fake-asset";
+import type { Asset } from "@/features/asset-management/types/Asset";
 
 function AssetManagementPage() {
+  const [selectedAsset, setSelectedAsset] = React.useState<Asset | null>(null);
+
+  const handleRowClick = (asset: Asset) => {
+    setSelectedAsset(asset);
+  };
+
   const navigate = useNavigate();
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Asset List</h1>
-
       <div className="mb-4 flex gap-5 space-x-4">
         <Popover>
           <PopoverTrigger asChild>
@@ -78,7 +87,19 @@ function AssetManagementPage() {
           Create new asset
         </Button>
       </div>
-      <AssetDataTable />
+
+      <DataTable
+        columns={assetColumns}
+        data={assets}
+        handleRowClick={(user) => handleRowClick(user)}
+      />
+
+      {selectedAsset && (
+        <AssetDetailDialog
+          selectedAsset={selectedAsset}
+          closeModal={() => setSelectedAsset(null)}
+        />
+      )}
     </div>
   );
 }
