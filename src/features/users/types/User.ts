@@ -15,7 +15,7 @@ export type Location = (typeof Location)[keyof typeof Location];
 
 export interface User {
   staffCode: string;
-  username: string;
+  userName: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;

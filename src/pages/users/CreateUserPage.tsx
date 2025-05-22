@@ -138,7 +138,6 @@ export default function CreateUserPage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 text-black"
         >
-          {/* First Name */}
           <FormField
             control={form.control}
             name="firstName"
@@ -153,7 +152,6 @@ export default function CreateUserPage() {
             )}
           />
 
-          {/* Last Name */}
           <FormField
             control={form.control}
             name="lastName"

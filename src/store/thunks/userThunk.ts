@@ -12,6 +12,7 @@ export const fetchUsers = createAsyncThunk<
 >("users/fetchUsers", async (_, { rejectWithValue }) => {
   try {
     const response = await userService.getUsers();
+    console.info("Users fetched successfully:", response);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -20,15 +21,3 @@ export const fetchUsers = createAsyncThunk<
     return rejectWithValue("An unexpected error occurred");
   }
 });
-
-// export const createUser = createAsyncThunk<User, User, { rejectValue: string }>(
-//   "users/createUser",
-//   async (userData, { rejectWithValue }) => {
-//     try {
-//       const response = await userService.createUser(userData);
-//       return response.data;
-//     } catch (error: any) {
-//       return rejectWithValue(error.message || "Failed to create user");
-//     }
-//   },
-// );
