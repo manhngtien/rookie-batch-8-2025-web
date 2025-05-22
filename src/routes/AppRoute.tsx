@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
 import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
+import AssignmentManagementPage from "@/pages/assignments/AssignmentManagementPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
 import RequestPage from "@/pages/requests/RequestPage";
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
       // Assignments
       {
         path: APP_ROUTES.assignment.path,
+        element: <AssignmentManagementPage />,
       },
     ],
   },
