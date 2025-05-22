@@ -1,5 +1,9 @@
 import { DataTable } from "@/components/ui/data-table";
 import { PageTitle } from "@/components/ui/page-header";
+import {
+  FilterButton,
+  type FilterButtonItems,
+} from "@/components/ui/sort-button";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 
@@ -37,10 +41,24 @@ const mockAssignments: Assignment[] = [
   },
 ];
 
+const filterItems: FilterButtonItems[] = [
+  {
+    title: "Accepted",
+  },
+  {
+    title: "Declined",
+  },
+  {
+    title: "Waiting for acceptance",
+  },
+];
+
 function AssignmentManagementPage() {
   return (
     <>
       <PageTitle>Assignment List</PageTitle>
+
+      <FilterButton filterTitle="State" items={filterItems} />
 
       <DataTable columns={assignmentColumns} data={mockAssignments} />
     </>
