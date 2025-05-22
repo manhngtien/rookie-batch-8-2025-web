@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { User } from "@/features/users/types/User";
-import { loginUser } from "@/store/thunks/authThunk";
+import { changePassword, loginUser } from "@/store/thunks/authThunk";
 
 interface AuthState {
   user: User | null;
@@ -47,4 +47,5 @@ const authSlice = createSlice({
 });
 
 export const { setUser, logoutUser } = authSlice.actions;
+export { changePassword };
 export default authSlice.reducer;

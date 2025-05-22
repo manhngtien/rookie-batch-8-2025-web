@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -12,57 +13,60 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
+import type { AppDispatch } from "@/store";
+import { changePassword } from "@/store/slices/authSlice";
 
 const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required"),
+    oldPassword: z.string().min(1, "Old password is required"),
     newPassword: z
       .string()
       .min(6, { message: "New password must be at least 6 characters" })
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-        message:
-          "Password must be alphanumeric and contain at least one letter and one number",
+      .regex(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
+        message: "Password must contain at least one letter and one number",
       }),
   })
-  .refine((data) => data.currentPassword !== data.newPassword, {
+  .refine((data) => data.oldPassword !== data.newPassword, {
     path: ["newPassword"],
-    message: "New password must be different from current password",
+    message: "New password must be different from old password",
   });
 
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm({
-  onSubmit,
   onCancel,
   onSuccess,
   loading = false,
 }: {
-  onSubmit?: (values: ChangePasswordFormValues) => void | Promise<void>;
   onSuccess?: () => void;
   onCancel?: () => void;
   loading?: boolean;
 }) {
+  const dispatch = useDispatch<AppDispatch>();
+
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      currentPassword: "",
+      oldPassword: "",
       newPassword: "",
     },
   });
 
-  // const form = useForm<ChangePasswordFormValues>({
-  //   defaultValues: {
-  //     currentPassword: "",
-  //     newPassword: "",
-  //     confirmPassword: "",
-  //   },
-  // });
-
   const handleSubmit = async (values: ChangePasswordFormValues) => {
     try {
-      await onSubmit?.(values);
-      console.log(values);
-      onSuccess?.(); // 🎯 Call onSuccess after successful submit
+      const result = await dispatch(
+        changePassword({
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
+        }),
+      );
+
+      console.info("dwuhdw" + result.payload);
+      if (changePassword.fulfilled.match(result)) {
+        onSuccess?.(); // ✅ success callback (e.g., open success dialog)
+      } else {
+        console.error("Password change failed:", result.payload);
+      }
     } catch (error) {
       console.error("Change password failed:", error);
     }
@@ -77,17 +81,16 @@ export function ChangePasswordForm({
       >
         <FormField
           control={form.control}
-          name="currentPassword"
+          name="oldPassword"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="currentPassword" className="text-primary">
-                Current Password
+              <Label htmlFor="oldPassword" className="text-primary">
+                Old Password
               </Label>
               <FormControl>
                 <PasswordInput
                   className="text-primary"
-                  id="currentPassword"
-                  // autoComplete="current-password"
+                  id="oldPassword"
                   {...field}
                 />
               </FormControl>
@@ -107,7 +110,6 @@ export function ChangePasswordForm({
                 <PasswordInput
                   className="text-primary"
                   id="newPassword"
-                  // autoComplete="new-password"
                   {...field}
                 />
               </FormControl>

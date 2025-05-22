@@ -3,11 +3,15 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
 
 import authService from "@/features/users/services/authService";
+import type {
+  ChangePasswordPayload,
+  Credentials,
+} from "@/features/users/types/Auth";
 import type { User } from "@/features/users/types/User";
 
 export const loginUser = createAsyncThunk<
   User,
-  { username: string; password: string },
+  Credentials,
   { rejectValue: string }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
@@ -17,6 +21,22 @@ export const loginUser = createAsyncThunk<
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       return rejectWithValue(error.message || "Failed to fetch users");
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});
+
+export const changePassword = createAsyncThunk<
+  { message: string },
+  ChangePasswordPayload,
+  { rejectValue: string }
+>("auth/changePassword", async (payload, { rejectWithValue }) => {
+  try {
+    await authService.changePassword(payload);
+    return { message: "Password changed successfully!" };
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(error.message || "Failed to change password");
     }
     return rejectWithValue("An unexpected error occurred");
   }

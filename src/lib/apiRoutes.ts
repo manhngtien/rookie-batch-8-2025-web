@@ -5,6 +5,7 @@ const addApiPrefix = (route: string): string => `${apiPrefix}${route}`;
 export const API_ROUTES = {
   auth: {
     login: addApiPrefix("/login"),
+    changePassword: addApiPrefix("/change-password"),
     logout: addApiPrefix("/logout"),
     check: addApiPrefix("/check"),
     refreshToken: addApiPrefix("/refresh-token"),
