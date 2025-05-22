@@ -4,31 +4,31 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Dialog({
+function DialogChangePassword({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
-function DialogTrigger({
+function DialogChangePasswordTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogPortal({
+function DialogChangePasswordPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
-function DialogClose({
+function DialogChangePasswordClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({
+function DialogChangePasswordOverlay({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
@@ -44,15 +44,15 @@ function DialogOverlay({
   );
 }
 
-function DialogContent({
+function DialogChangePasswordContent({
   className,
   children,
 
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content>) {
   return (
-    <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+    <DialogChangePasswordPortal data-slot="dialog-portal">
+      <DialogChangePasswordOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         onInteractOutside={(event) => event.preventDefault()}
@@ -68,11 +68,14 @@ function DialogContent({
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
-    </DialogPortal>
+    </DialogChangePasswordPortal>
   );
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+function DialogChangePasswordHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
@@ -82,7 +85,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+function DialogChangePasswordFooter({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
@@ -95,7 +101,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function DialogTitle({
+function DialogChangePasswordTitle({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Title>) {
@@ -108,7 +114,7 @@ function DialogTitle({
   );
 }
 
-function DialogDescription({
+function DialogChangePasswordDescription({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
@@ -122,14 +128,14 @@ function DialogDescription({
 }
 
 export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
+  DialogChangePassword,
+  DialogChangePasswordClose,
+  DialogChangePasswordContent,
+  DialogChangePasswordDescription,
+  DialogChangePasswordFooter,
+  DialogChangePasswordHeader,
+  DialogChangePasswordOverlay,
+  DialogChangePasswordPortal,
+  DialogChangePasswordTitle,
+  DialogChangePasswordTrigger,
 };

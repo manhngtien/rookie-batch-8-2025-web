@@ -5,10 +5,23 @@ import { cn } from "@/lib/utils";
 
 export function LoginForm({
   className,
-  ...props
-}: React.ComponentProps<"form">) {
+  username,
+  password,
+  loading,
+  onChange,
+  onSubmit,
+}: {
+  className?: string;
+  username: string;
+
+  password: string;
+  loading?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}) {
+  const isDisabled = loading || !username || !password;
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} onSubmit={onSubmit}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-3xl font-bold">Login to your account</h1>
 
@@ -21,9 +34,12 @@ export function LoginForm({
           <Label htmlFor="username">Username</Label>
           <Input
             id="username"
+            name="username"
             className="text-primary"
             type="text"
             placeholder="Enter your username"
+            value={username}
+            onChange={onChange}
             required
           />
         </div>
@@ -33,14 +49,21 @@ export function LoginForm({
           </div>
           <Input
             id="password"
+            name="password"
             className="text-primary"
             type="password"
             placeholder="Enter your password"
+            value={password}
+            onChange={onChange}
             required
           />
         </div>
-        <Button type="submit" className="w-full py-5 hover:cursor-pointer">
-          LOGIN
+        <Button
+          type="submit"
+          className="w-full py-5 hover:cursor-pointer"
+          disabled={isDisabled}
+        >
+          {loading ? "LOGGING IN..." : "LOGIN"}
         </Button>
       </div>
     </form>

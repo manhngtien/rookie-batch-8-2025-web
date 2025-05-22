@@ -1,15 +1,35 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 
-type ChangePasswordFormValues = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(6, { message: "New password must be at least 6 characters" })
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+        message:
+          "Password must be alphanumeric and contain at least one letter and one number",
+      }),
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    path: ["newPassword"],
+    message: "New password must be different from current password",
+  });
+
+type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm({
   onSubmit,
@@ -23,26 +43,27 @@ export function ChangePasswordForm({
   loading?: boolean;
 }) {
   const form = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
-      confirmPassword: "",
     },
   });
 
+  // const form = useForm<ChangePasswordFormValues>({
+  //   defaultValues: {
+  //     currentPassword: "",
+  //     newPassword: "",
+  //     confirmPassword: "",
+  //   },
+  // });
+
   const handleSubmit = async (values: ChangePasswordFormValues) => {
-    if (values.newPassword !== values.confirmPassword) {
-      form.setError("confirmPassword", {
-        type: "manual",
-        message: "Passwords do not match",
-      });
-      return;
-    }
     try {
       await onSubmit?.(values);
+      console.log(values);
       onSuccess?.(); // 🎯 Call onSuccess after successful submit
     } catch (error) {
-      // Optionally handle errors here (e.g., set form errors)
       console.error("Change password failed:", error);
     }
   };
@@ -57,19 +78,19 @@ export function ChangePasswordForm({
         <FormField
           control={form.control}
           name="currentPassword"
-          rules={{ required: "Current password is required" }}
           render={({ field }) => (
             <FormItem>
               <Label htmlFor="currentPassword" className="text-primary">
                 Current Password
               </Label>
-              <Input
-                className="text-primary"
-                id="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                {...field}
-              />
+              <FormControl>
+                <PasswordInput
+                  className="text-primary"
+                  id="currentPassword"
+                  // autoComplete="current-password"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -77,42 +98,19 @@ export function ChangePasswordForm({
         <FormField
           control={form.control}
           name="newPassword"
-          rules={{
-            required: "New password is required",
-            minLength: { value: 6, message: "At least 6 characters" },
-          }}
           render={({ field }) => (
             <FormItem>
               <Label htmlFor="newPassword" className="text-primary">
                 New Password
               </Label>
-              <Input
-                className="text-primary"
-                id="newPassword"
-                type="password"
-                autoComplete="new-password"
-                {...field}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          rules={{ required: "Please confirm your new password" }}
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="confirmPassword" className="text-primary">
-                Confirm New Password
-              </Label>
-              <Input
-                className="text-primary"
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                {...field}
-              />
+              <FormControl>
+                <PasswordInput
+                  className="text-primary"
+                  id="newPassword"
+                  // autoComplete="new-password"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

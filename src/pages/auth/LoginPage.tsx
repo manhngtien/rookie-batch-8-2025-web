@@ -1,7 +1,35 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { LoginForm } from "@/components/login-form";
+import type { AppDispatch } from "@/store";
+import { loginUser } from "@/store/slices/authSlice";
 
 function LoginPage() {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const result = await dispatch(loginUser(form));
+    setLoading(false);
+
+    if (loginUser.fulfilled.match(result)) {
+      navigate("/");
+    } else {
+      alert(result.payload || "Login failed");
+    }
+  };
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -11,7 +39,13 @@ function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-90">
-            <LoginForm />
+            <LoginForm
+              username={form.username}
+              password={form.password}
+              loading={loading}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+            />
           </div>
         </div>
       </div>

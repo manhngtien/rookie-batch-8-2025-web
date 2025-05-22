@@ -1,12 +1,13 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  DialogChangePassword,
+  DialogChangePasswordContent,
+  DialogChangePasswordHeader,
+  DialogChangePasswordTitle,
+} from "@/components/ui/dialog-change-password";
 
 import ChangePasswordForm from "./change-password-form";
 
@@ -33,39 +34,46 @@ export default function ChangePasswordDialog({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-primary mb-4">
+      <DialogChangePassword open={open} onOpenChange={onOpenChange}>
+        <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
+          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+            <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
               Change password
-            </DialogTitle>
-          </DialogHeader>
-          <ChangePasswordForm
-            onSuccess={handlePasswordChangeSuccess}
-            onCancel={() => onOpenChange(false)}
-          />
-        </DialogContent>
-      </Dialog>
+            </DialogChangePasswordTitle>
+          </DialogChangePasswordHeader>
+          <div className="m-6">
+            <ChangePasswordForm
+              onSuccess={handlePasswordChangeSuccess}
+              onCancel={() => onOpenChange(false)}
+            />
+          </div>
+        </DialogChangePasswordContent>
+      </DialogChangePassword>
 
-      <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-primary">Change password</DialogTitle>
-          </DialogHeader>
-          <hr className="my-4 border-black" />
-          <DialogDescription className="text-primary">
+      <DialogChangePassword
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+      >
+        <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
+          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+            <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
+              Change password
+            </DialogChangePasswordTitle>
+          </DialogChangePasswordHeader>
+          <DialogDescription className="text-primary px-4">
             Your password has been changed successfully!
           </DialogDescription>
-          <div className="mt-4 flex justify-end">
-            <button
-              className="bg-foreground rounded px-4 py-2 text-white"
+          <div className="mr-6 mb-4 flex justify-end">
+            <Button
+              className="p-5"
+              type="button"
               onClick={handleCloseSuccessDialog}
             >
               Close
-            </button>
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DialogChangePasswordContent>
+      </DialogChangePassword>
     </>
   );
 }
