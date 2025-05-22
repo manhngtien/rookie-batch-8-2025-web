@@ -1,3 +1,4 @@
+// src/routes/AppRoute.tsx
 import { createBrowserRouter } from "react-router";
 
 import Layout from "@/components/layout";
@@ -10,10 +11,16 @@ import RequestPage from "@/pages/requests/RequestPage";
 import CreateUserPage from "@/pages/users/CreateUserPage";
 import UserManagementPage from "@/pages/users/UserMangementPage";
 
+import ProtectedRoute from "./ProtectedRoute";
+
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     errorElement: <NotFound />,
     children: [
       // Users
@@ -42,11 +49,12 @@ export const router = createBrowserRouter([
       // Assignments
       {
         path: APP_ROUTES.assignment.path,
+        element: <div>Assignments Page</div>, // Placeholder until implemented
       },
     ],
   },
   {
-    path: "/login",
+    path: APP_ROUTES.auth.login,
     element: <LoginPage />,
   },
 ]);
