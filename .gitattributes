@@ -1,0 +1,6 @@
+# Default to LF for text files
+* text=auto eol=lf
+
+# CRLF for Windows script
+*.bat    text eol=crlf
+*.cmd    text eol=crlf

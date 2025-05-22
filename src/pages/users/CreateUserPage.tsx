@@ -135,6 +135,7 @@ export default function CreateUserPage() {
       <h1 className="mb-6 text-xl font-bold text-red-600">Create New User</h1>
       <Form {...form}>
         <form
+          id="create-user-form"
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 text-black"
         >
@@ -145,7 +146,7 @@ export default function CreateUserPage() {
               <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
                 <div className="text-sm font-medium">First Name</div>
                 <FormControl>
-                  <Input {...field} className="w-full" />
+                  <Input id="first-name-input" {...field} className="w-full" />
                 </FormControl>
                 <FormMessage className="col-start-2" />
               </FormItem>
@@ -159,7 +160,7 @@ export default function CreateUserPage() {
               <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
                 <div className="text-sm font-medium">Last Name</div>
                 <FormControl>
-                  <Input {...field} className="w-full" />
+                  <Input id="last-name-input" {...field} className="w-full" />
                 </FormControl>
                 <FormMessage className="col-start-2" />
               </FormItem>
@@ -178,6 +179,7 @@ export default function CreateUserPage() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
+                          id="date-of-birth-button"
                           variant="outline"
                           className={`w-full justify-between pl-3 text-left font-normal ${
                             dobError
@@ -261,6 +263,7 @@ export default function CreateUserPage() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
+                          id="date-select-button"
                           variant="outline"
                           className={`w-full justify-between pl-3 text-left font-normal ${
                             joinedDateError
@@ -311,7 +314,7 @@ export default function CreateUserPage() {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger id="user-type-select">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                   </FormControl>
@@ -329,13 +332,14 @@ export default function CreateUserPage() {
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <Button
+              id="user-create-save"
               type="submit"
               className="bg-red-600 text-white hover:bg-red-700"
               disabled={!isFormComplete()}
             >
               Save
             </Button>
-            <Button type="button" variant="outline">
+            <Button id="user-create-cancel" type="button" variant="outline">
               Cancel
             </Button>
           </div>

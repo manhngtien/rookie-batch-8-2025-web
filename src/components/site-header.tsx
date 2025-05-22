@@ -16,7 +16,7 @@ export default function SiteHeader() {
       <Breadcrumb>
         <BreadcrumbList className="text-white">
           <BreadcrumbItem className="">
-            <BreadcrumbLink href="#" className="hover:text-white">
+            <BreadcrumbLink href="#" className="text-lg hover:text-white">
               Home
             </BreadcrumbLink>
           </BreadcrumbItem>

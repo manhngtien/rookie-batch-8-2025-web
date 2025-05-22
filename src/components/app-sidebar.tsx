@@ -11,7 +11,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 
 const data = {
@@ -58,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar
-      className="top-[4rem] !h-[calc(100svh-var(4rem))] py-10"
+      className="top-[4rem] !h-[calc(100svh-var(4rem))] w-xs px-2 py-4"
       {...props}
     >
       <SidebarHeader>
@@ -82,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
+                        className="data-[active=true]:bg-foreground h-16 max-h-16 bg-[#F3F4F6] text-lg data-[active=true]:text-white"
                       >
                         <a href={item.url}>{item.title}</a>
                       </SidebarMenuButton>
@@ -95,7 +94,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
 
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }
