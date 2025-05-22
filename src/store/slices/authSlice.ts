@@ -1,44 +1,7 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-// TODO: Async function to create with login user
-export const loginUser = createAsyncThunk<
-  User, // Return type of the payload creator
-  { username: string; password: string }, // Argument type
-  { rejectValue: string }
->("auth/loginUser", async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/api/Auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      },
-    );
-    if (!response.ok) {
-      const error = await response.text();
-      return rejectWithValue(error);
-    }
-    const data: User = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue(error.message || "Fail to login!");
-    }
-    return rejectWithValue("An unexpected error!");
-  }
-});
-
-// TODO: Replace with actual type
-type User = {
-  userName: string;
-  roles: string[];
-};
+import type { User } from "@/features/users/types/User";
+import { changePassword, loginUser } from "@/store/thunks/authThunk";
 
 interface AuthState {
   user: User | null;
@@ -84,4 +47,5 @@ const authSlice = createSlice({
 });
 
 export const { setUser, logoutUser } = authSlice.actions;
+export { changePassword };
 export default authSlice.reducer;

@@ -1,11 +1,12 @@
+// src/services/apiInterceptors.ts
 import type { AxiosInstance } from "axios";
 
 import { API_ROUTES } from "@/lib/apiRoutes";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch } from "@/store";
-import { logout } from "@/store/slices/authSlice";
+import { logoutUser } from "@/store/slices/authSlice";
 
-export const authInterceptor = (
+export const setupAuthInterceptor = (
   axiosInstance: AxiosInstance,
   dispatch: AppDispatch,
 ) => {
@@ -20,7 +21,7 @@ export const authInterceptor = (
 
       if (status === 401) {
         if (!isLoginAttempt) {
-          dispatch(logout());
+          dispatch(logoutUser());
           window.location.href = APP_ROUTES.auth.login;
         } else {
           console.error("Invalid credentials");
