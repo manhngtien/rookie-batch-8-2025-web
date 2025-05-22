@@ -11,7 +11,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { APP_ROUTES } from "@/lib/appRoutes";
 
@@ -65,10 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar
-      className="top-header-height !h-[calc(100svh-var(--spacing-header-height))] py-10"
-      {...props}
-    >
+    <Sidebar className="top-header-height pt-10" {...props}>
       <SidebarHeader>
         <img alt="Nashtech Logo" src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
@@ -102,8 +98,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-
-      <SidebarRail />
     </Sidebar>
   );
 }
