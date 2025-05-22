@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { DataTable } from "@/components/ui/data-table";
 import { PageTitle } from "@/components/ui/page-header";
 import {
@@ -54,14 +56,20 @@ const filterItems: FilterButtonItems[] = [
 ];
 
 function AssignmentManagementPage() {
+  const [checkedItem, setCheckedItem] = useState<"all" | number>("all");
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <PageTitle>Assignment List</PageTitle>
 
-      <FilterButton filterTitle="State" items={filterItems} />
+      <FilterButton
+        filterTitle="State"
+        items={filterItems}
+        checkedItem={checkedItem}
+        onCheckedItemChange={setCheckedItem}
+      />
 
       <DataTable columns={assignmentColumns} data={mockAssignments} />
-    </>
+    </div>
   );
 }
 

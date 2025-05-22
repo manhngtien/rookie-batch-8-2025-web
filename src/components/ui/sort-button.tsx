@@ -16,12 +16,14 @@ export type FilterButtonItems = {
 export function FilterButton({
   filterTitle,
   items,
+  checkedItem,
+  onCheckedItemChange,
 }: React.ComponentProps<typeof Popover> & {
   filterTitle: string;
   items: FilterButtonItems[];
+  checkedItem: "all" | number;
+  onCheckedItemChange: (value: "all" | number) => void;
 }) {
-  const [checkedItem, setCheckedItem] = React.useState<"all" | number>("all");
-
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -40,7 +42,7 @@ export function FilterButton({
             <Checkbox
               id="all"
               checked={checkedItem === "all"}
-              onCheckedChange={() => setCheckedItem("all")}
+              onCheckedChange={() => onCheckedItemChange("all")}
             />
             <label htmlFor="all">All</label>
           </div>
@@ -49,7 +51,7 @@ export function FilterButton({
               <Checkbox
                 id={kebabCase(value.title) + "-sort"}
                 checked={checkedItem === idx}
-                onCheckedChange={() => setCheckedItem(idx)}
+                onCheckedChange={() => onCheckedItemChange(idx)}
               />
               <label htmlFor={kebabCase(value.title)}>{value.title}</label>
             </div>
