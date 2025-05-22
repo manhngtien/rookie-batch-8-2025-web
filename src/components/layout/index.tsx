@@ -2,7 +2,6 @@ import { Outlet } from "react-router";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { SIDEBAR_WIDTH } from "@/components/ui/sidebar";
 
 // import { useSelector } from "react-redux";
 // import { type RootState } from "@/store";
@@ -28,16 +27,9 @@ export default function Layout() {
   return (
     <SidebarProvider className="flex flex-col">
       <SiteHeader />
-      <div
-        className="flex flex-1"
-        style={
-          {
-            "--sidebar-width": SIDEBAR_WIDTH,
-          } as React.CSSProperties
-        }
-      >
+      <div className="flex flex-1">
         <AppSidebar />
-        <main className="!mt-header-height max-w-[calc(100vw-var(--sidebar-width))] p-6">
+        <main className="mt-header-height w-full p-6 md:w-[calc(100vw-var(--sidebar-width))]">
           <Outlet />
         </main>
       </div>
