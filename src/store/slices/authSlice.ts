@@ -3,7 +3,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 // TODO: Async function to create with login user
 export const loginUser = createAsyncThunk<
@@ -12,20 +12,15 @@ export const loginUser = createAsyncThunk<
   { rejectValue: string }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
-    const response = await fetch(
+    const response = await axios.post<User>(
       `${import.meta.env.VITE_API_BASE_URL}/api/Auth/login`,
+      credentials,
       {
-        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
+        withCredentials: true, // ✅ include cookies
       },
     );
-    if (!response.ok) {
-      const error = await response.text();
-      return rejectWithValue(error);
-    }
-    const data: User = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       return rejectWithValue(error.message || "Fail to login!");
