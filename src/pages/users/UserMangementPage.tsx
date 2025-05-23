@@ -1,6 +1,6 @@
 // src/features/users/components/UserManagementPage.tsx
 import { Funnel, Search } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 

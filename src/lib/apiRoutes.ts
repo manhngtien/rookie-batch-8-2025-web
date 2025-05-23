@@ -22,4 +22,7 @@ export const API_ROUTES = {
     updateAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
     deleteAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
   },
+  requests: {
+    getRequests: addApiPrefix("/ReturningRequest"),
+  },
 };

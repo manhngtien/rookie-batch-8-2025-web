@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Calendar, Funnel, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import GeneralDialog from "@/components/general-dialog";
 import { Button } from "@/components/ui/button";
@@ -14,16 +15,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { requestColumns } from "@/features/requests/components/request_columns";
-import type Request from "@/features/requests/Type";
-import { initialRequests } from "@/features/requests/Type";
+import type Request from "@/features/requests/types/Request";
+import type { AppDispatch, RootState } from "@/store";
+import { fetchRequests } from "@/store/thunks/requestThunk";
 
 export default function RequestPage() {
-  const [requestsList] = useState<Request[]>(initialRequests);
-  const [filteredRequests, setFilteredRequests] =
-    useState<Request[]>(initialRequests);
+  const dispatch = useDispatch<AppDispatch>();
+  const { requests, loading, error } = useSelector(
+    (state: RootState) => state.requests,
+  );
+  const [filteredRequests, setFilteredRequests] = useState<Request[]>(requests);
   const [returnedDateFilter, setReturnedDateFilter] = useState<Date | null>(
     null,
   );
+  // const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStates, setSelectedStates] = useState<string[]>([""]);
   const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
@@ -39,7 +44,11 @@ export default function RequestPage() {
     setReturnedDateFilter(null);
   };
   useEffect(() => {
-    let result = [...requestsList];
+    dispatch(fetchRequests());
+  }, [dispatch]);
+
+  useEffect(() => {
+    let result = [...requests];
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -50,8 +59,9 @@ export default function RequestPage() {
       );
     }
     if (returnedDateFilter) {
-      const filterDate = format(returnedDateFilter, "dd/MM/yyyy");
-      result = result.filter((request) => request.returnedDate === filterDate);
+      result = result.filter(
+        (request) => request.returnedDate === returnedDateFilter,
+      );
     }
     if (selectedStates.length > 1) {
       result = result.filter((request) =>
@@ -59,7 +69,7 @@ export default function RequestPage() {
       );
     }
     setFilteredRequests(result);
-  }, [requestsList, searchQuery, selectedStates, returnedDateFilter]);
+  }, [requests, searchQuery, selectedStates, returnedDateFilter]);
 
   return (
     <div className="container mx-auto p-4">
@@ -151,7 +161,11 @@ export default function RequestPage() {
         </div>
       </div>
 
-      <DataTable columns={requestColumns} data={filteredRequests} />
+      {loading && <p>Loading assets...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+      {!loading && !error && (
+        <DataTable columns={requestColumns} data={filteredRequests} />
+      )}
 
       <GeneralDialog
         onConfirm={() => {}}

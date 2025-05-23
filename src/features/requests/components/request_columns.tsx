@@ -1,8 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { CircleX, Pencil } from "lucide-react";
 
+import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import type Request from "@/features/requests/Type";
+
+import type Request from "../types/Request";
 
 export const requestColumns: ColumnDef<Request>[] = [
   {
@@ -57,25 +58,25 @@ export const requestColumns: ColumnDef<Request>[] = [
     id: "actions",
     cell: () => {
       return (
-        <div className="flex gap-2">
-          <button
-            id="edit-request"
-            className="duration-200 hover:scale-120 hover:cursor-pointer"
+        <div className="-my-4 flex">
+          <ActionButton
+            iconName="pencil"
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >
-            <Pencil size={20} />
-          </button>
-          <button
-            id="cancel-request"
-            className="duration-200 hover:scale-120 hover:cursor-pointer"
+          />
+          <ActionButton
+            iconName="circle-x"
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >
-            <CircleX size={20} />
-          </button>
+          />
+          <ActionButton
+            iconName="undo-2"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
         </div>
       );
     },
