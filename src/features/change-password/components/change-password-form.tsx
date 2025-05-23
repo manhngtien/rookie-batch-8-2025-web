@@ -61,7 +61,6 @@ export function ChangePasswordForm({
         }),
       );
 
-      console.info("dwuhdw" + result.payload);
       if (changePassword.fulfilled.match(result)) {
         onSuccess?.(); // ✅ success callback (e.g., open success dialog)
       } else {

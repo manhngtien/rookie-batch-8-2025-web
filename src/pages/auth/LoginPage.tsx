@@ -1,17 +1,44 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { LoginForm } from "@/components/login-form";
-import type { AppDispatch } from "@/store";
-import { loginUser } from "@/store/thunks/authThunk";
+import type { AppDispatch, RootState } from "@/store";
+import { checkAuth, loginUser } from "@/store/thunks/authThunk";
 
 function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        await dispatch(checkAuth()).unwrap();
+      } catch (error) {
+        console.error("checkAuth failed in LoginPage:", error);
+      }
+      setIsAuthChecked(true);
+    };
+
+    if (!isAuthChecked) {
+      verifyAuth();
+    }
+  }, [dispatch, isAuthChecked]);
+
+  if (isAuthChecked && isAuthenticated) {
+    console.info("Redirecting authenticated user to /");
+    navigate("/", { replace: true });
+    return null;
+  }
+
+  if (!isAuthChecked) {
+    return <div>Loading...</div>;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,7 +53,7 @@ function LoginPage() {
     if (loginUser.fulfilled.match(result)) {
       navigate("/");
     } else {
-      alert(result.payload || "Login failed");
+      alert(result.payload ?? "Login failed");
     }
   };
 

@@ -64,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar className="top-header-height pt-10" {...props}>
+    <Sidebar className="top-header-height w-xs px-2 pt-4" {...props}>
       <SidebarHeader>
         <img alt="Nashtech Logo" src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
@@ -86,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        className="data-[active=true]:bg-foreground h-16 max-h-16 text-lg data-[active=true]:text-white"
+                        className="data-[active=true]:bg-foreground h-16 max-h-16 bg-[#F3F4F6] text-lg data-[active=true]:text-white"
                       >
                         <Link to={item.url}>{item.title}</Link>
                       </SidebarMenuButton>

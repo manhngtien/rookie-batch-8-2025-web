@@ -7,23 +7,16 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import apiClient from "@/services/apiClient";
 import { setupAuthInterceptor } from "@/services/apiInterceptors";
+import type { AppDispatch } from "@/store";
 
 import SiteHeader from "../site-header";
 
 export default function Layout() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // Set up auth interceptor after store is initialized
   useEffect(() => {
     setupAuthInterceptor(apiClient, dispatch);
   }, [dispatch]);
-
-  // COMMENTED TEMPORARILY FOR DEV. PLEASE DON'T REMOVE
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate(APP_ROUTES.auth.login);
-  //   }
-  // }, [isAuthenticated, navigate]);
 
   return (
     <SidebarProvider className="flex flex-col">

@@ -1,5 +1,6 @@
 import { Funnel, Search } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -13,17 +14,25 @@ import {
 } from "@/components/ui/popover";
 import { assetColumns } from "@/features/asset-management/components/asset-columns";
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
-import { assets } from "@/features/asset-management/components/fake-asset";
 import type { Asset } from "@/features/asset-management/types/Asset";
+import type { AppDispatch, RootState } from "@/store";
+import { fetchAssets } from "@/store/thunks/assetThunk";
 
 function AssetManagementPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { assets, loading, error } = useSelector(
+    (state: RootState) => state.assets,
+  );
   const [selectedAsset, setSelectedAsset] = React.useState<Asset | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchAssets());
+  }, [dispatch]);
 
   const handleRowClick = (asset: Asset) => {
     setSelectedAsset(asset);
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto p-4">
@@ -81,7 +90,6 @@ function AssetManagementPage() {
             className=""
             placeholder="Search..."
           />
-
           <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
         <Button
@@ -95,11 +103,15 @@ function AssetManagementPage() {
         </Button>
       </div>
 
-      <DataTable
-        columns={assetColumns}
-        data={assets}
-        handleRowClick={(user) => handleRowClick(user)}
-      />
+      {loading && <p>Loading assets...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+      {!loading && !error && (
+        <DataTable
+          columns={assetColumns}
+          data={assets}
+          handleRowClick={(asset) => handleRowClick(asset)}
+        />
+      )}
 
       {selectedAsset && (
         <AssetDetailDialog

@@ -4,16 +4,22 @@ const addApiPrefix = (route: string): string => `${apiPrefix}${route}`;
 
 export const API_ROUTES = {
   auth: {
-    login: addApiPrefix("/login"),
+    login: addApiPrefix("/Auth/login"),
     changePassword: addApiPrefix("/change-password"),
-    logout: addApiPrefix("/logout"),
-    check: addApiPrefix("/check"),
-    refreshToken: addApiPrefix("/refresh-token"),
+    logout: addApiPrefix("/Auth/logout"),
+    check: addApiPrefix("/Auth/check"),
+    refreshToken: addApiPrefix("/Auth/refresh-token"),
   },
   users: {
-    getUsers: addApiPrefix("/users"),
-    createUser: addApiPrefix("/users"),
-    updateUser: (userId: string) => addApiPrefix(`/users/${userId}`),
-    deleteUser: (userId: string) => addApiPrefix(`/users/${userId}`),
+    getUsers: addApiPrefix("/User"),
+    createUser: addApiPrefix("/User"),
+    updateUser: (userId: string) => addApiPrefix(`/User/${userId}`),
+    deleteUser: (userId: string) => addApiPrefix(`/User/${userId}`),
+  },
+  assets: {
+    getAssets: addApiPrefix("/Assets"),
+    createAsset: addApiPrefix("/Assets"),
+    updateAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
+    deleteAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
   },
 };

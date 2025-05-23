@@ -3,6 +3,7 @@ import { CircleX, Pencil } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { User } from "@/features/users/types/User";
+import { formatDate } from "@/utils/helpers";
 
 export const userColumns: ColumnDef<User>[] = [
   {
@@ -32,6 +33,10 @@ export const userColumns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Joined Date" />
     ),
+    cell: ({ row }) => {
+      const joinedDate = row.original.joinedDate;
+      return joinedDate ? formatDate(joinedDate) : "N/A";
+    },
   },
   {
     accessorKey: "type",

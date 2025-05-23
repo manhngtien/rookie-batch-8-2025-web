@@ -13,13 +13,11 @@ export function LoginForm({
 }: {
   className?: string;
   username: string;
-
   password: string;
   loading?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
-  // const isDisabled = loading || !username || !password;
   return (
     <form
       id="login-form"
