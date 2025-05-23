@@ -64,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = location.pathname;
 
   return (
-    <Sidebar className="top-header-height w-xs px-2 pt-4" {...props}>
+    <Sidebar className="top-header-height px-2 pt-4" {...props}>
       <SidebarHeader>
         <img alt="Nashtech Logo" src={NashLogo} className="w-32" />
         <span className="text-foreground font-bold">
