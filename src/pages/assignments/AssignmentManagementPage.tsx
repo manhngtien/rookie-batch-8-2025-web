@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { DataTable } from "@/components/ui/data-table";
-import { PageTitle } from "@/components/ui/page-header";
 import {
   FilterButton,
   type FilterButtonItems,
-} from "@/components/ui/sort-button";
+} from "@/components/ui/dashboard-elements";
+import { PageTitle } from "@/components/ui/dashboard-elements";
+import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 

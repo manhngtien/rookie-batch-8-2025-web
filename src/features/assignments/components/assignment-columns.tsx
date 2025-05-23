@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { ActionButton } from "@/components/ui/action-button";
+import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 
 import type { Assignment } from "../types/Assignment";

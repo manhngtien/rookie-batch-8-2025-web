@@ -1,11 +1,44 @@
 import { Funnel } from "lucide-react";
+import type { IconName } from "lucide-react/dynamic";
+import { DynamicIcon } from "lucide-react/dynamic";
 import React from "react";
 
+import { cn } from "@/lib/utils";
 import { kebabCase } from "@/lib/utils";
 
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+
+export function PageTitle({ children }: { children: string }) {
+  return <h1 className="text-2xl font-bold text-red-600">{children}</h1>;
+}
+
+export function ActionButton({
+  className,
+  iconName,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  iconName: IconName;
+}) {
+  return (
+    <Button
+      {...props}
+      id="edit-assignment-button"
+      className="group/button hover:cursor-pointer"
+      variant="ghost"
+      size="icon"
+    >
+      <DynamicIcon
+        name={iconName}
+        className={cn(
+          "transition-transform group-hover/button:scale-[1.2]",
+          className,
+        )}
+      />
+    </Button>
+  );
+}
 
 export type FilterButtonItems = {
   title: string;
