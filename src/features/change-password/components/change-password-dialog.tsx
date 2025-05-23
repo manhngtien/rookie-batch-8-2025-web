@@ -1,5 +1,6 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,8 +9,12 @@ import {
   DialogChangePasswordHeader,
   DialogChangePasswordTitle,
 } from "@/components/ui/dialog-change-password";
+import type { AppDispatch } from "@/store";
+import { changePassword } from "@/store/slices/authSlice";
 
-import ChangePasswordForm from "./change-password-form";
+import ChangePasswordForm, {
+  type ChangePasswordFormValues,
+} from "./change-password-form";
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -20,10 +25,32 @@ export default function ChangePasswordDialog({
   open,
   onOpenChange,
 }: ChangePasswordDialogProps) {
+  const [loading, setLoading] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 
-  // Assume ChangePasswordForm accepts an onSuccess callback prop
-  const handlePasswordChangeSuccess = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmit = async (values: ChangePasswordFormValues) => {
+    setLoading(true);
+    try {
+      const result = await dispatch(
+        changePassword({
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
+        }),
+      );
+
+      if (changePassword.fulfilled.match(result)) {
+        openDialogChangeSuccess();
+      } else {
+        console.error("Password change failed:", result.payload);
+      }
+    } catch (error) {
+      console.error("Change password failed:", error);
+    }
+  };
+
+  const openDialogChangeSuccess = () => {
     setSuccessDialogOpen(true);
   };
 
@@ -43,8 +70,9 @@ export default function ChangePasswordDialog({
           </DialogChangePasswordHeader>
           <div className="m-6">
             <ChangePasswordForm
-              onSuccess={handlePasswordChangeSuccess}
+              onSubmit={handleSubmit}
               onCancel={() => onOpenChange(false)}
+              loading={loading}
             />
           </div>
         </DialogChangePasswordContent>

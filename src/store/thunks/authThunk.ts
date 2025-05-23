@@ -20,8 +20,13 @@ export const loginUser = createAsyncThunk<
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      return rejectWithValue(error.message || "Failed to fetch users");
+      if (error.response?.status === 401) {
+        return rejectWithValue("Unauthorized"); // <-- catch 401
+      }
+
+      return rejectWithValue(error.response?.data?.message || "Request failed");
     }
+
     return rejectWithValue("An unexpected error occurred");
   }
 });

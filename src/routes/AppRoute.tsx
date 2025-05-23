@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
+    path: APP_ROUTES.auth.login,
     element: <LoginPage />,
   },
 ]);

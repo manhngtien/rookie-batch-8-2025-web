@@ -1,6 +1,7 @@
 import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
 import { useState } from "react";
 
+// import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -22,9 +23,15 @@ interface NavUserProps {
 }
 
 export function NavUser({ user }: NavUserProps) {
+  // const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] =
     useState(false);
+
+  const handleLogout = () => {
+    // navigate("/login");
+    setOpenModal(true);
+  };
 
   return (
     <div>
@@ -85,7 +92,7 @@ export function NavUser({ user }: NavUserProps) {
             Change Password
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => setOpenModal(true)}
+            onClick={handleLogout}
             className="text-black hover:cursor-pointer"
           >
             <LogOut className="mr-2 size-4" />

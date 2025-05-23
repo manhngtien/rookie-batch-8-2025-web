@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -13,8 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
-import type { AppDispatch } from "@/store";
-import { changePassword } from "@/store/slices/authSlice";
 
 const changePasswordSchema = z
   .object({
@@ -31,19 +28,17 @@ const changePasswordSchema = z
     message: "New password must be different from old password",
   });
 
-type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+export type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm({
+  onSubmit,
   onCancel,
-  onSuccess,
   loading = false,
 }: {
-  onSuccess?: () => void;
+  onSubmit: (values: ChangePasswordFormValues) => Promise<void>;
   onCancel?: () => void;
   loading?: boolean;
 }) {
-  const dispatch = useDispatch<AppDispatch>();
-
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
@@ -52,31 +47,11 @@ export function ChangePasswordForm({
     },
   });
 
-  const handleSubmit = async (values: ChangePasswordFormValues) => {
-    try {
-      const result = await dispatch(
-        changePassword({
-          oldPassword: values.oldPassword,
-          newPassword: values.newPassword,
-        }),
-      );
-
-      console.info("dwuhdw" + result.payload);
-      if (changePassword.fulfilled.match(result)) {
-        onSuccess?.(); // ✅ success callback (e.g., open success dialog)
-      } else {
-        console.error("Password change failed:", result.payload);
-      }
-    } catch (error) {
-      console.error("Change password failed:", error);
-    }
-  };
-
   return (
     <Form {...form}>
       <form
         id="change-password-form"
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4"
         autoComplete="off"
       >
