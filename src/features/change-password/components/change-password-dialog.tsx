@@ -30,7 +30,10 @@ export default function ChangePasswordDialog({
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSubmit = async (values: ChangePasswordFormValues) => {
+  const handleSubmit = async (
+    values: ChangePasswordFormValues,
+    showErrors: (message: string) => void,
+  ) => {
     setLoading(true);
     try {
       const result = await dispatch(
@@ -41,12 +44,19 @@ export default function ChangePasswordDialog({
       );
 
       if (changePassword.fulfilled.match(result)) {
-        openDialogChangeSuccess();
+        openDialogChangeSuccess(); // Success UI
+      } else if (result.payload === "Request failed with status code 404") {
+        showErrors("Old password is incorrect");
+      } else if (result.payload === "Request failed with status code 422") {
+        showErrors("Old password is incorrect");
       } else {
-        console.error("Password change failed:", result.payload);
+        showErrors("Failed to change password");
       }
     } catch (error) {
-      console.error("Change password failed:", error);
+      console.error("Change password failed!", error);
+      showErrors("Unexpected error");
+    } finally {
+      setLoading(false);
     }
   };
 

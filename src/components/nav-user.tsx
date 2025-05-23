@@ -1,5 +1,8 @@
+// src/components/NavUser.tsx
 import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 
 // import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +15,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
+import { APP_ROUTES } from "@/lib/appRoutes";
+import type { AppDispatch } from "@/store";
+import { logoutUser } from "@/store/thunks/authThunk";
 
 import GeneralDialog from "./general-dialog";
 
@@ -27,10 +33,19 @@ export function NavUser({ user }: NavUserProps) {
   const [openModal, setOpenModal] = useState(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] =
     useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // navigate("/login");
-    setOpenModal(true);
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      console.info("Logout successful, redirecting to login");
+      navigate(APP_ROUTES.auth.login, { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Failed to log out. Please try again.");
+    }
+    setOpenModal(false);
   };
 
   return (
@@ -39,6 +54,7 @@ export function NavUser({ user }: NavUserProps) {
         content
         isOpen={openModal}
         onClose={() => setOpenModal(false)}
+        onConfirm={handleLogout}
         header="Are you sure ?"
         description="Do you want to log out?"
       />
@@ -88,7 +104,7 @@ export function NavUser({ user }: NavUserProps) {
             onClick={() => setOpenChangePasswordDialog(true)}
             className="text-black hover:cursor-pointer"
           >
-            <Lock />
+            <Lock className="mr-2 size-4" />
             Change Password
           </DropdownMenuItem>
           <DropdownMenuItem

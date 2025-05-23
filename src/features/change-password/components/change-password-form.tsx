@@ -35,7 +35,10 @@ export function ChangePasswordForm({
   onCancel,
   loading = false,
 }: {
-  onSubmit: (values: ChangePasswordFormValues) => Promise<void>;
+  onSubmit: (
+    values: ChangePasswordFormValues,
+    showErrors: (message: string) => void,
+  ) => Promise<void>;
   onCancel?: () => void;
   loading?: boolean;
 }) {
@@ -47,11 +50,26 @@ export function ChangePasswordForm({
     },
   });
 
+  const handleSubmit = async (values: ChangePasswordFormValues) => {
+    await onSubmit(values, (message: string) => {
+      form.setError("oldPassword", {
+        type: "manual",
+        message,
+      });
+    });
+  };
+
+  const { watch } = form;
+  const oldPassword = watch("oldPassword");
+  const newPassword = watch("newPassword");
+
+  const isDisabled = loading || !oldPassword || !newPassword;
+
   return (
     <Form {...form}>
       <form
         id="change-password-form"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4"
         autoComplete="off"
       >
@@ -97,8 +115,8 @@ export function ChangePasswordForm({
           <Button
             id="password-change-save-button"
             type="submit"
-            disabled={loading}
             className="px-6 py-3"
+            disabled={isDisabled}
           >
             {loading ? "Saving..." : "Save"}
           </Button>

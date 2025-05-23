@@ -1,16 +1,43 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { LoginForm } from "@/components/login-form";
-import type { AppDispatch } from "@/store";
-import type { RootState } from "@/store"; // adjust path as needed
-import { loginUser } from "@/store/thunks/authThunk";
+import type { AppDispatch, RootState } from "@/store";
+import { checkAuth, loginUser } from "@/store/thunks/authThunk";
 
 function LoginPage() {
   const loading = useSelector((state: RootState) => state.auth.loading);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        await dispatch(checkAuth()).unwrap();
+      } catch (error) {
+        console.error("checkAuth failed in LoginPage:", error);
+      }
+      setIsAuthChecked(true);
+    };
+
+    if (!isAuthChecked) {
+      verifyAuth();
+    }
+  }, [dispatch, isAuthChecked]);
+
+  if (isAuthChecked && isAuthenticated) {
+    console.info("Redirecting authenticated user to /");
+    navigate("/", { replace: true });
+    return null;
+  }
+
+  if (!isAuthChecked) {
+    return <div>Loading...</div>;
+  }
 
   const handleSubmit = async (
     values: { username: string; password: string },
@@ -20,7 +47,7 @@ function LoginPage() {
 
     if (loginUser.fulfilled.match(result)) {
       navigate("/");
-    } else if (result.payload === "Unauthorized") {
+    } else if (result.payload === "Request failed with status code 401") {
       showErrors("Username or password is incorrect");
     } else {
       showErrors(result.payload || "Unexpected login error");

@@ -19,10 +19,6 @@ export function DataTablePagination<TData>({
   return (
     <div className="flex flex-row-reverse items-center justify-between px-2 text-black">
       <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
         {/* TODO: Proper pagination */}
         <div className="flex items-center space-x-2">
           <Pagination>
@@ -36,13 +32,13 @@ export function DataTablePagination<TData>({
               </PaginationItem>
 
               <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
+                <PaginationLink href="#" isActive>
+                  1
+                </PaginationLink>
               </PaginationItem>
 
               <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  2
-                </PaginationLink>
+                <PaginationLink href="#">2</PaginationLink>
               </PaginationItem>
 
               <PaginationItem>

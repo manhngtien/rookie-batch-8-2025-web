@@ -16,17 +16,11 @@ export const loginUser = createAsyncThunk<
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
     const response = await authService.loginUser(credentials);
-    console.info("User login successfully:", response);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        return rejectWithValue("Unauthorized"); // <-- catch 401
-      }
-
-      return rejectWithValue(error.response?.data?.message || "Request failed");
+      return rejectWithValue(error.message ?? "Failed to fetch users");
     }
-
     return rejectWithValue("An unexpected error occurred");
   }
 });
@@ -41,8 +35,65 @@ export const changePassword = createAsyncThunk<
     return { message: "Password changed successfully!" };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      return rejectWithValue(error.message || "Failed to change password");
+      return rejectWithValue(error.message ?? "Failed to change password");
     }
     return rejectWithValue("An unexpected error occurred");
   }
 });
+
+export const checkAuth = createAsyncThunk<User, void, { rejectValue: string }>(
+  "auth/checkAuth",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authService.checkAuth();
+      console.info(
+        "User check auth successfully:",
+        JSON.stringify(response.data),
+      );
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Invalid session",
+        );
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);
+
+export const refreshToken = createAsyncThunk<
+  User,
+  void,
+  { rejectValue: string }
+>("auth/refreshToken", async (_, { rejectWithValue }) => {
+  try {
+    const response = await authService.refreshToken();
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data?.message ?? "Failed to refresh token",
+      );
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});
+
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await authService.logout(); // Assuming authService has a logout method
+      console.info("User logged out successfully");
+      return;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Failed to logout",
+        );
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

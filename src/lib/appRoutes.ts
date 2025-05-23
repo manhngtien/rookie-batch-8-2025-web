@@ -6,6 +6,7 @@ export const APP_ROUTES = {
   users: {
     path: "/users",
     create: "create-user",
+    edit: "edit-user",
   },
   assets: {
     path: "/assets",
@@ -16,5 +17,8 @@ export const APP_ROUTES = {
   },
   assignment: {
     path: "/assignment",
+  },
+  reports: {
+    path: "/reports",
   },
 };

@@ -18,12 +18,14 @@ export default function GeneralDialog({
   content,
   isOpen,
   onClose,
+  onConfirm,
 }: {
   header: string;
   description: string;
   content: ReactNode | undefined;
   isOpen: boolean;
   onClose: () => void;
+  onConfirm: () => void;
 }) {
   return (
     <Dialog open={isOpen}>
@@ -38,11 +40,17 @@ export default function GeneralDialog({
             id={`${kebabCase(header)}-cancel-button`}
             type="button"
             variant="secondary"
+            className="hover:cursor-pointer"
             onClick={onClose}
           >
             Cancel
           </Button>
-          <Button id={`${kebabCase(header)}-confirm-button`} type="button">
+          <Button
+            id={`${kebabCase(header)}-confirm-button`}
+            type="button"
+            className="hover:cursor-pointer"
+            onClick={onConfirm}
+          >
             Confirm
           </Button>
         </DialogFooter>

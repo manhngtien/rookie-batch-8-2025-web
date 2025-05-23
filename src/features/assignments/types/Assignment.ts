@@ -1,9 +1,10 @@
 export interface Assignment {
   id: number;
-  stateDate: Date;
-  note: string;
+  state: string;
+  assignedDate: Date;
   assetCode: string;
+  assetName: string;
   assignedBy: string;
   assignedTo: string;
-  returnDate?: Date;
+  note: string;
 }
