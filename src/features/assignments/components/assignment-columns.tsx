@@ -11,6 +11,7 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="No." />
     ),
+    cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "assetCode",
@@ -41,6 +42,10 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned Date" />
     ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("assignedDate"));
+      return <span>{date.toLocaleDateString()}</span>;
+    },
   },
   {
     accessorKey: "state",

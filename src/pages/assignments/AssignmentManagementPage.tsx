@@ -1,6 +1,9 @@
 import { useState } from "react";
 
 import {
+  CreateButton,
+  DateSelector,
+  DetailDialog,
   FilterButton,
   type FilterButtonItems,
 } from "@/components/ui/dashboard-elements";
@@ -57,18 +60,72 @@ const filterItems: FilterButtonItems[] = [
 
 function AssignmentManagementPage() {
   const [checkedItem, setCheckedItem] = useState<"all" | number>("all");
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const handleRowClick = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>Assignment List</PageTitle>
 
-      <FilterButton
-        filterTitle="State"
-        items={filterItems}
-        checkedItem={checkedItem}
-        onCheckedItemChange={setCheckedItem}
+      <div className="flex">
+        <div className="flex w-full gap-2">
+          <FilterButton
+            filterTitle="State"
+            items={filterItems}
+            checkedItem={checkedItem}
+            onCheckedItemChange={setCheckedItem}
+          />
+          <DateSelector
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            title="Assigned Date"
+          />
+        </div>
+
+        <CreateButton>Create new assignment</CreateButton>
+      </div>
+
+      <DataTable
+        columns={assignmentColumns}
+        data={mockAssignments}
+        handleRowClick={(assignment) => handleRowClick(assignment)}
       />
 
-      <DataTable columns={assignmentColumns} data={mockAssignments} />
+      {selectedAssignment && (
+        <DetailDialog<Assignment>
+          selectedEntity={selectedAssignment}
+          closeModal={() => setSelectedAssignment(null)}
+          title="Detailed Assignment Information"
+        >
+          <div className="grid grid-cols-2 gap-4 text-gray-500">
+            <p className="font-medium">Asset Code:</p>
+            <p className="text-left">{selectedAssignment.assetCode}</p>
+            <p className="font-medium">Asset Name:</p>
+            <p className="text-left">{selectedAssignment.assetName}</p>
+            <p className="font-medium">Assigned To:</p>
+            <p className="text-left">{selectedAssignment.assignedTo}</p>
+            <p className="font-medium">Assigned By:</p>
+            <p className="text-left">{selectedAssignment.assignedBy}</p>
+            <p className="font-medium">Assigned Date:</p>
+            <p className="text-left">
+              {selectedAssignment.assignedDate.toLocaleDateString()}
+            </p>
+            <p className="font-medium">State:</p>
+            <p className="text-left">{selectedAssignment.state}</p>
+            {selectedAssignment.note && (
+              <>
+                <p className="font-medium">Note:</p>
+                <p className="text-left">{selectedAssignment.note}</p>
+              </>
+            )}
+          </div>
+        </DetailDialog>
+      )}
     </div>
   );
 }
