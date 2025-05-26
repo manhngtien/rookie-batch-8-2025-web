@@ -113,6 +113,7 @@ function AssetManagementPage() {
 
       {!loading && !error && (
         <DataTable
+          total={-1}
           columns={assetColumns}
           data={assets}
           handleRowClick={(asset) => handleRowClick(asset)}
