@@ -164,7 +164,11 @@ export default function RequestPage() {
       {loading && <p>Loading assets...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
       {!loading && !error && (
-        <DataTable columns={requestColumns} data={filteredRequests} />
+        <DataTable
+          total={-1}
+          columns={requestColumns}
+          data={filteredRequests}
+        />
       )}
 
       <GeneralDialog

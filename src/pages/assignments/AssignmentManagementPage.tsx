@@ -91,6 +91,7 @@ function AssignmentManagementPage() {
       </div>
 
       <DataTable
+        total={-1}
         columns={assignmentColumns}
         data={mockAssignments}
         handleRowClick={(assignment) => handleRowClick(assignment)}
