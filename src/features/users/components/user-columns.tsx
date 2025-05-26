@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { CircleX, Pencil } from "lucide-react";
 
+import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { User } from "@/features/users/types/User";
 import { formatDate } from "@/utils/helpers";
@@ -13,20 +13,17 @@ export const userColumns: ColumnDef<User>[] = [
     ),
   },
   {
-    id: "fullName",
+    accessorKey: "fullName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Full Name" />
     ),
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original;
-      return `${firstName} ${lastName}`;
-    },
   },
   {
     accessorKey: "userName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
+    enableSorting: false,
   },
   {
     accessorKey: "joinedDate",
@@ -48,25 +45,19 @@ export const userColumns: ColumnDef<User>[] = [
     id: "actions",
     cell: () => {
       return (
-        <div className="flex gap-2">
-          <button
-            id="edit-user-button"
-            className="duration-200 hover:scale-120 hover:cursor-pointer"
+        <div className="-my-4 flex">
+          <ActionButton
+            iconName="pencil"
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >
-            <Pencil size={20} />
-          </button>
-          <button
-            id="delete-user-button"
-            className="duration-200 hover:scale-120 hover:cursor-pointer"
+          />
+          <ActionButton
+            iconName="circle-x"
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >
-            <CircleX size={20} />
-          </button>
+          />
         </div>
       );
     },

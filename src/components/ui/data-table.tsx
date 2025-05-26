@@ -2,6 +2,9 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -17,20 +20,53 @@ import {
 import { DataTablePagination } from "./data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
+  initialState?: TableOptions<TData>["initialState"];
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  total: number;
   handleRowClick?: (row: TData) => void;
+  onPageChange?: (pageIndex: number) => void;
+  onSortingChange?: (sort: { id: string; desc: boolean } | null) => void;
 }
 
 export function DataTable<TData, TValue>({
+  initialState,
   columns,
   data,
+  total,
   handleRowClick,
+  onPageChange,
+  onSortingChange,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
-    data,
+    initialState: {
+      ...initialState,
+      pagination: {
+        pageIndex: initialState?.pagination?.pageIndex ?? 0,
+        pageSize: initialState?.pagination?.pageSize ?? 20,
+      },
+    },
     columns,
+    data,
+    rowCount: total,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    onSortingChange: (updater) => {
+      if (typeof updater === "function") {
+        const newSorting = updater(table.getState().sorting);
+        const sort = newSorting.length > 0 ? newSorting[0] : null;
+        onSortingChange?.(sort);
+      }
+    },
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
+        const newState = updater(table.getState().pagination);
+        onPageChange?.(newState.pageIndex);
+      }
+    },
   });
 
   return (
@@ -44,12 +80,30 @@ export function DataTable<TData, TValue>({
                   className="border p-2 text-left text-black"
                   key={header.id}
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
+                  {header.isPlaceholder ? null : (
+                    <div
+                      className={
+                        header.column.getCanSort()
+                          ? "cursor-pointer select-none"
+                          : ""
+                      }
+                      onClick={header.column.getToggleSortingHandler()}
+                      title={
+                        header.column.getCanSort()
+                          ? header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                              ? "Sort descending"
+                              : "Clear sort"
+                          : undefined
+                      }
+                    >
+                      {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
                       )}
+                    </div>
+                  )}
                 </TableHead>
               ))}
             </TableRow>
@@ -78,7 +132,6 @@ export function DataTable<TData, TValue>({
                       )}
                     </TableCell>
                   ))}
-                {/* Last row got special treatment */}
                 {row
                   .getVisibleCells()
                   .slice(-1)
@@ -107,7 +160,7 @@ export function DataTable<TData, TValue>({
       </Table>
 
       <div className="py-2">
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} total={total} />
       </div>
     </div>
   );

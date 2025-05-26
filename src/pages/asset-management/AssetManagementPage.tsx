@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 import { assetColumns } from "@/features/asset-management/components/asset-columns";
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
@@ -35,9 +37,9 @@ function AssetManagementPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-2xl font-bold">Asset List</h1>
-      <div className="mb-4 flex gap-5 space-x-4">
+    <div className="flex flex-col gap-4">
+      <PageTitle>Asset List</PageTitle>
+      <div className="flex gap-5 space-x-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -102,9 +104,13 @@ function AssetManagementPage() {
           Create new asset
         </Button>
       </div>
-
-      {loading && <p>Loading assets...</p>}
+      {loading && (
+        <div>
+          <Spinner className="text-foreground" size="large" />
+        </div>
+      )}
       {error && <p className="text-red-500">Error: {error}</p>}
+
       {!loading && !error && (
         <DataTable
           columns={assetColumns}
@@ -112,7 +118,6 @@ function AssetManagementPage() {
           handleRowClick={(asset) => handleRowClick(asset)}
         />
       )}
-
       {selectedAsset && (
         <AssetDetailDialog
           selectedAsset={selectedAsset}

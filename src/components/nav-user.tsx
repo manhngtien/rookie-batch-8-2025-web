@@ -2,7 +2,6 @@
 import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
 
 // import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ChangePasswordDialog from "@/features/change-password/components/change-password-dialog";
-import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch } from "@/store";
 import { logoutUser } from "@/store/thunks/authThunk";
 
@@ -34,13 +32,10 @@ export function NavUser({ user }: NavUserProps) {
   const [openChangePasswordDialog, setOpenChangePasswordDialog] =
     useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      console.info("Logout successful, redirecting to login");
-      navigate(APP_ROUTES.auth.login, { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
       alert("Failed to log out. Please try again.");
@@ -104,14 +99,14 @@ export function NavUser({ user }: NavUserProps) {
             onClick={() => setOpenChangePasswordDialog(true)}
             className="text-black hover:cursor-pointer"
           >
-            <Lock className="mr-2 size-4" />
+            <Lock className="size-4" />
             Change Password
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleLogout}
             className="text-black hover:cursor-pointer"
           >
-            <LogOut className="mr-2 size-4" />
+            <LogOut className="size-4" />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>

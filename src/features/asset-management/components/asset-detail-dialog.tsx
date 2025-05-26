@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
+import { formatDate } from "@/utils/helpers";
 
 interface AssetDetailDialogProps {
   selectedAsset: Asset | null;
@@ -34,10 +35,10 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="font-medium">Asset Name:</p>
               <p className="text-left">{selectedAsset.assetName}</p>
               <p className="font-medium">Category:</p>
-              <p className="text-left">{selectedAsset.category.categoryName}</p>
+              <p className="text-left">{selectedAsset.categoryName}</p>
               <p className="font-medium">Installed Date:</p>
               <p className="text-left">
-                {selectedAsset.installedDate.toLocaleDateString()}
+                {formatDate(selectedAsset.installedDate)}
               </p>
 
               <p className="font-medium">State:</p>
@@ -66,7 +67,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedAsset.assignments.length > 0 ? (
+                    {/* {selectedAsset.assignments.length > 0 ? (
                       selectedAsset.assignments.map((assignment, index) => (
                         <tr key={index} className="border-b">
                           <td className="p-2">
@@ -87,7 +88,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                           No assignment history
                         </td>
                       </tr>
-                    )}
+                    )} */}
                   </tbody>
                 </table>
               </div>

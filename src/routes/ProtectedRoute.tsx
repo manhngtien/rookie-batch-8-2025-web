@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 
+import { Spinner } from "@/components/ui/spinner";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch, RootState } from "@/store";
 import { checkAuth } from "@/store/thunks/authThunk";
@@ -28,10 +29,12 @@ const ProtectedRoute: React.FC = () => {
   }, [dispatch, isAuthenticated]);
 
   if (!isAuthChecked) {
-    return <div>Loading huhu...</div>;
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center">
+        <Spinner className="text-foreground" size="large" />
+      </div>
+    );
   }
-
-  console.info("ProtectedRoute render", { isAuthenticated, isAuthChecked });
 
   return isAuthenticated ? (
     <Outlet />

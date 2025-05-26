@@ -1,5 +1,6 @@
 // src/store/thunks/userThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import type { AxiosError } from "axios";
 import { isAxiosError } from "axios";
 
 import authService from "@/features/users/services/authService";
@@ -12,16 +13,22 @@ import type { User } from "@/features/users/types/User";
 export const loginUser = createAsyncThunk<
   User,
   Credentials,
-  { rejectValue: string }
+  { rejectValue: { code?: number; message?: string } }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
     const response = await authService.loginUser(credentials);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      return rejectWithValue(error.message ?? "Failed to fetch users");
+      const axiosError = error as AxiosError<{
+        code?: number;
+        message?: string;
+      }>;
+      return rejectWithValue(
+        axiosError.response?.data ?? { message: axiosError.message },
+      );
     }
-    return rejectWithValue("An unexpected error occurred");
+    return rejectWithValue({ message: "An unexpected error occurred" });
   }
 });
 
@@ -84,7 +91,7 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
-      await authService.logout(); // Assuming authService has a logout method
+      await authService.logout();
       console.info("User logged out successfully");
       return;
     } catch (error) {

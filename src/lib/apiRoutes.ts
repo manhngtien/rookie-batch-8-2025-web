@@ -11,10 +11,10 @@ export const API_ROUTES = {
     refreshToken: addApiPrefix("/Auth/refresh-token"),
   },
   users: {
-    getUsers: addApiPrefix("/User"),
-    createUser: addApiPrefix("/User"),
-    updateUser: (userId: string) => addApiPrefix(`/User/${userId}`),
-    deleteUser: (userId: string) => addApiPrefix(`/User/${userId}`),
+    getUsers: addApiPrefix("/Users"),
+    createUser: addApiPrefix("/Users"),
+    updateUser: (userId: string) => addApiPrefix(`/Users/${userId}`),
+    deleteUser: (userId: string) => addApiPrefix(`/Users/${userId}`),
   },
   assets: {
     getAssets: addApiPrefix("/Assets"),

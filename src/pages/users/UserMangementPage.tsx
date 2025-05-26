@@ -1,11 +1,11 @@
-// src/features/users/components/UserManagementPage.tsx
 import { Funnel, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,26 +13,90 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
 import type { User } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchUsers } from "@/store/thunks/userThunk";
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 function UserManagementPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { users, loading, error } = useSelector(
+  const { users, total, loading, error } = useSelector(
     (state: RootState) => state.users,
   );
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(["All"]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([
+    "All",
+    "Admin",
+    "Staff",
+  ]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
+    id: "fullName",
+    desc: false,
+  });
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const orderBy = sort
+    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
+    : "fullnameasc";
+
+  // Memoize initialState to prevent resetting table state
+  const initialState = useMemo(
+    () => ({
+      sorting: sort ? [sort] : [{ id: "fullName", desc: false }],
+      pagination: {
+        pageIndex: page - 1,
+        pageSize,
+      },
+    }),
+    [sort, page, pageSize],
+  );
 
   useEffect(() => {
-    dispatch(fetchUsers());
-    console.log(users);
-  }, [dispatch]);
+    const fetchUsersData = async () => {
+      try {
+        const typeParam = selectedTypes.includes("All")
+          ? undefined
+          : selectedTypes;
+        const response = await dispatch(
+          fetchUsers({
+            page,
+            pageSize,
+            type: typeParam,
+            searchTerm: debouncedSearchTerm,
+            orderBy,
+          }),
+        ).unwrap();
+        console.info("Users fetched successfully", response);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
+
+    fetchUsersData();
+  }, [dispatch, page, pageSize, selectedTypes, debouncedSearchTerm, orderBy]);
 
   const handleRowClick = (user: User) => {
     setSelectedUser(user);
@@ -43,27 +107,33 @@ function UserManagementPage() {
   };
 
   const handleTypeChange = (type: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev.filter((t) => t !== "All"), type],
-    );
+    setSelectedTypes((prev) => {
+      if (type === "All") {
+        if (prev.includes("All")) {
+          return [];
+        }
+        return ["All", "Admin", "Staff"];
+      }
+
+      let newTypes = prev.includes(type)
+        ? prev.filter((t) => t !== type && t !== "All")
+        : [...prev, type];
+
+      if (newTypes.includes("Admin") && newTypes.includes("Staff")) {
+        newTypes = ["All", "Admin", "Staff"];
+      }
+
+      return newTypes;
+    });
+    setPage(1);
   };
 
-  const filteredUsers = users.filter((user) => {
-    const typeMatch =
-      selectedTypes.includes("All") || selectedTypes.includes(user.type);
-    const searchMatch =
-      searchTerm === "" ||
-      user.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.staffCode.toLowerCase().includes(searchTerm.toLowerCase());
-    return typeMatch && searchMatch;
-  });
+  const filteredUsers = users;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-2xl font-bold text-red-600">User List</h1>
-      <div className="mb-4 flex items-center justify-between space-x-4">
+    <div className="flex flex-col gap-4">
+      <PageTitle>User List</PageTitle>
+      <div className="flex items-center justify-between space-x-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -113,9 +183,11 @@ function UserManagementPage() {
               className=""
               placeholder="Search..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
             />
-
             <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
           </div>
           <Button
@@ -130,13 +202,24 @@ function UserManagementPage() {
         </div>
       </div>
 
-      {loading && <p>Loading users...</p>}
-      {error && <p className="text-red-600">Error: {error}</p>}
+      {loading && (
+        <div>
+          <Spinner className="text-foreground" size="large" />
+        </div>
+      )}
+      {error && <p className="text-center text-red-600">Error: {error}</p>}
       {!loading && !error && (
         <DataTable
           columns={userColumns}
           data={filteredUsers}
+          total={total}
           handleRowClick={(user) => handleRowClick(user)}
+          initialState={initialState}
+          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+          onSortingChange={(sort) => {
+            setSort(sort);
+            setPage(1);
+          }}
         />
       )}
 

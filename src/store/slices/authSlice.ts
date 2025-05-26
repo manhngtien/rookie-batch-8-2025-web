@@ -80,6 +80,7 @@ const authSlice = createSlice({
         state.isCheckingAuth = true;
       })
       .addCase(logoutUser.fulfilled, (state) => {
+        console.info("Logout successful from slice");
         state.isAuthenticated = false;
         state.user = null;
         state.isCheckingAuth = false;

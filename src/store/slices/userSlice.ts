@@ -6,12 +6,14 @@ import { fetchUsers } from "@/store/thunks/userThunk";
 
 interface UserState {
   users: User[];
+  total: number;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
   users: [],
+  total: 0,
   loading: false,
   error: null,
 };
@@ -27,14 +29,14 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch users
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.users = action.payload.data;
+        state.total = action.payload.total;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;

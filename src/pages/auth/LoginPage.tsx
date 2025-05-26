@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
 import { LoginForm } from "@/components/login-form";
-import type { AppDispatch, RootState } from "@/store";
+import { Spinner } from "@/components/ui/spinner";
+import type { AppDispatch } from "@/store";
 import { checkAuth, loginUser } from "@/store/thunks/authThunk";
 
 function LoginPage() {
-  const loading = useSelector((state: RootState) => state.auth.loading);
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        await dispatch(checkAuth()).unwrap();
+        const response = await dispatch(checkAuth()).unwrap();
+        if (response) {
+          navigate("/");
+        }
       } catch (error) {
         console.error("checkAuth failed in LoginPage:", error);
       }
@@ -29,28 +34,33 @@ function LoginPage() {
     }
   }, [dispatch, isAuthChecked]);
 
-  if (isAuthChecked && isAuthenticated) {
-    console.info("Redirecting authenticated user to /");
-    navigate("/", { replace: true });
-    return null;
-  }
-
   if (!isAuthChecked) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center">
+        <Spinner className="text-foreground" size="large" />
+      </div>
+    );
   }
 
-  const handleSubmit = async (
-    values: { username: string; password: string },
-    showErrors: (message: string) => void,
-  ) => {
-    const result = await dispatch(loginUser(values));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    if (loginUser.fulfilled.match(result)) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      await dispatch(loginUser(form)).unwrap();
       navigate("/");
-    } else if (result.payload === "Request failed with status code 401") {
-      showErrors("Username or password is incorrect");
-    } else {
-      showErrors(result.payload || "Unexpected login error");
+    } catch (error: unknown) {
+      setLoading(false);
+      const err = error as { code?: number; message?: string };
+      if (err.code == 704) {
+        setErrorMessage("Invalid username or password. Please try again.");
+      } else {
+        setErrorMessage(err.message ?? "An unexpected error occurred");
+      }
     }
   };
 
@@ -62,7 +72,14 @@ function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-90">
-            <LoginForm loading={loading} onSubmit={handleSubmit} />
+            <LoginForm
+              username={form.username}
+              password={form.password}
+              loading={loading}
+              errorMessage={errorMessage}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+            />
           </div>
         </div>
       </div>

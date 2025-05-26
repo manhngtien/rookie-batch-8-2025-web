@@ -6,7 +6,7 @@ export interface Asset {
   specification: string;
   type: number;
   location: number;
-  installedDate: Date;
+  installedDate: string;
   categoryId: number;
   categoryName: string;
   state: string;
