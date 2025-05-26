@@ -1,8 +1,8 @@
-import { format } from "date-fns";
-import { Calendar, Funnel } from "lucide-react";
+import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
+import { CalendarIcon, Funnel } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { DynamicIcon } from "lucide-react/dynamic";
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Dialog,
@@ -16,6 +16,13 @@ import { Button } from "./button";
 import { Calendar as CalendarComponent } from "./calendar";
 import { Checkbox } from "./checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 
 function PageTitle({ children }: { children: string }) {
   return <h1 className="text-2xl font-bold text-red-600">{children}</h1>;
@@ -134,7 +141,7 @@ function DetailDialog<T>({
       <DialogContent className="max-w-2xl p-0 text-black">
         <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-200 p-4">
           <DialogTitle className="border-red-500 text-red-500">
-            {title || "Detailed Information"}
+            {title ?? "Detailed Information"}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 px-8 pb-4">{children}</div>
@@ -143,41 +150,148 @@ function DetailDialog<T>({
   );
 }
 
+interface DateSelectorProps {
+  selectedDate: Date | null;
+  setSelectedDate: (date: Date | null) => void;
+  title: string;
+}
+
 function DateSelector({
   selectedDate,
   setSelectedDate,
   title,
-}: {
-  selectedDate: Date | null;
-  setSelectedDate: (date: Date | null) => void;
-  title: string;
-}) {
+}: DateSelectorProps) {
+  const [open, setOpen] = useState(false);
+  const currentYear = getYear(new Date());
+  const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const handleYearChange = (year: string) => {
+    const newYear = parseInt(year);
+    let newDate: Date | null = selectedDate
+      ? new Date(selectedDate)
+      : new Date();
+    newDate = setYear(newDate, newYear);
+
+    if (newDate > new Date()) {
+      newDate = new Date();
+    }
+
+    setSelectedDate(newDate);
+  };
+
+  const handleMonthChange = (month: string) => {
+    const newMonth = months.indexOf(month);
+    let newDate: Date | null = selectedDate
+      ? new Date(selectedDate)
+      : new Date();
+    newDate = setMonth(newDate, newMonth);
+
+    if (newDate > new Date()) {
+      newDate = new Date();
+    }
+
+    setSelectedDate(newDate);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date && date > new Date()) {
+      setSelectedDate(new Date());
+    } else {
+      setSelectedDate(date ?? null);
+    }
+    setOpen(false);
+  };
+
   return (
-    <>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id={`${kebabCase(title)}-date-selector-button`}
-            variant="outline"
-            className="max-w-44 justify-between text-black"
-          >
-            {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
-            <Calendar className="ml-auto h-4 w-4 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="z-10 w-auto rounded-md bg-white p-0 text-black shadow-md"
-          align="start"
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          id={`${kebabCase(title)}-date-selector-button`}
+          variant="outline"
+          className="max-w-44 justify-between text-black"
         >
+          {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
+          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="z-10 w-auto rounded-md bg-white p-0 text-black shadow-md"
+        align="start"
+      >
+        <div className="rounded-lg bg-white shadow-lg">
+          <div className="flex justify-between p-2">
+            <Select
+              onValueChange={handleMonthChange}
+              value={
+                selectedDate
+                  ? months[getMonth(selectedDate)]
+                  : months[getMonth(new Date())]
+              }
+            >
+              <SelectTrigger id="month-trigger" className="w-[110px]">
+                <SelectValue placeholder="Month" />
+              </SelectTrigger>
+              <SelectContent id="month-content">
+                {months.map((month) => (
+                  <SelectItem id={`month-${month}`} key={month} value={month}>
+                    {month}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={handleYearChange}
+              value={
+                selectedDate
+                  ? getYear(selectedDate).toString()
+                  : getYear(new Date()).toString()
+              }
+            >
+              <SelectTrigger id="year-trigger" className="w-[110px]">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent id="year-content">
+                {years.map((year) => (
+                  <SelectItem
+                    id={`year-${year}`}
+                    key={year}
+                    value={year.toString()}
+                  >
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <CalendarComponent
             mode="single"
-            onSelect={(date) => setSelectedDate(date ?? null)}
+            onSelect={handleDateSelect}
             selected={selectedDate || undefined}
             initialFocus
+            month={selectedDate || new Date()}
+            onMonthChange={(newMonth) => setSelectedDate(newMonth)}
+            toDate={new Date()}
+            classNames={{
+              day_selected: `bg-[#2F3132] border-[#2F3132] text-white`,
+            }}
           />
-        </PopoverContent>
-      </Popover>
-    </>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
