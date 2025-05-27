@@ -127,8 +127,6 @@ function UserManagementPage() {
     setPage(1);
   };
 
-  const filteredUsers = users;
-
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>User List</PageTitle>
@@ -202,21 +200,19 @@ function UserManagementPage() {
       </div>
 
       {error && <p className="text-center text-red-600">Error: {error}</p>}
-      {!error && (
-        <DataTable
-          columns={userColumns}
-          data={filteredUsers}
-          total={total}
-          loading={loading}
-          handleRowClick={(user) => handleRowClick(user)}
-          initialState={initialState}
-          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
-          onSortingChange={(sort) => {
-            setSort(sort);
-            setPage(1);
-          }}
-        />
-      )}
+      <DataTable
+        columns={userColumns}
+        data={users}
+        total={total}
+        loading={loading}
+        handleRowClick={(user) => handleRowClick(user)}
+        initialState={initialState}
+        onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+        onSortingChange={(sort) => {
+          setSort(sort);
+          setPage(1);
+        }}
+      />
 
       {selectedUser && (
         <UserDetailDialog selectedUser={selectedUser} closeModal={closeModal} />

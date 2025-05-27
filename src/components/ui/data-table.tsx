@@ -4,9 +4,11 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   type TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
+import { useState } from "react";
 
 import {
   Table,
@@ -41,17 +43,21 @@ export function DataTable<TData, TValue>({
   onPageChange,
   onSortingChange,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>(
+    initialState?.sorting ?? [{ id: "fullName", desc: false }],
+  );
+
   const table = useReactTable({
-    initialState: {
-      ...initialState,
+    data,
+    columns,
+    rowCount: total,
+    state: {
+      sorting,
       pagination: {
         pageIndex: initialState?.pagination?.pageIndex ?? 0,
         pageSize: initialState?.pagination?.pageSize ?? 20,
       },
     },
-    columns,
-    data,
-    rowCount: total,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -59,8 +65,13 @@ export function DataTable<TData, TValue>({
     manualSorting: true,
     onSortingChange: (updater) => {
       if (typeof updater === "function") {
-        const newSorting = updater(table.getState().sorting);
+        const newSorting = updater(sorting);
+        setSorting(newSorting);
         const sort = newSorting.length > 0 ? newSorting[0] : null;
+        onSortingChange?.(sort);
+      } else {
+        setSorting(updater);
+        const sort = updater.length > 0 ? updater[0] : null;
         onSortingChange?.(sort);
       }
     },
