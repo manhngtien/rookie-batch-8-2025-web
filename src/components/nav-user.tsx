@@ -3,7 +3,6 @@ import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-// import { useNavigate } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,

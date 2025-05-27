@@ -17,12 +17,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import TableSkeleton from "../table-skeleton";
 import { DataTablePagination } from "./data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
   initialState?: TableOptions<TData>["initialState"];
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  loading?: boolean;
   total: number;
   handleRowClick?: (row: TData) => void;
   onPageChange?: (pageIndex: number) => void;
@@ -34,6 +36,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   total,
+  loading,
   handleRowClick,
   onPageChange,
   onSortingChange,
@@ -70,7 +73,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md">
+    <div className="relative rounded-md">
       <Table className="text-black">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -108,7 +111,13 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableSkeleton />
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}

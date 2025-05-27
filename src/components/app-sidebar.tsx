@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router";
 
 import NashLogo from "@/assets/nash_tech_logo.png";
@@ -13,6 +14,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { APP_ROUTES } from "@/lib/appRoutes";
+import type { RootState } from "@/store";
 
 const data = {
   navMain: [
@@ -62,6 +64,15 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const filteredNavMain = data.navMain.map((group) => ({
+    ...group,
+    items:
+      user?.type === "Staff"
+        ? group.items.filter((item) => item.title === "Home")
+        : group.items,
+  }));
 
   return (
     <Sidebar className="top-header-height px-2 pt-4" {...props}>
@@ -72,8 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </span>
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
+        {filteredNavMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupContent>
               <SidebarMenu className="gap-2">

@@ -13,7 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Spinner } from "@/components/ui/spinner";
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
 import type { User } from "@/features/users/types/User";
@@ -202,17 +201,13 @@ function UserManagementPage() {
         </div>
       </div>
 
-      {loading && (
-        <div>
-          <Spinner className="text-foreground" size="large" />
-        </div>
-      )}
       {error && <p className="text-center text-red-600">Error: {error}</p>}
-      {!loading && !error && (
+      {!error && (
         <DataTable
           columns={userColumns}
           data={filteredUsers}
           total={total}
+          loading={loading}
           handleRowClick={(user) => handleRowClick(user)}
           initialState={initialState}
           onPageChange={(pageIndex) => setPage(pageIndex + 1)}

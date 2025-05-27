@@ -13,7 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Spinner } from "@/components/ui/spinner";
 import { assetColumns } from "@/features/asset-management/components/asset-columns";
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
@@ -122,7 +121,6 @@ function AssetManagementPage() {
   const handleStateToggle = (state: string) => {
     setSelectedStates((prev) => {
       if (state === "All") {
-        // Toggle all states on/off
         return ["All"];
       }
       const newSelected = prev.includes(state)
@@ -218,18 +216,15 @@ function AssetManagementPage() {
           Create new asset
         </Button>
       </div>
-      {loading && (
-        <div>
-          <Spinner className="text-foreground" size="large" />
-        </div>
-      )}
+
       {error && <p className="text-red-500">Error: {error}</p>}
 
-      {!loading && !error && (
+      {!error && (
         <DataTable
           columns={assetColumns}
           data={assets}
           total={total}
+          loading={loading}
           handleRowClick={(asset) => handleRowClick(asset)}
           initialState={initialState}
           onPageChange={(pageIndex) => setPage(pageIndex + 1)}

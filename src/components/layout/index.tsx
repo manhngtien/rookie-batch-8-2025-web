@@ -20,7 +20,6 @@ export default function Layout() {
 
   useEffect(() => {
     setupAuthInterceptor(apiClient, dispatch);
-    console.info("dispatchhhhhh");
   }, [dispatch]);
 
   return (

@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -29,13 +28,26 @@ export default function GeneralDialog({
 }) {
   return (
     <Dialog open={isOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{header}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+      <DialogContent
+        className="w-sm max-w-md p-0 text-black"
+        isClosable={false}
+      >
+        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+          <DialogTitle className="border-red-500 pb-2 text-red-500">
+            {header}
+          </DialogTitle>
         </DialogHeader>
+        <p className="text-center text-sm">{description}</p>
         {content}
-        <DialogFooter>
+        <DialogFooter className="mx-auto flex gap-4 p-4">
+          <Button
+            id={`${kebabCase(header)}-confirm-button`}
+            type="button"
+            className="hover:cursor-pointer"
+            onClick={onConfirm}
+          >
+            Log out
+          </Button>
           <Button
             id={`${kebabCase(header)}-cancel-button`}
             type="button"
@@ -44,14 +56,6 @@ export default function GeneralDialog({
             onClick={onClose}
           >
             Cancel
-          </Button>
-          <Button
-            id={`${kebabCase(header)}-confirm-button`}
-            type="button"
-            className="hover:cursor-pointer"
-            onClick={onConfirm}
-          >
-            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>

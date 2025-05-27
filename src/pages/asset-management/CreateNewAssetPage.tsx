@@ -42,7 +42,6 @@ function CreateNewAssetPage() {
 
     const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
 
-    // Avoid duplicates
     if (categories.some((c) => c.value === formatted)) {
       alert("Category already exists!");
       return;

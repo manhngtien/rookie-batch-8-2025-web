@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 
 import { Spinner } from "@/components/ui/spinner";
 import { APP_ROUTES } from "@/lib/appRoutes";
@@ -9,8 +9,12 @@ import { checkAuth } from "@/store/thunks/authThunk";
 
 const ProtectedRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -36,11 +40,19 @@ const ProtectedRoute: React.FC = () => {
     );
   }
 
-  return isAuthenticated ? (
-    <Outlet />
-  ) : (
-    <Navigate to={APP_ROUTES.auth.login} replace />
-  );
+  if (!isAuthenticated) {
+    console.warn("User not authenticated, redirecting to login");
+    return <Navigate to={APP_ROUTES.auth.login} replace />;
+  }
+
+  if (user?.type === "Staff" && currentPath !== "/") {
+    console.info(
+      `Staff user attempted to access ${currentPath}, redirecting to /`,
+    );
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
