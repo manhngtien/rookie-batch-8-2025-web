@@ -3,6 +3,7 @@ import { isAxiosError } from "axios";
 
 import assetService from "@/features/asset-management/services/assetService";
 import type { Asset } from "@/features/asset-management/types/Asset";
+import type { AssetParams } from "@/features/asset-management/types/AssetParams";
 
 export const fetchAssets = createAsyncThunk<
   Asset[],
@@ -16,6 +17,45 @@ export const fetchAssets = createAsyncThunk<
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       return rejectWithValue(error.message || "Failed to fetch assets");
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});
+
+export const fetchAssetsByParams = createAsyncThunk<
+  { assets: Asset[]; total: number },
+  AssetParams,
+  { rejectValue: string }
+>("assets/fetchAssetsByParams", async (params, { rejectWithValue }) => {
+  try {
+    const response = await assetService.getAssetsByParams(params);
+    console.info("Assets fetched by params successfully:", response);
+    return {
+      assets: response.data,
+      total: response.total,
+    };
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(
+        error.message || "Failed to fetch assets by params",
+      );
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});
+
+export const createAsset = createAsyncThunk<
+  string,
+  Asset,
+  { rejectValue: string }
+>("assets/createAsset", async (asset, { rejectWithValue }) => {
+  try {
+    const response = await assetService.createAsset(asset);
+    console.info("Asset created successfully:", response);
+    return response.data;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(error.message || "Failed to create asset");
     }
     return rejectWithValue("An unexpected error occurred");
   }

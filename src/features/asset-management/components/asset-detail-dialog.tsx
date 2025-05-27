@@ -35,7 +35,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="font-medium">Asset Name:</p>
               <p className="text-left">{selectedAsset.assetName}</p>
               <p className="font-medium">Category:</p>
-              <p className="text-left">{selectedAsset.categoryName}</p>
+              <p className="text-left">{selectedAsset.category.categoryName}</p>
               <p className="font-medium">Installed Date:</p>
               <p className="text-left">
                 {formatDate(selectedAsset.installedDate)}
@@ -71,13 +71,13 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                       selectedAsset.assignments.map((assignment, index) => (
                         <tr key={index} className="border-b">
                           <td className="p-2">
-                            {assignment.stateDate.toLocaleDateString()}
+                            {assignment.assignedDate.toLocaleDateString()}
                           </td>
                           <td className="p-2">{assignment.assignedTo}</td>
                           <td className="p-2">{assignment.assignedBy}</td>
                           <td className="p-2">
-                            {assignment.returnDate
-                              ? assignment.returnDate.toLocaleDateString()
+                            {assignment.assignedDate
+                              ? assignment.assignedDate.toLocaleDateString()
                               : "N/A"}
                           </td>
                         </tr>

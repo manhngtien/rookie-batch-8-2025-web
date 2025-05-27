@@ -45,9 +45,7 @@ export default function ChangePasswordDialog({
 
       if (changePassword.fulfilled.match(result)) {
         openDialogChangeSuccess(); // Success UI
-      } else if (result.payload === "Request failed with status code 404") {
-        showErrors("Old password is incorrect");
-      } else if (result.payload === "Request failed with status code 422") {
+      } else if (result.payload === "Request failed with status code 400") {
         showErrors("Old password is incorrect");
       } else {
         showErrors("Failed to change password");

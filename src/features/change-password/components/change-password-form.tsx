@@ -19,8 +19,9 @@ const changePasswordSchema = z
     newPassword: z
       .string()
       .min(6, { message: "New password must be at least 6 characters" })
-      .regex(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
-        message: "Password must contain at least one letter and one number",
+      .regex(/^(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/, {
+        message:
+          "Password must be at least 6 characters long and contain at least one letter, one number, and one special character.",
       }),
   })
   .refine((data) => data.oldPassword !== data.newPassword, {
