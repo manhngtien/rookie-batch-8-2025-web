@@ -66,12 +66,14 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
           />
           <ActionButton
             iconName="circle-x"
+            className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();
             }}
           />
           <ActionButton
             iconName="undo-2"
+            className="text-fuchsia-500"
             onClick={(e) => {
               e.stopPropagation();
             }}

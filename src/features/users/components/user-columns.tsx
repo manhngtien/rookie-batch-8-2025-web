@@ -54,6 +54,7 @@ export const userColumns: ColumnDef<User>[] = [
           />
           <ActionButton
             iconName="circle-x"
+            className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();
             }}

@@ -154,16 +154,18 @@ interface DateSelectorProps {
   selectedDate: Date | null;
   setSelectedDate: (date: Date | null) => void;
   title: string;
+  className?: string;
 }
 
 function DateSelector({
   selectedDate,
   setSelectedDate,
   title,
+  className,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
-  const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: 120 }, (_, i) => currentYear - i);
   const months = [
     "January",
     "February",
@@ -222,7 +224,7 @@ function DateSelector({
         <Button
           id={`${kebabCase(title)}-date-selector-button`}
           variant="outline"
-          className="max-w-44 justify-between text-black"
+          className={cn("max-w-44 justify-between text-black", className)}
         >
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -264,7 +266,10 @@ function DateSelector({
               <SelectTrigger id="year-trigger" className="w-[110px]">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
-              <SelectContent id="year-content">
+              <SelectContent
+                id="year-content"
+                className="max-h-100 overflow-y-auto"
+              >
                 {years.map((year) => (
                   <SelectItem
                     id={`year-${year}`}

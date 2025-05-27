@@ -101,7 +101,6 @@ export default function CreateUserForm({
     }
   };
 
-  // Watch date fields to validate in real-time
   const dob = form.watch("dateOfBirth");
   const joinedDate = form.watch("joinedDate");
 
@@ -111,7 +110,6 @@ export default function CreateUserForm({
     }
   }, [dob, joinedDate]);
 
-  // Check if all required fields are filled
   const isFormComplete = () => {
     const values = form.getValues();
     const requiredFields = [
@@ -177,6 +175,7 @@ export default function CreateUserForm({
                   title="Date of birth"
                   selectedDate={field.value}
                   setSelectedDate={field.onChange}
+                  className="w-full !max-w-full"
                 />
                 {dobError && (
                   <p className="mt-1 text-sm font-medium text-red-500">
@@ -203,7 +202,7 @@ export default function CreateUserForm({
                   className="flex gap-6"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="female" id="female" />
+                    <RadioGroupItem value="female" id="female" className="" />
                     <label htmlFor="female" className="text-sm">
                       Female
                     </label>
@@ -233,6 +232,7 @@ export default function CreateUserForm({
                   title="Joined Date"
                   selectedDate={field.value}
                   setSelectedDate={field.onChange}
+                  className="w-full !max-w-full"
                 />
                 {joinedDateError && (
                   <p className="mt-1 text-sm font-medium text-red-500">
@@ -253,7 +253,7 @@ export default function CreateUserForm({
             <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
               <div className="text-sm font-medium">Type</div>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
+                <FormControl className="w-full">
                   <SelectTrigger id="user-type-select">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -261,7 +261,6 @@ export default function CreateUserForm({
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="staff">Staff</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage className="col-start-2" />
@@ -269,7 +268,6 @@ export default function CreateUserForm({
           )}
         />
 
-        {/* Buttons */}
         <div className="flex justify-end gap-3 pt-4">
           <Button
             id="user-create-save"

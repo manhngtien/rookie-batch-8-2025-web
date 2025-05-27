@@ -42,6 +42,7 @@ export const assetColumns: ColumnDef<Asset>[] = [
           />
           <ActionButton
             iconName="circle-x"
+            className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();
             }}

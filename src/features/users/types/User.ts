@@ -29,4 +29,5 @@ export interface User {
   type: string;
   location: string;
   isDisabled: boolean;
+  isFirstLogin: boolean;
 }

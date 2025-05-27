@@ -117,7 +117,6 @@ function AssetManagementPage() {
           columns={assetColumns}
           data={assets}
           handleRowClick={(asset) => handleRowClick(asset)}
-          total={assets.length}
         />
       )}
       {selectedAsset && (

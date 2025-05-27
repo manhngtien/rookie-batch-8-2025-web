@@ -27,7 +27,6 @@ interface NavUserProps {
 }
 
 export function NavUser({ user }: NavUserProps) {
-  // const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] =
     useState(false);
@@ -103,7 +102,7 @@ export function NavUser({ user }: NavUserProps) {
             Change Password
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={handleLogout}
+            onClick={() => setOpenModal(true)}
             className="text-black hover:cursor-pointer"
           >
             <LogOut className="size-4" />

@@ -33,13 +33,13 @@ export const loginUser = createAsyncThunk<
 });
 
 export const changePassword = createAsyncThunk<
-  { message: string },
+  { code: number; message: string },
   ChangePasswordPayload,
   { rejectValue: string }
 >("auth/changePassword", async (payload, { rejectWithValue }) => {
   try {
     await authService.changePassword(payload);
-    return { message: "Password changed successfully!" };
+    return { code: 204, message: "Password changed successfully!" };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       return rejectWithValue(error.message ?? "Failed to change password");

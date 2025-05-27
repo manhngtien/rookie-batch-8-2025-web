@@ -77,15 +77,13 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id} className="border-none bg-gray-100">
               {headerGroup.headers.slice(0, -1).map((header) => (
                 <TableHead
-                  className="border p-2 text-left text-black"
+                  className="border p-2 text-left text-black hover:cursor-pointer"
                   key={header.id}
                 >
                   {header.isPlaceholder ? null : (
                     <div
                       className={
-                        header.column.getCanSort()
-                          ? "cursor-pointer select-none"
-                          : ""
+                        header.column.getCanSort() ? "select-none" : ""
                       }
                       onClick={header.column.getToggleSortingHandler()}
                       title={

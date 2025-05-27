@@ -35,7 +35,7 @@ export function DataTableColumnHeader<TData, TValue>({
           }
         }}
       >
-        <span>{title}</span>
+        <span className="hover:cursor-pointer">{title}</span>
         {column.getIsSorted() === "desc" ? (
           <ArrowDown />
         ) : column.getIsSorted() === "asc" ? (
