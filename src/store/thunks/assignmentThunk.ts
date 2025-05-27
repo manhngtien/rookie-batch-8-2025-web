@@ -1,13 +1,14 @@
 import { assignmentService } from "@/features/assignments/services/assignmentService";
 import type {
+  Assignment,
   FetchAssignmentsParams,
-  FetchAssignmentsResponse,
 } from "@/features/assignments/types/Assignment";
+import type { FetchResponse } from "@/types";
 import { createAppThunk } from "@/utils/thunkFactory";
 
 export const fetchAssignments = createAppThunk<
   FetchAssignmentsParams,
-  FetchAssignmentsResponse
+  FetchResponse<Assignment[]>
 >(
   "assignments/fetchAssignments",
   async ({ pageNumber, pageSize, assignedDate, searchTerm, orderBy }) => {

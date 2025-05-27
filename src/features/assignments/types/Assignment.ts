@@ -4,11 +4,6 @@ export interface FetchAssignmentsParams extends FetchParams {
   assignedDate?: Date;
 }
 
-export interface FetchAssignmentsResponse {
-  data: Assignment[];
-  total: number;
-}
-
 export interface Assignment {
   id: number;
   state: string;

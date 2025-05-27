@@ -2,20 +2,17 @@ import type { AxiosResponseHeaders } from "axios";
 
 import { API_ROUTES } from "@/lib/apiRoutes";
 import apiClient from "@/services/apiClient";
+import type { FetchResponse } from "@/types";
 import { getPaginationHeader } from "@/utils/helpers";
 
-import type {
-  Assignment,
-  FetchAssignmentsParams,
-  FetchAssignmentsResponse,
-} from "../types/Assignment";
+import type { Assignment, FetchAssignmentsParams } from "../types/Assignment";
 
 export const assignmentService = {
   getAssignments: async ({
     pageNumber,
     pageSize,
     assignedDate,
-  }: FetchAssignmentsParams): Promise<FetchAssignmentsResponse> => {
+  }: FetchAssignmentsParams): Promise<FetchResponse<Assignment[]>> => {
     const queryParams = new URLSearchParams({
       PageNumber: pageNumber.toString(),
       PageSize: pageSize.toString(),
