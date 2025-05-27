@@ -17,6 +17,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/ui/password-input";
 import type { AppDispatch, RootState } from "@/store";
@@ -92,19 +93,20 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem className="flex items-center gap-2">
-                    <FormLabel>New Password</FormLabel>
-                    <FormControl>
+                    <FormLabel className="w-24 !flex-none">
+                      New Password
+                    </FormLabel>
+                    <FormControl className="!grow">
                       <PasswordInput
                         className="w-full"
                         id="new-password"
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
-              {error && <p className="text-sm text-red-500">{error}</p>}
-
               <Button
                 id="change-password-first-button"
                 type="submit"
@@ -113,6 +115,7 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
                 Save
               </Button>
             </form>
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </Form>
         </div>
       </DialogContent>

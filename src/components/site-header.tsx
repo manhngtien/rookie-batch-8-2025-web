@@ -13,7 +13,6 @@ import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 
 export default function SiteHeader() {
-  //get user from store or context if needed
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (

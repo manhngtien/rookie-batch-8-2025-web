@@ -16,7 +16,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
       props.value === "" || props.value === undefined || props.disabled;
 
     return (
-      <div className="relative">
+      <div className="relative w-full">
         <Input
           id="password-input"
           type={showPassword ? "text" : "password"}
