@@ -1,5 +1,5 @@
 import { Funnel, Search } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
@@ -18,22 +18,119 @@ import { assetColumns } from "@/features/asset-management/components/asset-colum
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import type { AppDispatch, RootState } from "@/store";
-import { fetchAssets } from "@/store/thunks/assetThunk";
+import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
 
 function AssetManagementPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { assets, loading, error } = useSelector(
+  const { assets, total, loading, error } = useSelector(
     (state: RootState) => state.assets,
   );
+
+  const allStates = [
+    "All",
+    "Available",
+    "Not_Available",
+    "Assigned",
+    "Waiting_For_Recycling",
+    "Recycled",
+  ];
+
+  const allCategories = ["Electronics", "Furniture"];
+
+  const [selectedStates, setSelectedStates] = useState<string[]>(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedAsset, setSelectedAsset] = React.useState<Asset | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+
   const navigate = useNavigate();
 
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
+    id: "assetCode",
+    desc: false,
+  });
+  const orderBy = sort
+    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
+    : "assetcodeasc";
+
+  const initialState = useMemo(
+    () => ({
+      sorting: sort ? [sort] : [{ id: "assetCode", desc: false }],
+      pagination: {
+        pageIndex: page - 1,
+        pageSize,
+      },
+    }),
+    [sort, page, pageSize],
+  );
+
+  function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+
+    return debouncedValue;
+  }
+
   useEffect(() => {
-    dispatch(fetchAssets());
-  }, [dispatch]);
+    const fetchAssetsData = async () => {
+      try {
+        const response = await dispatch(
+          fetchAssetsByParams({
+            orderBy,
+            searchTerm: debouncedSearchTerm,
+            category: selectedCategory,
+            state:
+              selectedStates.length > 0 && !selectedStates.includes("All")
+                ? selectedStates.join(",")
+                : undefined,
+            pageNumber: page,
+            pageSize,
+          }),
+        ).unwrap();
+        console.info("Users fetched successfully", response);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
+
+    fetchAssetsData();
+  }, [
+    dispatch,
+    page,
+    pageSize,
+    debouncedSearchTerm,
+    orderBy,
+    selectedCategory,
+    selectedStates,
+  ]);
 
   const handleRowClick = (asset: Asset) => {
     setSelectedAsset(asset);
+  };
+
+  const handleStateToggle = (state: string) => {
+    setSelectedStates((prev) => {
+      if (state === "All") {
+        // Toggle all states on/off
+        return ["All"];
+      }
+      const newSelected = prev.includes(state)
+        ? prev.filter((s) => s !== state)
+        : [...prev.filter((s) => s !== "All"), state];
+      console.log("New selected states:", newSelected);
+      return newSelected;
+    });
   };
 
   return (
@@ -55,10 +152,16 @@ function AssetManagementPage() {
           </PopoverTrigger>
           <PopoverContent className="w-[15rem] p-2">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="all" checked={true} onCheckedChange={() => {}} />
-                <label htmlFor="all">All</label>
-              </div>
+              {allStates.map((state) => (
+                <div key={state} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={state}
+                    checked={selectedStates.includes(state)}
+                    onCheckedChange={() => handleStateToggle(state)}
+                  />
+                  <label htmlFor={state}>{state}</label>
+                </div>
+              ))}
             </div>
           </PopoverContent>
         </Popover>
@@ -78,10 +181,16 @@ function AssetManagementPage() {
           </PopoverTrigger>
           <PopoverContent className="w-[15rem] p-2">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="all" checked={true} onCheckedChange={() => {}} />
-                <label htmlFor="all">All</label>
-              </div>
+              {allCategories.map((category) => (
+                <div key={category} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={category}
+                    checked={selectedCategory === category}
+                    onCheckedChange={() => setSelectedCategory(category)}
+                  />
+                  <label htmlFor={category}>{category}</label>
+                </div>
+              ))}
             </div>
           </PopoverContent>
         </Popover>
@@ -91,6 +200,11 @@ function AssetManagementPage() {
             id="asset-assignment-search-bar"
             className=""
             placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
           />
           <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
@@ -113,10 +227,16 @@ function AssetManagementPage() {
 
       {!loading && !error && (
         <DataTable
-          total={-1}
           columns={assetColumns}
           data={assets}
+          total={total}
           handleRowClick={(asset) => handleRowClick(asset)}
+          initialState={initialState}
+          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+          onSortingChange={(sort) => {
+            setSort(sort);
+            setPage(1);
+          }}
         />
       )}
       {selectedAsset && (

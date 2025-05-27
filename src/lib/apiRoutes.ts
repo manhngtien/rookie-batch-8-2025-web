@@ -1,4 +1,6 @@
 const apiPrefix = "/api";
+import type { AssetParams } from "@/features/asset-management/types/AssetParams";
+import { buildQueryUrl } from "@/utils/url";
 
 const addApiPrefix = (route: string): string => `${apiPrefix}${route}`;
 
@@ -18,9 +20,15 @@ export const API_ROUTES = {
   },
   assets: {
     getAssets: addApiPrefix("/Assets"),
+    getAssetsByParams: (params?: AssetParams) =>
+      buildQueryUrl(addApiPrefix("/Assets/"), params),
     createAsset: addApiPrefix("/Assets"),
-    updateAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
-    deleteAsset: (assetId: string) => addApiPrefix(`/Assets/${assetId}`),
+    getAssetByCode: (assetCode: string) => addApiPrefix(`/Assets/${assetCode}`),
+    updateAsset: (assetCode: string) => addApiPrefix(`/Assets/${assetCode}`),
+    deleteAsset: (assetCode: string) => addApiPrefix(`/Assets/${assetCode}`),
+  },
+  categories: {
+    getCategories: addApiPrefix("/AssetCategories"),
   },
   requests: {
     getRequests: addApiPrefix("/ReturningRequest"),

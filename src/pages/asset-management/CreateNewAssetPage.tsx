@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import React from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -21,8 +22,40 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+interface Category {
+  value: string;
+  label: string;
+}
+
 function CreateNewAssetPage() {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>();
+  const [categories, setCategories] = useState<Category[]>([
+    { value: "electronics", label: "Electronics" },
+    { value: "furniture", label: "Furniture" },
+    { value: "equipment", label: "Equipment" },
+  ]);
+  const [selected, setSelected] = useState<string | undefined>();
+
+  const handleAddCategory = () => {
+    const newCategoryName = prompt("Enter new category name:");
+    if (!newCategoryName) return;
+
+    const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
+
+    // Avoid duplicates
+    if (categories.some((c) => c.value === formatted)) {
+      alert("Category already exists!");
+      return;
+    }
+
+    const newCategory = {
+      value: formatted,
+      label: newCategoryName,
+    };
+
+    setCategories((prev) => [...prev, newCategory]);
+    setSelected(newCategory.value); // optionally auto-select the new one
+  };
 
   return (
     <div className="mx-auto max-w-md p-6 text-black">
@@ -38,7 +71,29 @@ function CreateNewAssetPage() {
           <Label htmlFor="category" className="w-32">
             Category
           </Label>
-          <Select>
+
+          <Select value={selected} onValueChange={setSelected}>
+            <SelectTrigger id="select-category" className="flex-1">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value}>
+                  {cat.label}
+                </SelectItem>
+              ))}
+
+              {/* "Add new category" at bottom (styled like item, but not selectable) */}
+              <div
+                className="hover:bg-muted text-foreground relative cursor-pointer px-2 py-1.5 text-sm select-none"
+                onClick={handleAddCategory}
+              >
+                + Add new category
+              </div>
+            </SelectContent>
+          </Select>
+
+          {/* <Select>
             <SelectTrigger id="category" className="flex-1">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
@@ -47,7 +102,7 @@ function CreateNewAssetPage() {
               <SelectItem value="furniture">Furniture</SelectItem>
               <SelectItem value="equipment">Equipment</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
         <div className="flex items-center space-x-4">
           <Label htmlFor="specification" className="w-32">
