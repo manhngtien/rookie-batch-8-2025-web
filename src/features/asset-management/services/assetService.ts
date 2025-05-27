@@ -1,5 +1,7 @@
-import type { Asset } from "@/features/asset-management/types/Asset";
-import type { PaginationHeader } from "@/features/asset-management/types/Asset";
+import type {
+  Asset,
+  PaginationHeader,
+} from "@/features/asset-management/types/Asset";
 import type { AssetParams } from "@/features/asset-management/types/AssetParams";
 import { API_ROUTES } from "@/lib/apiRoutes";
 import apiClient from "@/services/apiClient";

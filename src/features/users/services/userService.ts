@@ -45,6 +45,14 @@ const userService = {
       total: pagination.totalCount,
     };
   },
+
+  createUser: async (user: User): Promise<{ data: User }> => {
+    const response = await apiClient.post<User>(
+      API_ROUTES.users.createUser,
+      user,
+    );
+    return response;
+  },
 };
 
 export default userService;

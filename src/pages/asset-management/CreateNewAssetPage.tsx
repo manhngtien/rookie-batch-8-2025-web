@@ -1,168 +1,123 @@
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import React from "react";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-
+import { Form } from "@/components/ui/form";
+import { AssetFormFields } from "@/features/asset-management/components/asset-form-fields";
 interface Category {
   value: string;
   label: string;
 }
 
-function CreateNewAssetPage() {
-  const [date, setDate] = useState<Date>();
+export const formSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  category: z.string({
+    required_error: "Category is required",
+  }),
+  specification: z.string().min(1, "Specification is required"),
+  installedDate: z.date({
+    required_error: "Installed date is required",
+  }),
+  state: z.enum(["available", "not-available"], {
+    required_error: "State is required",
+  }),
+});
+
+interface CreateNewAssetPageProps {
+  onSubmit?: (data: z.infer<typeof formSchema>) => void;
+  onCancel?: () => void;
+}
+
+function CreateNewAssetPage({ onSubmit, onCancel }: CreateNewAssetPageProps) {
   const [categories, setCategories] = useState<Category[]>([
     { value: "electronics", label: "Electronics" },
     { value: "furniture", label: "Furniture" },
     { value: "equipment", label: "Equipment" },
   ]);
-  const [selected, setSelected] = useState<string | undefined>();
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleAddCategory = () => {
-    const newCategoryName = prompt("Enter new category name:");
-    if (!newCategoryName) return;
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      specification: "",
+      state: undefined,
+    },
+  });
 
-    const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
-
-    if (categories.some((c) => c.value === formatted)) {
-      alert("Category already exists!");
-      return;
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    if (onSubmit) {
+      onSubmit(values);
     }
-
-    const newCategory = {
-      value: formatted,
-      label: newCategoryName,
-    };
-
-    setCategories((prev) => [...prev, newCategory]);
-    setSelected(newCategory.value); // optionally auto-select the new one
   };
 
+  const isFormComplete = () => {
+    const values = form.getValues();
+    const requiredFields = [
+      "name",
+      "category",
+      "specification",
+      "installedDate",
+      "state",
+    ];
+    return requiredFields.every(
+      (field) => values[field as keyof typeof values],
+    );
+  };
+
+  useEffect(() => {
+    if (isAddingCategory && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isAddingCategory]);
+
   return (
-    <div className="mx-auto max-w-md p-6 text-black">
-      <h2 className="mb-6 text-2xl font-bold text-red-600">Create New Asset</h2>
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="name" className="w-32">
-            Name
-          </Label>
-          <Input id="name" className="flex-1" />
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="category" className="w-32">
-            Category
-          </Label>
-
-          <Select value={selected} onValueChange={setSelected}>
-            <SelectTrigger id="select-category" className="flex-1">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value}>
-                  {cat.label}
-                </SelectItem>
-              ))}
-
-              {/* "Add new category" at bottom (styled like item, but not selectable) */}
-              <div
-                className="hover:bg-muted text-foreground relative cursor-pointer px-2 py-1.5 text-sm select-none"
-                onClick={handleAddCategory}
-              >
-                + Add new category
-              </div>
-            </SelectContent>
-          </Select>
-
-          {/* <Select>
-            <SelectTrigger id="category" className="flex-1">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="electronics">Electronics</SelectItem>
-              <SelectItem value="furniture">Furniture</SelectItem>
-              <SelectItem value="equipment">Equipment</SelectItem>
-            </SelectContent>
-          </Select> */}
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="specification" className="w-32">
-            Specification
-          </Label>
-          <Input id="specification" className="flex-1" />
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="installedDate" className="w-32">
-            Installed Date
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                id="installed-date"
-                variant={"outline"}
-                className={cn(
-                  "flex-1 justify-start text-left font-normal",
-                  !date && "text-muted-foreground",
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label className="w-32">State</Label>
-          <RadioGroup defaultValue="available" className="flex space-x-4">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="available" id="available" />
-              <Label htmlFor="available">Available</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="not-available" id="not-available" />
-              <Label htmlFor="not-available">Not available</Label>
-            </div>
-          </RadioGroup>
-        </div>
+    <Form {...form}>
+      <form
+        id="create-asset-form"
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="mx-auto max-w-md space-y-6 p-6 text-black"
+      >
+        <h2 className="mb-6 text-2xl font-bold text-red-600">
+          Create New Asset
+        </h2>
+        <AssetFormFields
+          form={form}
+          categories={categories}
+          setCategories={setCategories}
+          isAddingCategory={isAddingCategory}
+          setIsAddingCategory={setIsAddingCategory}
+          newCategoryName={newCategoryName}
+          setNewCategoryName={setNewCategoryName}
+          isDropdownOpen={isDropdownOpen}
+          setIsDropdownOpen={setIsDropdownOpen}
+        />
         <div className="flex justify-end space-x-4">
-          <Button id="cancel-button" variant="outline">
+          <Button
+            id="cancel-button"
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
           <Button
             id="save-button"
+            type="submit"
             className="bg-red-600 text-white hover:bg-red-700"
+            disabled={!isFormComplete()}
           >
             Save
           </Button>
         </div>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 }
 
