@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 import {
   CreateButton,
@@ -13,6 +14,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import { useDebounce } from "@/hooks/useDebounce";
+import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatStateLabel, revertStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssignments } from "@/store/thunks/assignmentThunk";
@@ -37,6 +39,7 @@ function AssignmentManagementPage() {
   );
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   // TODO: hooks??
 
@@ -124,7 +127,15 @@ function AssignmentManagementPage() {
             }}
           />
 
-          <CreateButton>Create new assignment</CreateButton>
+          <CreateButton
+            onClick={() => {
+              navigate(
+                `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
+              );
+            }}
+          >
+            Create new assignment
+          </CreateButton>
         </div>
       </div>
 

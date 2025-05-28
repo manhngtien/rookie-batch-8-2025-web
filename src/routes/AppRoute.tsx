@@ -6,6 +6,7 @@ import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
 import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
 import EditAssetPage from "@/pages/asset-management/EditAssetPage";
 import AssignmentManagementPage from "@/pages/assignments/AssignmentManagementPage";
+import CreateAssignmentPage from "@/pages/assignments/CreateAssignmentPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
 import RequestPage from "@/pages/requests/RequestPage";
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
           {
             path: APP_ROUTES.assignment.path,
             element: <AssignmentManagementPage />,
+          },
+          {
+            path: `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
+            element: <CreateAssignmentPage />,
           },
         ],
       },

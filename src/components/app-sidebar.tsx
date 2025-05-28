@@ -47,6 +47,10 @@ const data = {
         {
           title: "Manage Assignment",
           url: APP_ROUTES.assignment.path,
+          activePaths: [
+            APP_ROUTES.assignment.path,
+            `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
+          ],
         },
         {
           title: "Request for Returning",
