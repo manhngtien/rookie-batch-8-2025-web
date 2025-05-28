@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 
 export function createAppThunk<TArg, TReturn>(
   typePrefix: string,
-  handler: (arg: TArg, thunkAPI?: unknown) => Promise<TReturn>,
+  handler: (arg: TArg, thunkAPI: unknown) => Promise<TReturn>,
 ) {
   return createAsyncThunk<TReturn, TArg>(typePrefix, async (arg, thunkAPI) => {
     try {
