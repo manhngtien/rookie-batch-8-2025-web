@@ -178,6 +178,7 @@ interface DateSelectorProps {
   setSelectedDate: (date: Date | null) => void;
   title: string;
   className?: string;
+  disableFutureDates?: boolean;
 }
 
 function DateSelector({
@@ -185,6 +186,7 @@ function DateSelector({
   setSelectedDate,
   title,
   className,
+  disableFutureDates = true,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
@@ -211,7 +213,7 @@ function DateSelector({
       : new Date();
     newDate = setYear(newDate, newYear);
 
-    if (newDate > new Date()) {
+    if (disableFutureDates && newDate > new Date()) {
       newDate = new Date();
     }
 
@@ -225,7 +227,7 @@ function DateSelector({
       : new Date();
     newDate = setMonth(newDate, newMonth);
 
-    if (newDate > new Date()) {
+    if (disableFutureDates && newDate > new Date()) {
       newDate = new Date();
     }
 
@@ -233,7 +235,7 @@ function DateSelector({
   };
 
   const handleDateSelect = (date: Date | undefined) => {
-    if (date && date > new Date()) {
+    if (disableFutureDates && date && date > new Date()) {
       setSelectedDate(new Date());
     } else {
       setSelectedDate(date ?? null);
@@ -315,7 +317,7 @@ function DateSelector({
             initialFocus
             month={selectedDate || new Date()}
             onMonthChange={(newMonth) => setSelectedDate(newMonth)}
-            toDate={new Date()}
+            toDate={disableFutureDates ? new Date() : undefined}
             classNames={{
               day_selected: `bg-[#2F3132] border-[#2F3132] text-white`,
             }}

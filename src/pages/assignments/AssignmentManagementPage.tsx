@@ -111,6 +111,7 @@ function AssignmentManagementPage() {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             title="Assigned Date"
+            disableFutureDates={false}
           />
         </div>
 
