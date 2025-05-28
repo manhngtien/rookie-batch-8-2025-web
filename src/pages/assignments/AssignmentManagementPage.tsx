@@ -7,8 +7,8 @@ import {
   DateSelector,
   DetailDialog,
   FilterButton,
+  PageTitle,
 } from "@/components/ui/dashboard-elements";
-import { PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
@@ -100,7 +100,7 @@ function AssignmentManagementPage() {
     <div className="flex flex-col gap-4">
       <PageTitle>Assignment List</PageTitle>
 
-      <div className="flex">
+      <div className="flex flex-col gap-2 md:flex-row">
         <div className="flex w-full gap-2">
           <FilterButton
             label="State"
@@ -115,12 +115,12 @@ function AssignmentManagementPage() {
           />
         </div>
 
-        <div className="flex w-full justify-end gap-2">
+        <div className="flex w-full gap-2 md:justify-end">
           {/* TODO: component? */}
-          <div className="relative w-50">
+          <div className="relative max-w-full min-w-25 md:max-w-50">
             <Input
               id="users-search-bar"
-              className=""
+              className="max-w-full"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => {

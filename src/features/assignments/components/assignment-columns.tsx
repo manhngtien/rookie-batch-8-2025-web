@@ -78,7 +78,7 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
           />
           <ActionButton
             iconName="undo-2"
-            className="text-fuchsia-500"
+            className="text-blue-500"
             onClick={(e) => {
               e.stopPropagation();
             }}

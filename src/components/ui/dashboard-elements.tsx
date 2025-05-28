@@ -77,11 +77,13 @@ function FilterButton({
   options,
   defaultSelected = [],
   onChange,
+  className,
 }: React.ComponentProps<typeof Popover> & {
   label?: string;
   options: string[];
   defaultSelected?: string[];
   onChange: (selected: string[]) => void;
+  className?: string;
 }) {
   const [selected, setSelected] = React.useState<string[]>(defaultSelected);
   const [indeterminate, setIndeterminate] = React.useState(false);
@@ -112,13 +114,16 @@ function FilterButton({
         <Button
           id="user-type-dropdown"
           variant="outline"
-          className="max-w-44 justify-between text-black hover:cursor-pointer"
+          className={cn(
+            "max-w-full flex-1 justify-between text-black hover:cursor-pointer md:max-w-44",
+            className,
+          )}
         >
           {label}
           <Funnel color="black" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[180px] p-2">
+      <PopoverContent className="max-w-44 p-2">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -135,7 +140,7 @@ function FilterButton({
                 checked={selected.includes(option)}
                 onCheckedChange={() => toggleOption(option)}
               />
-              <label htmlFor={kebabCase(option)}>{option}</label>
+              <label htmlFor={kebabCase(option) + "-sort"}>{option}</label>
             </div>
           ))}
         </div>
@@ -156,7 +161,7 @@ function DetailDialog<T>({
   return (
     <Dialog open={!!selectedEntity} onOpenChange={closeModal}>
       <DialogContent className="max-w-2xl p-0 text-black">
-        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-200 p-4">
+        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-100 p-4">
           <DialogTitle className="border-red-500 text-red-500">
             {title ?? "Detailed Information"}
           </DialogTitle>
@@ -241,7 +246,10 @@ function DateSelector({
         <Button
           id={`${kebabCase(title)}-date-selector-button`}
           variant="outline"
-          className={cn("max-w-44 justify-between text-black", className)}
+          className={cn(
+            "max-w-full flex-1 justify-between text-black md:max-w-44",
+            className,
+          )}
         >
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
