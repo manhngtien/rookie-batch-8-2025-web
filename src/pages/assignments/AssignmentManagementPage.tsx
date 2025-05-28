@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,9 +7,9 @@ import {
   DetailDialog,
   FilterButton,
   PageTitle,
+  SearchInput,
 } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -116,20 +115,13 @@ function AssignmentManagementPage() {
         </div>
 
         <div className="flex w-full gap-2 md:justify-end">
-          {/* TODO: component? */}
-          <div className="relative max-w-full min-w-25 md:max-w-50">
-            <Input
-              id="users-search-bar"
-              className="max-w-full"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
-            />
-            <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
-          </div>
+          <SearchInput
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+          />
 
           <CreateButton>Create new assignment</CreateButton>
         </div>
@@ -157,6 +149,7 @@ function AssignmentManagementPage() {
           closeModal={() => setSelectedAssignment(null)}
           title="Detailed Assignment Information"
         >
+          {/* TODO: maybe this could also be separated to components */}
           <div className="grid grid-cols-2 gap-4 text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>

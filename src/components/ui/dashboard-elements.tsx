@@ -1,5 +1,5 @@
 import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
-import { CalendarIcon, Funnel } from "lucide-react";
+import { CalendarIcon, Funnel, Search } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { DynamicIcon } from "lucide-react/dynamic";
 import React, { useState } from "react";
@@ -15,6 +15,7 @@ import { cn, kebabCase } from "@/lib/utils";
 import { Button } from "./button";
 import { Calendar as CalendarComponent } from "./calendar";
 import { Checkbox } from "./checkbox";
+import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
   Select,
@@ -325,6 +326,27 @@ function DateSelector({
   );
 }
 
+function SearchInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="relative max-w-full min-w-25 md:max-w-50">
+      <Input
+        id="users-search-bar"
+        className="max-w-full"
+        placeholder="Search..."
+        value={value}
+        onChange={onChange}
+      />
+      <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
+    </div>
+  );
+}
+
 export {
   ActionButton,
   CreateButton,
@@ -332,4 +354,5 @@ export {
   DetailDialog,
   FilterButton,
   PageTitle,
+  SearchInput,
 };
