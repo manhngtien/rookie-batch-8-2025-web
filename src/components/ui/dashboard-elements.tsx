@@ -72,23 +72,40 @@ function ActionButton({
   );
 }
 
-type FilterButtonItems = {
-  title: string;
-  // checked: boolean;
-  // onCheckedChange: () => void;
-};
-
 function FilterButton({
-  filterTitle,
-  items,
-  checkedItem,
-  onCheckedItemChange,
+  label = "Filter",
+  options,
+  defaultSelected = [],
+  onChange,
 }: React.ComponentProps<typeof Popover> & {
-  filterTitle: string;
-  items: FilterButtonItems[];
-  checkedItem: "all" | number;
-  onCheckedItemChange: (value: "all" | number) => void;
+  label?: string;
+  options: string[];
+  defaultSelected?: string[];
+  onChange: (selected: string[]) => void;
 }) {
+  const [selected, setSelected] = React.useState<string[]>(defaultSelected);
+  const [indeterminate, setIndeterminate] = React.useState(false);
+
+  const allSelected = selected.length === options.length;
+
+  React.useEffect(() => {
+    const isIndeterminate = selected.length > 0 && !allSelected;
+    setIndeterminate(isIndeterminate);
+    onChange(selected);
+  }, [allSelected, onChange, selected]);
+
+  const toggleAll = () => {
+    setSelected(allSelected ? [] : [...options]);
+  };
+
+  const toggleOption = (option: string) => {
+    setSelected((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option],
+    );
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -97,7 +114,7 @@ function FilterButton({
           variant="outline"
           className="max-w-44 justify-between text-black hover:cursor-pointer"
         >
-          {filterTitle}
+          {label}
           <Funnel color="black" />
         </Button>
       </PopoverTrigger>
@@ -106,19 +123,19 @@ function FilterButton({
           <div className="flex items-center space-x-2">
             <Checkbox
               id="all"
-              checked={checkedItem === "all"}
-              onCheckedChange={() => onCheckedItemChange("all")}
+              checked={allSelected || (indeterminate && "indeterminate")}
+              onCheckedChange={toggleAll}
             />
             <label htmlFor="all">All</label>
           </div>
-          {items.map((value, idx) => (
+          {options.map((option) => (
             <div className="flex items-center space-x-2">
               <Checkbox
-                id={kebabCase(value.title) + "-sort"}
-                checked={checkedItem === idx}
-                onCheckedChange={() => onCheckedItemChange(idx)}
+                id={kebabCase(option) + "-sort"}
+                checked={selected.includes(option)}
+                onCheckedChange={() => toggleOption(option)}
               />
-              <label htmlFor={kebabCase(value.title)}>{value.title}</label>
+              <label htmlFor={kebabCase(option)}>{option}</label>
             </div>
           ))}
         </div>
@@ -306,6 +323,5 @@ export {
   DateSelector,
   DetailDialog,
   FilterButton,
-  type FilterButtonItems,
   PageTitle,
 };
