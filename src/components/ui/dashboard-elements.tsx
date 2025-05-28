@@ -124,7 +124,7 @@ function FilterButton({
           <Funnel color="black" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="max-w-44 p-2">
+      <PopoverContent className="max-w-44 p-2" align="start">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -253,7 +253,7 @@ function DateSelector({
           )}
         >
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
-          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          <CalendarIcon className="ml-auto h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
