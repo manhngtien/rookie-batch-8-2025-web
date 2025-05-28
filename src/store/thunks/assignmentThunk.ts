@@ -11,13 +11,21 @@ export const fetchAssignments = createAppThunk<
   FetchResponse<Assignment[]>
 >(
   "assignments/fetchAssignments",
-  async ({ pageNumber, pageSize, assignedDate, searchTerm, orderBy }) => {
+  async ({
+    pageNumber,
+    pageSize,
+    assignedDate,
+    searchTerm,
+    orderBy,
+    state,
+  }) => {
     const response = await assignmentService.getAssignments({
       pageNumber,
       pageSize,
       assignedDate,
       searchTerm,
       orderBy,
+      state,
     });
     return response;
   },

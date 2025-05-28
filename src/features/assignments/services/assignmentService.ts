@@ -12,15 +12,18 @@ export const assignmentService = {
     pageNumber,
     pageSize,
     assignedDate,
+    searchTerm,
+    orderBy,
+    state,
   }: FetchAssignmentsParams): Promise<FetchResponse<Assignment[]>> => {
     const queryParams = new URLSearchParams({
       PageNumber: pageNumber.toString(),
       PageSize: pageSize.toString(),
+      AssignedDate: assignedDate ? assignedDate.toDateString() : "",
+      SearchTerm: searchTerm || "",
+      OrderBy: orderBy || "assetnameasc",
+      State: state ? state.join(",") : "",
     });
-
-    if (assignedDate) {
-      queryParams.append("AssignedDate", assignedDate.toISOString());
-    }
 
     const response = await apiClient.get<Assignment[]>(
       `${API_ROUTES.assignments.getAssignments}?${queryParams.toString()}`,

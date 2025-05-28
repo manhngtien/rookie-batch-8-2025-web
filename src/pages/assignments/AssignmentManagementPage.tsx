@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,45 +10,13 @@ import {
 } from "@/components/ui/dashboard-elements";
 import { PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
-import { Spinner } from "@/components/ui/spinner";
+import { Input } from "@/components/ui/input";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
+import { useDebounce } from "@/hooks/useDebounce";
+import { formatStateLabel, revertStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssignments } from "@/store/thunks/assignmentThunk";
-
-// Example mock data for Assignment
-// const mockAssignments: Assignment[] = [
-//   {
-//     id: 1,
-//     state: "Accepted",
-//     assignedDate: new Date("2025-05-01"),
-//     assetCode: "AS001",
-//     assetName: "Laptop Dell XPS 13",
-//     assignedBy: "Alice Nguyen",
-//     assignedTo: "Bob Tran",
-//     note: "Urgent assignment",
-//   },
-//   {
-//     id: 2,
-//     state: "Waiting for Acceptance",
-//     assignedDate: new Date("2025-05-10"),
-//     assetCode: "AS002",
-//     assetName: 'Monitor Samsung 24"',
-//     assignedBy: "Charlie Le",
-//     assignedTo: "Daisy Pham",
-//     note: "",
-//   },
-//   {
-//     id: 3,
-//     state: "Declined",
-//     assignedDate: new Date("2025-05-15"),
-//     assetCode: "AS003",
-//     assetName: "Keyboard Logitech K380",
-//     assignedBy: "Eve Hoang",
-//     assignedTo: "Frank Vu",
-//     note: "User declined due to duplicate",
-//   },
-// ];
 
 const filterItems = ["Accepted", "Declined", "Waiting for acceptance"];
 
@@ -61,6 +30,8 @@ function AssignmentManagementPage() {
     id: "assetName",
     desc: false,
   });
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
 
   const { data, total, loading, error } = useSelector(
     (state: RootState) => state.assignments,
@@ -68,9 +39,13 @@ function AssignmentManagementPage() {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  // TODO: hooks??
+
+  // TODO: maybe this sort stuff could be separated
+
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
-    : "fullnameasc";
+    : "assetnameasc";
 
   const initialState = {
     sorting: sort ? [sort] : [{ id: "assetName", desc: false }],
@@ -80,37 +55,46 @@ function AssignmentManagementPage() {
     },
   };
 
+  const debouncedSearchTerm = useDebounce(searchTerm);
+
   const handleRowClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
   };
 
   const fetchData = useCallback(async () => {
     try {
-      // const typeParam = selectedTypes.includes("All")
-      //   ? undefined
-      //   : selectedTypes;
       const response = await dispatch(
         fetchAssignments({
           pageNumber: page,
           pageSize,
           assignedDate: selectedDate,
-          // searchTerm,
+          searchTerm: debouncedSearchTerm,
           orderBy,
+          state: selectedStates.map(revertStateLabel),
         }),
       ).unwrap();
       console.info("Assignments fetched successfully", response);
     } catch (err) {
       console.error("Failed to fetch assignments:", err);
     }
-  }, [dispatch, orderBy, page, pageSize, selectedDate]);
+  }, [
+    debouncedSearchTerm,
+    dispatch,
+    orderBy,
+    page,
+    pageSize,
+    selectedDate,
+    selectedStates,
+  ]);
 
   const handleFilterChange = (selected: string[]) => {
-    console.log("🔥 Selected filters:", selected);
+    setSelectedStates(selected);
+    setPage(1);
   };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, orderBy, page, pageSize, selectedDate]);
+  }, [fetchData]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -122,6 +106,7 @@ function AssignmentManagementPage() {
             label="State"
             options={filterItems}
             onChange={handleFilterChange}
+            defaultSelected={selectedStates}
           />
           <DateSelector
             selectedDate={selectedDate}
@@ -130,14 +115,25 @@ function AssignmentManagementPage() {
           />
         </div>
 
-        <CreateButton>Create new assignment</CreateButton>
-      </div>
+        <div className="flex w-full justify-end gap-2">
+          {/* TODO: component? */}
+          <div className="relative w-50">
+            <Input
+              id="users-search-bar"
+              className=""
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
+            />
+            <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
+          </div>
 
-      {loading && (
-        <div>
-          <Spinner className="text-foreground" size="large" />
+          <CreateButton>Create new assignment</CreateButton>
         </div>
-      )}
+      </div>
 
       {error && <p className="text-center text-red-600">Error: {error}</p>}
 
@@ -145,6 +141,7 @@ function AssignmentManagementPage() {
         total={total}
         columns={assignmentColumns}
         data={data}
+        loading={loading}
         initialState={initialState}
         handleRowClick={(assignment) => handleRowClick(assignment)}
         onPageChange={(pageIndex) => setPage(pageIndex + 1)}
@@ -171,10 +168,12 @@ function AssignmentManagementPage() {
             <p className="text-left">{selectedAssignment.assignedBy}</p>
             <p className="font-medium">Assigned Date:</p>
             <p className="text-left">
-              {selectedAssignment.assignedDate.toLocaleDateString()}
+              {new Date(selectedAssignment.assignedDate).toLocaleDateString()}
             </p>
             <p className="font-medium">State:</p>
-            <p className="text-left">{selectedAssignment.state}</p>
+            <p className="text-left">
+              {formatStateLabel(selectedAssignment.state)}
+            </p>
             {selectedAssignment.note && (
               <>
                 <p className="font-medium">Note:</p>
