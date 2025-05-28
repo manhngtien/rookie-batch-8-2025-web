@@ -16,24 +16,9 @@ import {
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
 import type { User } from "@/features/users/types/User";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchUsers } from "@/store/thunks/userThunk";
-
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
 
 function UserManagementPage() {
   const navigate = useNavigate();

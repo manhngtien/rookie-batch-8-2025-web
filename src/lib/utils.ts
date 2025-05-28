@@ -11,3 +11,17 @@ export function kebabCase(string: string) {
     .replace(/[^a-zA-Z0-9-]/g, "") // Remove special characters
     .toLowerCase();
 }
+
+export function formatStateLabel(state: string) {
+  return state
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
+export function revertStateLabel(state: string) {
+  return state
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("_");
+}
