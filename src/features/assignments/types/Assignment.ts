@@ -1,7 +1,7 @@
 import type { FetchParams } from "@/types";
 
 export interface FetchAssignmentsParams extends FetchParams {
-  assignedDate?: Date;
+  assignedDate?: Date | null;
 }
 
 export interface Assignment {
