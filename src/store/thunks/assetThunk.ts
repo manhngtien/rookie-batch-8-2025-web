@@ -45,12 +45,12 @@ export const fetchAssetsByParams = createAsyncThunk<
 });
 
 export const createAsset = createAsyncThunk<
-  string,
   Asset,
+  FormData,
   { rejectValue: string }
->("assets/createAsset", async (asset, { rejectWithValue }) => {
+>("assets/createAsset", async (formData, { rejectWithValue }) => {
   try {
-    const response = await assetService.createAsset(asset);
+    const response = await assetService.createAsset(formData);
     console.info("Asset created successfully:", response);
     return response.data;
   } catch (error: unknown) {

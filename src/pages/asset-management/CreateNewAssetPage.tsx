@@ -1,26 +1,29 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { AssetFormFields } from "@/features/asset-management/components/asset-form-fields";
-interface Category {
-  value: string;
-  label: string;
-}
+import type { Category } from "@/features/asset-management/types/Category";
+import type { AppDispatch, RootState } from "@/store";
+import { createAsset } from "@/store/thunks/assetThunk";
+import { fetchCategories } from "@/store/thunks/categoryThunk";
 
 export const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string({
     required_error: "Category is required",
   }),
+  category_id: z.number().optional(),
   specification: z.string().min(1, "Specification is required"),
   installedDate: z.date({
     required_error: "Installed date is required",
   }),
-  state: z.enum(["available", "not-available"], {
+  state: z.enum(["available", "not_available"], {
     required_error: "State is required",
   }),
 });
@@ -30,12 +33,18 @@ interface CreateNewAssetPageProps {
   onCancel?: () => void;
 }
 
-function CreateNewAssetPage({ onSubmit, onCancel }: CreateNewAssetPageProps) {
-  const [categories, setCategories] = useState<Category[]>([
-    { value: "electronics", label: "Electronics" },
-    { value: "furniture", label: "Furniture" },
-    { value: "equipment", label: "Equipment" },
-  ]);
+function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const dataCategories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
+
+  const navigate = useNavigate();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  console.info("Categories from store:", categories);
+
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -45,17 +54,12 @@ function CreateNewAssetPage({ onSubmit, onCancel }: CreateNewAssetPageProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      category_id: 0,
       category: "",
       specification: "",
       state: undefined,
     },
   });
-
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    if (onSubmit) {
-      onSubmit(values);
-    }
-  };
 
   const isFormComplete = () => {
     const values = form.getValues();
@@ -72,10 +76,31 @@ function CreateNewAssetPage({ onSubmit, onCancel }: CreateNewAssetPageProps) {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(fetchCategories()).unwrap();
+    };
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isAddingCategory && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isAddingCategory]);
+
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    console.log("Submitting form data:", data);
+    formData.append("assetName", data.name);
+    formData.append("categoryId", data.category_id?.toString() || "0");
+    formData.append("specification", data.specification);
+    formData.append("installedDate", data.installedDate.toISOString());
+    formData.append("state", data.state);
+    const resultAction = await dispatch(createAsset(formData));
+    if (createAsset.fulfilled.match(resultAction)) {
+      navigate("/assets"); // ✅ go to Manage Asset page
+    }
+  };
 
   return (
     <Form {...form}>
@@ -89,7 +114,7 @@ function CreateNewAssetPage({ onSubmit, onCancel }: CreateNewAssetPageProps) {
         </h2>
         <AssetFormFields
           form={form}
-          categories={categories}
+          categories={dataCategories}
           setCategories={setCategories}
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}

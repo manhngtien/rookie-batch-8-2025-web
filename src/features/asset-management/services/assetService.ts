@@ -29,8 +29,16 @@ const assetService = {
     return response;
   },
 
-  createAsset: async (asset: Asset): Promise<{ data: string }> => {
-    const response = await apiClient.post(API_ROUTES.assets.createAsset, asset);
+  createAsset: async (formData: FormData): Promise<{ data: Asset }> => {
+    const response = await apiClient.post(
+      API_ROUTES.assets.createAsset,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Important: Let the browser set the proper multipart boundary
+        },
+      },
+    );
     return response;
   },
 

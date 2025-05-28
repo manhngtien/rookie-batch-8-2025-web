@@ -1,6 +1,6 @@
 export interface Category {
-  id: number;
+  id: number | null;
   prefix: string;
-  categoryName: string;
-  total: number;
+  name: string;
+  total: number | null;
 }
