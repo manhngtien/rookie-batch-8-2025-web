@@ -1,5 +1,6 @@
 import type {
   Asset,
+  AssetUpdate,
   PaginationHeader,
 } from "@/features/asset-management/types/Asset";
 import type { AssetParams } from "@/features/asset-management/types/AssetParams";
@@ -22,11 +23,28 @@ const assetService = {
     return { data: response.data, total: pagination.totalCount };
   },
 
-  getAssetbyCode: async (assetCode: string): Promise<{ data: Asset }> => {
+  getAssetByCode: async (assetCode: string): Promise<{ data: Asset }> => {
     const response = await apiClient.get(
       API_ROUTES.assets.getAssetByCode(assetCode),
     );
-    return response;
+
+    const apiAsset = response.data;
+
+    // Manually map categoryName → name
+    const mappedAsset: Asset = {
+      ...apiAsset,
+      category: {
+        id: apiAsset.category.id,
+        prefix: apiAsset.category.prefix,
+        name: apiAsset.category.categoryName, // <-- remap here
+        total: apiAsset.category.total,
+      },
+      installedDate: new Date(apiAsset.installedDate).toLocaleDateString(
+        "sv-SE",
+      ), // ensure date is Date object
+    };
+
+    return { data: mappedAsset };
   },
 
   createAsset: async (formData: FormData): Promise<{ data: Asset }> => {
@@ -43,12 +61,12 @@ const assetService = {
   },
 
   updateAsset: async (
-    assetId: string,
-    asset: Asset,
-  ): Promise<{ data: string }> => {
+    assetCode: string,
+    assetUpdate: AssetUpdate,
+  ): Promise<{ data: Asset }> => {
     const response = await apiClient.put(
-      API_ROUTES.assets.updateAsset(assetId),
-      asset,
+      API_ROUTES.assets.updateAsset(assetCode),
+      assetUpdate,
     );
     return response;
   },

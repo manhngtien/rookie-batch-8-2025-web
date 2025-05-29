@@ -7,7 +7,7 @@ export interface Asset {
   assetName: string;
   specification: string;
   location: number;
-  installedDate: Date;
+  installedDate: string;
   category: Category;
   state: string;
   assignments: Assignment[];
@@ -19,6 +19,13 @@ export interface AssetCreate {
   location: number;
   installedDate: Date;
   category_id: number;
+  state: string;
+}
+
+export interface AssetUpdate {
+  assetName: string;
+  specification: string;
+  installedDate: string;
   state: string;
 }
 

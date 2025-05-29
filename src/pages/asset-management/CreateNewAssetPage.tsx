@@ -94,7 +94,8 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
     formData.append("assetName", data.name);
     formData.append("categoryId", data.category_id?.toString() || "0");
     formData.append("specification", data.specification);
-    formData.append("installedDate", data.installedDate.toISOString());
+    const localDateString = data.installedDate.toLocaleDateString("sv-SE");
+    formData.append("installedDate", localDateString);
     formData.append("state", data.state);
     const resultAction = await dispatch(createAsset(formData));
     if (createAsset.fulfilled.match(resultAction)) {

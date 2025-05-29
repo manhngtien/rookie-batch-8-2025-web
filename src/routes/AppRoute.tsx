@@ -5,6 +5,7 @@ import Layout from "@/components/layout";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import AssetManagementPage from "@/pages/asset-management/AssetManagementPage";
 import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
+import EditAssetPage from "@/pages/asset-management/EditAssetPage";
 import AssignmentManagementPage from "@/pages/assignments/AssignmentManagementPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
           {
             path: `${APP_ROUTES.assets.path}/${APP_ROUTES.assets.create}`,
             element: <CreateNewAssetPage />,
+          },
+          {
+            path: "/assets/edit-asset/:assetCode",
+            element: <EditAssetPage />,
           },
           // Returns
           {

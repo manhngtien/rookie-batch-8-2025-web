@@ -1,13 +1,9 @@
-import type { Category } from "@/features/asset-management/types/Category";
+import type {
+  Category,
+  CategoryAPIResponse,
+} from "@/features/asset-management/types/Category";
 import { API_ROUTES } from "@/lib/apiRoutes";
 import apiClient from "@/services/apiClient";
-
-interface CategoryAPIResponse {
-  id: number;
-  prefix: string;
-  categoryName: string;
-  total: number;
-}
 
 const categoryService = {
   getCategories: async (): Promise<{ data: Category[] }> => {
