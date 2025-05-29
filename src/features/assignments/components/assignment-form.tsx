@@ -13,15 +13,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type { Asset } from "@/features/asset-management/types/Asset";
 import type { User } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
+import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
 import { fetchUsers } from "@/store/thunks/userThunk";
 
+import { assetSelectColumns } from "./asset-select-columns";
 import { SearchPopup } from "./search-popup";
-import { userColumns } from "./user-select-columns";
+import { userSelectColumns } from "./user-select-columns";
+
+const POPOVER_SIDE_OFFSET = -55;
+const POPOVER_ALIGN_OFFSET = -20;
 
 const formSchema = z.object({
   staffCode: z.string().min(2),
+  assetCode: z.string().min(2),
 });
 
 export function CreateAssignmentForm({
@@ -39,22 +46,37 @@ export function CreateAssignmentForm({
   });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [userInputOpened, setUserInputOpened] = useState(false);
+  const [assetInputOpened, setAssetInputOpened] = useState(false);
 
   const usersOrderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "fullnameasc";
+  const assetsOrderBy = sort
+    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
+    : "assetnameasc";
 
   const isUserInputOpened = userInputOpened === true;
+  const isAssetInputOpened = assetInputOpened === true;
 
   const dispatch = useDispatch<AppDispatch>();
-  const { users, total, loading /* , error */ } = useSelector(
-    (state: RootState) => state.users,
-  );
+  const {
+    users,
+    total: totalUsers,
+    loading: usersLoading,
+    // error: usersError,
+  } = useSelector((state: RootState) => state.users);
+  const {
+    assets,
+    total: totalAssets,
+    loading: assetsLoading,
+    // error: assetsError,
+  } = useSelector((state: RootState) => state.assets);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       staffCode: "",
+      assetCode: "",
     },
   });
 
@@ -73,6 +95,22 @@ export function CreateAssignmentForm({
       console.error("Failed to fetch users:", err);
     }
   }, [dispatch, usersOrderBy, page, pageSize, searchTerm]);
+
+  const fetchAssetData = useCallback(async () => {
+    try {
+      const response = await dispatch(
+        fetchAssetsByParams({
+          pageNumber: page,
+          pageSize,
+          searchTerm,
+          orderBy: assetsOrderBy,
+        }),
+      ).unwrap();
+      console.info("Users fetched successfully", response);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+    }
+  }, [dispatch, page, pageSize, searchTerm, assetsOrderBy]);
 
   function getSearchTerm(value: string) {
     setSearchTerm(value);
@@ -97,8 +135,11 @@ export function CreateAssignmentForm({
     }
   }
 
-  function onUserInputClose() {
-    setUserInputOpened(false);
+  function onAssetSelect(row: Asset | undefined) {
+    if (row) {
+      form.setValue("assetCode", row.assetCode);
+      setAssetInputOpened(false);
+    }
   }
 
   useEffect(() => {
@@ -106,6 +147,12 @@ export function CreateAssignmentForm({
       fetchUsersData();
     }
   }, [fetchUsersData, isUserInputOpened]);
+
+  useEffect(() => {
+    if (isAssetInputOpened) {
+      fetchAssetData();
+    }
+  }, [fetchAssetData, isAssetInputOpened]);
 
   return (
     <Form {...form}>
@@ -126,21 +173,59 @@ export function CreateAssignmentForm({
                 <PopoverContent
                   className="w-2xl max-w-full"
                   align="end"
-                  sideOffset={-55}
-                  alignOffset={-20}
+                  sideOffset={POPOVER_SIDE_OFFSET}
+                  alignOffset={POPOVER_ALIGN_OFFSET}
                 >
                   <SearchPopup<User>
                     title="Select User"
-                    columns={userColumns}
+                    columns={userSelectColumns}
                     data={users}
-                    total={total}
-                    loading={loading}
+                    total={totalUsers}
+                    loading={usersLoading}
                     sendPage={getPage}
                     sendSort={getSort}
                     sendPageSize={getPageSize}
                     sendSearchTerm={getSearchTerm}
                     onSave={onUserSelect}
-                    onCancel={onUserInputClose}
+                    onCancel={() => setUserInputOpened(false)}
+                  />
+                </PopoverContent>
+              </Popover>
+            </OneLineFormControl>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="assetCode"
+          render={({ field }) => (
+            <OneLineFormControl label="Asset">
+              <Popover
+                open={assetInputOpened}
+                onOpenChange={setAssetInputOpened}
+                modal
+              >
+                <PopoverTrigger asChild>
+                  <SearchInput className="cursor-pointer" readOnly {...field} />
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-2xl max-w-full"
+                  align="end"
+                  sideOffset={POPOVER_SIDE_OFFSET}
+                  alignOffset={POPOVER_ALIGN_OFFSET}
+                >
+                  <SearchPopup<Asset>
+                    title="Select Asset"
+                    columns={assetSelectColumns}
+                    data={assets}
+                    total={totalAssets}
+                    loading={assetsLoading}
+                    sendPage={getPage}
+                    sendSort={getSort}
+                    sendPageSize={getPageSize}
+                    sendSearchTerm={getSearchTerm}
+                    onSave={onAssetSelect}
+                    onCancel={() => setAssetInputOpened(false)}
                   />
                 </PopoverContent>
               </Popover>
