@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import type { User } from "@/features/users/types/User";
-import { fetchUsers } from "@/store/thunks/userThunk";
+import { createUser, fetchUsers } from "@/store/thunks/userThunk";
 
 interface UserState {
   users: User[];
@@ -39,6 +39,21 @@ const userSlice = createSlice({
         state.total = action.payload.total;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "An error occurred";
+      })
+      //Create user
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = [action.payload.data, ...state.users];
+        console.info("User created successfully", state.users);
+        state.total += 1;
+      })
+      .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
       });

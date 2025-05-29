@@ -1,4 +1,3 @@
-// src/routes/AppRoute.tsx
 import { createBrowserRouter } from "react-router";
 
 import Layout from "@/components/layout";
