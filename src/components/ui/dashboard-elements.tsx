@@ -331,15 +331,15 @@ function DateSelector({
 function SearchInput({
   value,
   onChange,
-}: {
+}: React.ComponentProps<typeof Input> & {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="relative max-w-full min-w-25 md:max-w-50">
+    <div className="relative w-full min-w-25 flex-1">
       <Input
         id="users-search-bar"
-        className="max-w-full"
+        className="w-full"
         placeholder="Search..."
         value={value}
         onChange={onChange}
