@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
-import CreateUserForm from "@/features/users/components/create-user-form";
+import UserForm from "@/features/users/components/user-form";
 import type { CreateUserRequest } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
 import { createUser } from "@/store/thunks/userThunk";
@@ -23,9 +23,9 @@ const CreateUserPage = () => {
     const requestData: CreateUserRequest = {
       firstName: data.firstName,
       lastName: data.lastName,
-      dateOfBirth: data.dateOfBirth.toISOString(),
+      dateOfBirth: data.dateOfBirth.toLocaleDateString(),
       gender: data.gender === "male",
-      joinedDate: data.joinedDate.toISOString(),
+      joinedDate: data.joinedDate.toLocaleDateString(),
       type: data.type,
       location: data.location,
     };
@@ -44,10 +44,12 @@ const CreateUserPage = () => {
 
   return (
     <div className="mx-auto max-w-md space-y-6 p-6 text-black">
-      <h2 className="mb-6 text-2xl font-bold text-red-600">Create New Asset</h2>
-      <CreateUserForm
+      <h2 className="mb-6 text-2xl font-bold text-red-600">Create New User</h2>
+      <UserForm
         onSubmit={handleCreateUser}
-        onCancel={() => console.log("Cancelled")}
+        onCancel={() => {
+          navigate("/users");
+        }}
       />
     </div>
   );

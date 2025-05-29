@@ -27,6 +27,13 @@ export interface CreateUserRequest {
   type: string;
   location?: string;
 }
+
+export interface UpdateUserRequest {
+  dateOfBirth: string;
+  gender: boolean;
+  joinedDate: string;
+  type: string;
+}
 export interface User {
   staffCode: string;
   userName: string;

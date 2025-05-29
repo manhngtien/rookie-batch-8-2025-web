@@ -60,7 +60,7 @@ function UserManagementPage() {
   );
 
   useEffect(() => {
-    if (location.state?.newUserCreated) {
+    if (location.state?.newUserCreated || location.state?.userEdited) {
       window.history.replaceState({}, document.title, location.pathname);
       return;
     }

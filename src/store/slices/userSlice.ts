@@ -1,8 +1,12 @@
-// src/store/slices/userSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
 
 import type { User } from "@/features/users/types/User";
-import { createUser, fetchUsers } from "@/store/thunks/userThunk";
+import {
+  createUser,
+  disableUser,
+  fetchUsers,
+  updateUser,
+} from "@/store/thunks/userThunk";
 
 interface UserState {
   users: User[];
@@ -56,6 +60,37 @@ const userSlice = createSlice({
       .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
+      })
+      // Update user
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedUser = action.payload.data;
+        state.users = [
+          updatedUser,
+          ...state.users.filter(
+            (user) => user.staffCode !== updatedUser.staffCode,
+          ),
+        ];
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "An error occurred";
+      })
+      //Disable user
+      .addCase(disableUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(disableUser.fulfilled, (state) => {
+        state.loading = false;
+        state.total -= 1;
+      })
+      .addCase(disableUser.rejected, (state) => {
+        state.loading = false;
       });
   },
 });

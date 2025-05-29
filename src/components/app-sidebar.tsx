@@ -33,7 +33,7 @@ const data = {
           activePaths: [
             APP_ROUTES.users.path,
             `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
-            `${APP_ROUTES.users.path}/${APP_ROUTES.users.edit}`,
+            `${APP_ROUTES.users.path}/${APP_ROUTES.users.edit}/:staffCode`,
           ],
         },
         {
@@ -83,13 +83,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </span>
       </SidebarHeader>
       <SidebarContent>
-        {filteredNavMain.map((item) => (
-          <SidebarGroup key={item.title}>
+        {filteredNavMain.map((group) => (
+          <SidebarGroup key={group.title}>
             <SidebarGroupContent>
               <SidebarMenu className="gap-2">
-                {item.items.map((item) => {
+                {group.items.map((item) => {
                   const isActive = item.activePaths
-                    ? item.activePaths.includes(currentPath)
+                    ? item.activePaths.some((path) => {
+                        const regexPath = path.replace(/:staffCode/, "[^/]+");
+                        const regex = new RegExp(`^${regexPath}$`);
+                        return regex.test(currentPath);
+                      })
                     : currentPath === item.url;
                   return (
                     <SidebarMenuItem key={item.title}>

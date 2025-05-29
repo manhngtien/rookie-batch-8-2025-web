@@ -1,3 +1,4 @@
+// src/features/users/components/user-form.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
 import { differenceInYears, isBefore, isWeekend } from "date-fns";
 import { useEffect, useState } from "react";
@@ -50,19 +51,23 @@ const formSchema = z.object({
   location: z.string().optional(),
 });
 
-interface CreateUserFormProps {
+interface UserFormProps {
+  isEditing?: boolean;
   onSubmit: (data: z.infer<typeof formSchema>) => void;
   onCancel?: () => void;
+  defaultValues?: z.infer<typeof formSchema>;
 }
 
-export default function CreateUserForm({
+export default function UserForm({
+  isEditing,
   onSubmit,
   onCancel,
-}: CreateUserFormProps) {
+  defaultValues,
+}: UserFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: defaultValues || {
       firstName: "",
       lastName: "",
       gender: undefined,
@@ -73,6 +78,12 @@ export default function CreateUserForm({
 
   const [dobError, setDobError] = useState<string | null>(null);
   const [joinedDateError, setJoinedDateError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues, form]);
 
   const validateDates = (
     dob: Date | undefined,
@@ -167,7 +178,12 @@ export default function CreateUserForm({
               <FormLabel className="text-sm font-medium">First Name</FormLabel>
               <div className="w-full">
                 <FormControl>
-                  <Input id="first-name-input" {...field} className="w-full" />
+                  <Input
+                    id="first-name-input"
+                    {...field}
+                    className="w-full"
+                    disabled={isEditing}
+                  />
                 </FormControl>
                 {fieldState.error && (
                   <p className="mt-1 text-sm font-medium text-red-500">
@@ -187,7 +203,12 @@ export default function CreateUserForm({
               <FormLabel className="text-sm font-medium">Last Name</FormLabel>
               <div className="w-full">
                 <FormControl>
-                  <Input id="last-name-input" {...field} className="w-full" />
+                  <Input
+                    id="last-name-input"
+                    {...field}
+                    className="w-full"
+                    disabled={isEditing}
+                  />
                 </FormControl>
                 {fieldState.error && (
                   <p className="mt-1 text-sm font-medium text-red-500">
@@ -286,7 +307,10 @@ export default function CreateUserForm({
           render={({ field }) => (
             <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
               <FormLabel className="text-sm font-medium">Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value.toLowerCase() || ""}
+              >
                 <FormControl className="w-full">
                   <SelectTrigger id="user-type-select">
                     <SelectValue placeholder="Select type" />
@@ -302,7 +326,7 @@ export default function CreateUserForm({
           )}
         />
 
-        {type === "admin" && (
+        {type === "admin" && !isEditing && (
           <FormField
             control={form.control}
             name="location"
@@ -334,7 +358,7 @@ export default function CreateUserForm({
           <Button
             id="user-create-save"
             type="submit"
-            className="bg-red-600 text-white hover:bg-red-700"
+            className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
             disabled={!isFormComplete()}
           >
             Save
