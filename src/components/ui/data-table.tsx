@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type Header,
   type SortingState,
   type TableOptions,
   useReactTable,
@@ -31,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   handleRowClick?: (row: TData) => void;
   onPageChange?: (pageIndex: number) => void;
   onSortingChange?: (sort: { id: string; desc: boolean } | null) => void;
+  uniqueLastColumn?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,6 +44,7 @@ export function DataTable<TData, TValue>({
   handleRowClick,
   onPageChange,
   onSortingChange,
+  uniqueLastColumn = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(
     initialState?.sorting ?? [{ id: "fullName", desc: false }],
@@ -83,41 +86,42 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  function RenderHeaders(header: Header<TData, unknown>) {
+    return (
+      <TableHead
+        className="border p-2 text-left text-black hover:cursor-pointer"
+        key={header.id}
+      >
+        {header.isPlaceholder ? null : (
+          <div
+            className={header.column.getCanSort() ? "select-none" : ""}
+            onClick={header.column.getToggleSortingHandler()}
+            title={
+              header.column.getCanSort()
+                ? header.column.getNextSortingOrder() === "asc"
+                  ? "Sort ascending"
+                  : header.column.getNextSortingOrder() === "desc"
+                    ? "Sort descending"
+                    : "Clear sort"
+                : undefined
+            }
+          >
+            {flexRender(header.column.columnDef.header, header.getContext())}
+          </div>
+        )}
+      </TableHead>
+    );
+  }
+
   return (
     <div className="relative rounded-md">
       <Table className="text-black">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="border-none bg-gray-100">
-              {headerGroup.headers.slice(0, -1).map((header) => (
-                <TableHead
-                  className="border p-2 text-left text-black hover:cursor-pointer"
-                  key={header.id}
-                >
-                  {header.isPlaceholder ? null : (
-                    <div
-                      className={
-                        header.column.getCanSort() ? "select-none" : ""
-                      }
-                      onClick={header.column.getToggleSortingHandler()}
-                      title={
-                        header.column.getCanSort()
-                          ? header.column.getNextSortingOrder() === "asc"
-                            ? "Sort ascending"
-                            : header.column.getNextSortingOrder() === "desc"
-                              ? "Sort descending"
-                              : "Clear sort"
-                          : undefined
-                      }
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </div>
-                  )}
-                </TableHead>
-              ))}
+              {uniqueLastColumn
+                ? headerGroup.headers.slice(0, -1).map(RenderHeaders)
+                : headerGroup.headers.map(RenderHeaders)}
             </TableRow>
           ))}
         </TableHeader>
@@ -136,35 +140,53 @@ export function DataTable<TData, TValue>({
                 className="group border-none hover:cursor-pointer"
                 onClick={() => handleRowClick?.(row.original)}
               >
-                {row
-                  .getVisibleCells()
-                  .slice(0, -1)
-                  .map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="group-hover:bg-muted/50 border p-4"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                {row
-                  .getVisibleCells()
-                  .slice(-1)
-                  .map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="group-hover:white w-0 p-4 whitespace-nowrap hover:cursor-default"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                {uniqueLastColumn ? (
+                  <>
+                    {row
+                      .getVisibleCells()
+                      .slice(0, -1)
+                      .map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="group-hover:bg-muted/50 border p-4"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    {row
+                      .getVisibleCells()
+                      .slice(-1)
+                      .map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="group-hover:white w-0 p-4 whitespace-nowrap hover:cursor-default"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                  </>
+                ) : (
+                  <>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="group-hover:bg-muted/50 border p-4"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </>
+                )}
               </TableRow>
             ))
           ) : (
