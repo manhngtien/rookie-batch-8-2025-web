@@ -5,6 +5,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   type Header,
+  type RowSelectionState,
   type SortingState,
   type TableOptions,
   useReactTable,
@@ -49,6 +50,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>(
     initialState?.sorting ?? [{ id: "fullName", desc: false }],
   );
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
     data,
@@ -60,6 +62,7 @@ export function DataTable<TData, TValue>({
         pageIndex: initialState?.pagination?.pageIndex ?? 0,
         pageSize: initialState?.pagination?.pageSize ?? 20,
       },
+      rowSelection,
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -84,6 +87,8 @@ export function DataTable<TData, TValue>({
         onPageChange?.(newState.pageIndex);
       }
     },
+    onRowSelectionChange: setRowSelection,
+    enableMultiRowSelection: false,
   });
 
   function RenderHeaders(header: Header<TData, unknown>) {
@@ -138,7 +143,10 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 className="group border-none hover:cursor-pointer"
-                onClick={() => handleRowClick?.(row.original)}
+                onClick={() => {
+                  table.setRowSelection({ [row.id]: true });
+                  handleRowClick?.(row.original);
+                }}
               >
                 {uniqueLastColumn ? (
                   <>
