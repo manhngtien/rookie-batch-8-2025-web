@@ -91,7 +91,6 @@ function AssignmentManagementPage() {
 
   const handleFilterChange = (selected: string[]) => {
     setSelectedStates(selected);
-    setPage(1);
   };
 
   useEffect(() => {
