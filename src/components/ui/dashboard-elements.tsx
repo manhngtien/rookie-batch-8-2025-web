@@ -328,21 +328,14 @@ function DateSelector({
   );
 }
 
-function SearchInput({
-  value,
-  onChange,
-}: React.ComponentProps<typeof Input> & {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
+function SearchInput({ ...props }: React.ComponentProps<typeof Input>) {
   return (
-    <div className="relative w-full min-w-25 flex-1">
+    <div className={cn("relative w-full min-w-25 flex-1", props.className)}>
       <Input
         id="users-search-bar"
         className="w-full"
         placeholder="Search..."
-        value={value}
-        onChange={onChange}
+        {...props}
       />
       <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
     </div>
