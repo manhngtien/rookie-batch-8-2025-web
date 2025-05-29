@@ -82,7 +82,6 @@ const userSlice = createSlice({
       })
       //Disable user
       .addCase(disableUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(disableUser.fulfilled, (state) => {
