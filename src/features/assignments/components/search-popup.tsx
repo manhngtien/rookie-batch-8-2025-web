@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -11,45 +12,57 @@ export function SearchPopup<T>({
   data,
   total,
   loading,
-  page,
-  setPage,
-  setSort,
-  pageSize,
-  debouncedSearchTerm,
-  handleRowSelect,
+  sendPage,
+  sendSort,
+  sendPageSize,
+  sendSearchTerm,
+  onSave,
+  onCancel,
 }: {
   title: string;
   columns: ColumnDef<T>[];
   data: T[];
   total: number;
   loading: boolean;
-  page: number;
-  setPage: (value: React.SetStateAction<number>) => void;
-  setSort: (
-    value: React.SetStateAction<{
+  sendPage: (value: number) => void;
+  sendSort: (
+    value: {
       id: string;
       desc: boolean;
-    } | null>,
+    } | null,
   ) => void;
-  pageSize: number;
-  debouncedSearchTerm: (value: string) => void;
-  handleRowSelect: (row: T) => void;
+  sendPageSize: (value: number) => void;
+  sendSearchTerm: (value: string) => void;
+  onSave: (row: T | undefined) => void;
+  onCancel: () => void;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
+    id: "",
+    desc: false,
+  });
+  const [selectedRow, setSelectedRow] = useState<T | undefined>(undefined);
 
-  debouncedSearchTerm(useDebounce(searchTerm));
+  sendSearchTerm(useDebounce(searchTerm));
+  sendPage(page);
+  sendSort(sort);
+  sendPageSize(pageSize);
 
   return (
-    <div>
-      <PageTitle>{title}</PageTitle>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-4">
+        <PageTitle>{title}</PageTitle>
 
-      <SearchInput
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          setPage(1);
-        }}
-      />
+        <SearchInput
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+        />
+      </div>
 
       <DataTable
         columns={columns}
@@ -68,8 +81,26 @@ export function SearchPopup<T>({
           setSort(sort);
           setPage(1);
         }}
-        handleRowClick={handleRowSelect}
+        handleRowClick={(row) => setSelectedRow(row)}
       />
+
+      <div className="flex justify-end gap-4">
+        <Button
+          id="save-search-popup"
+          onClick={() => onSave(selectedRow)}
+          disabled={!selectedRow}
+        >
+          Save
+        </Button>
+        <Button
+          id="close-search-popup"
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 }

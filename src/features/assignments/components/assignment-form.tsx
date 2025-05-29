@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/dashboard-elements";
 import { Form, FormField } from "@/components/ui/form";
 import { OneLineFormControl } from "@/components/ui/form-controls";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import type { User } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchUsers } from "@/store/thunks/userThunk";
 
@@ -25,19 +31,16 @@ export function CreateAssignmentForm({
   onSubmit: (data: z.infer<typeof formSchema>) => void;
   onCancel?: () => void;
 }) {
-  const [selectedStaffCode, setSelectedStaffCode] = useState<string | null>(
-    null,
-  );
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
-    id: "fullName",
+    id: "",
     desc: false,
   });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [userInputOpened, setUserInputOpened] = useState(false);
 
-  const orderBy = sort
+  const usersOrderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "fullnameasc";
 
@@ -62,25 +65,46 @@ export function CreateAssignmentForm({
           page,
           pageSize,
           searchTerm,
-          orderBy,
+          orderBy: usersOrderBy,
         }),
       ).unwrap();
       console.info("Users fetched successfully", response);
     } catch (err) {
       console.error("Failed to fetch users:", err);
     }
-  }, [dispatch, orderBy, page, pageSize, searchTerm]);
+  }, [dispatch, usersOrderBy, page, pageSize, searchTerm]);
 
   function getSearchTerm(value: string) {
     setSearchTerm(value);
   }
 
-  function handleRowSelect(staffCode: string) {
-    setSelectedStaffCode(staffCode);
+  function getPage(value: number) {
+    setPage(value);
+  }
+
+  function getSort(value: { id: string; desc: boolean } | null) {
+    setSort(value);
+  }
+
+  function getPageSize(value: number) {
+    setPageSize(value);
+  }
+
+  function onUserSelect(row: User | undefined) {
+    if (row) {
+      form.setValue("staffCode", row.staffCode);
+      setUserInputOpened(false);
+    }
+  }
+
+  function onUserInputClose() {
+    setUserInputOpened(false);
   }
 
   useEffect(() => {
-    fetchUsersData();
+    if (isUserInputOpened) {
+      fetchUsersData();
+    }
   }, [fetchUsersData, isUserInputOpened]);
 
   return (
@@ -89,17 +113,39 @@ export function CreateAssignmentForm({
         <FormField
           control={form.control}
           name="staffCode"
-          render={
-            (/*{ field }*/) => (
-              <OneLineFormControl label="User">
-                <SearchInput
-                  className="cursor-pointer"
-                  readOnly
-                  onClick={() => setUserInputOpened(!userInputOpened)}
-                />
-              </OneLineFormControl>
-            )
-          }
+          render={({ field }) => (
+            <OneLineFormControl label="User">
+              <Popover
+                open={userInputOpened}
+                onOpenChange={setUserInputOpened}
+                modal
+              >
+                <PopoverTrigger asChild>
+                  <SearchInput className="cursor-pointer" readOnly {...field} />
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-2xl max-w-full"
+                  align="end"
+                  sideOffset={-55}
+                  alignOffset={-20}
+                >
+                  <SearchPopup<User>
+                    title="Select User"
+                    columns={userColumns}
+                    data={users}
+                    total={total}
+                    loading={loading}
+                    sendPage={getPage}
+                    sendSort={getSort}
+                    sendPageSize={getPageSize}
+                    sendSearchTerm={getSearchTerm}
+                    onSave={onUserSelect}
+                    onCancel={onUserInputClose}
+                  />
+                </PopoverContent>
+              </Popover>
+            </OneLineFormControl>
+          )}
         />
 
         <div className="flex justify-end gap-3 pt-4">
@@ -107,7 +153,6 @@ export function CreateAssignmentForm({
           <Button
             id="assignment-form-save"
             type="submit"
-            className="bg-red-600 text-white hover:bg-red-700"
             // disabled={!isFormComplete()}
           >
             Save
@@ -122,24 +167,6 @@ export function CreateAssignmentForm({
           </Button>
         </div>
       </form>
-
-      {userInputOpened && (
-        <SearchPopup
-          data={users}
-          debouncedSearchTerm={getSearchTerm}
-          loading={loading}
-          total={total}
-          page={page}
-          setPage={setPage}
-          setSort={setSort}
-          pageSize={pageSize}
-          title="Select User"
-          columns={userColumns(selectedStaffCode, handleRowSelect)}
-          handleRowSelect={(row) => {
-            handleRowSelect(row.staffCode);
-          }}
-        />
-      )}
     </Form>
   );
 }
