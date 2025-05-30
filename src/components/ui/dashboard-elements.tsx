@@ -332,7 +332,7 @@ function SearchInput({ ...props }: React.ComponentProps<typeof Input>) {
   return (
     <div className={cn("relative w-full min-w-25 flex-1", props.className)}>
       <Input
-        id="users-search-bar"
+        id={props.id || "search-input"}
         className="w-full"
         placeholder="Search..."
         {...props}

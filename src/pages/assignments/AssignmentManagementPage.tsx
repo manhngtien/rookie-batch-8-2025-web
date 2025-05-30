@@ -119,6 +119,7 @@ function AssignmentManagementPage() {
 
         <div className="flex w-full gap-2 md:justify-end">
           <SearchInput
+            id="assignment-search"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
