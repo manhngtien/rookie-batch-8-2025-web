@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export function SearchPopup<T>({
@@ -64,6 +65,7 @@ export function SearchPopup<T>({
         <PageTitle>{title}</PageTitle>
 
         <SearchInput
+          id="search-popup-input"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -72,26 +74,28 @@ export function SearchPopup<T>({
         />
       </div>
 
-      <DataTable
-        columns={columns}
-        data={data}
-        total={total}
-        loading={loading}
-        initialState={{
-          pagination: {
-            pageIndex: page - 1,
-            pageSize,
-          },
-        }}
-        onPageChange={(pageIndex) => setPage(pageIndex + 1)}
-        uniqueLastColumn={false}
-        onSortingChange={(sort) => {
-          setSort(sort);
-          setPage(1);
-        }}
-        handleRowClick={(row) => setLocalSelectedRow(row)}
-        initialSelectedRow={localSelectedRow}
-      />
+      <ScrollArea className="h-96">
+        <DataTable
+          columns={columns}
+          data={data}
+          total={total}
+          loading={loading}
+          initialState={{
+            pagination: {
+              pageIndex: page - 1,
+              pageSize,
+            },
+          }}
+          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+          uniqueLastColumn={false}
+          onSortingChange={(sort) => {
+            setSort(sort);
+            setPage(1);
+          }}
+          handleRowClick={(row) => setLocalSelectedRow(row)}
+          initialSelectedRow={localSelectedRow}
+        />
+      </ScrollArea>
 
       <div className="flex justify-end gap-2">
         <Button

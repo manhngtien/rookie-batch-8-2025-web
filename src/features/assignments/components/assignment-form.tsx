@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { SearchInput } from "@/components/ui/dashboard-elements";
+import { DateSelector, SearchInput } from "@/components/ui/dashboard-elements";
 import { Form, FormField } from "@/components/ui/form";
 import { OneLineFormControl } from "@/components/ui/form-controls";
 import {
@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import type { User } from "@/features/users/types/User";
 import type { AppDispatch, RootState } from "@/store";
@@ -27,8 +28,21 @@ const POPOVER_SIDE_OFFSET = -55;
 const POPOVER_ALIGN_OFFSET = -20;
 
 const formSchema = z.object({
-  staffCode: z.string().min(2),
-  assetCode: z.string().min(2),
+  staffCode: z.string().min(1, "User is required"),
+  assetCode: z.string().min(1, "Asset is required"),
+  assignedDate: z.date().refine(
+    (date) => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // set to local midnight
+      const picked = new Date(date);
+      picked.setHours(0, 0, 0, 0); // set to local midnight
+      return picked >= now;
+    },
+    {
+      message: "Date must be today or later",
+    },
+  ),
+  note: z.string().optional(),
 });
 
 export function CreateAssignmentForm({
@@ -43,6 +57,7 @@ export function CreateAssignmentForm({
     undefined,
   );
 
+  // Pagination and sorting states
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
@@ -146,6 +161,17 @@ export function CreateAssignmentForm({
     setAssetInputOpened(false);
   }
 
+  const isFormComplete = () => {
+    const values = form.getValues();
+    const requiredFields = ["staffCode", "assetCode", "assignedDate"];
+
+    const allFieldsFilled = requiredFields.every(
+      (field) => values[field as keyof typeof values],
+    );
+
+    return allFieldsFilled;
+  };
+
   useEffect(() => {
     if (isUserInputOpened) {
       fetchUsersData();
@@ -160,7 +186,10 @@ export function CreateAssignmentForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 text-black"
+      >
         <FormField
           control={form.control}
           name="staffCode"
@@ -173,8 +202,9 @@ export function CreateAssignmentForm({
               >
                 <PopoverTrigger asChild>
                   <SearchInput
+                    id="assignment-user-input"
                     value={selectedUser ? selectedUser.fullName : ""}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-left"
                     readOnly
                   />
                 </PopoverTrigger>
@@ -217,7 +247,8 @@ export function CreateAssignmentForm({
               >
                 <PopoverTrigger asChild>
                   <SearchInput
-                    className="cursor-pointer"
+                    id="assignment-asset-input"
+                    className="cursor-pointer text-left"
                     value={selectedAsset ? selectedAsset.assetName : ""}
                     readOnly
                   />
@@ -249,12 +280,42 @@ export function CreateAssignmentForm({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="assignedDate"
+          render={({ field }) => (
+            <OneLineFormControl label="Assigned Date">
+              <div className="w-full">
+                <DateSelector
+                  selectedDate={field.value}
+                  setSelectedDate={field.onChange}
+                  title=""
+                  className="w-full !max-w-full"
+                  disableFutureDates={false}
+                  defaultToToday={true}
+                />
+              </div>
+            </OneLineFormControl>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="note"
+          render={({ field }) => {
+            return (
+              <OneLineFormControl label="Note">
+                <Textarea id="assignment-notes" className="" {...field} />
+              </OneLineFormControl>
+            );
+          }}
+        />
+
         <div className="flex justify-end gap-2 pt-4">
-          {/* TODO: separate this? */}
           <Button
             id="assignment-form-save"
             type="submit"
-            // disabled={!isFormComplete()}
+            disabled={!isFormComplete()}
           >
             Save
           </Button>

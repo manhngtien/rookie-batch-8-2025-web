@@ -179,6 +179,7 @@ interface DateSelectorProps {
   title: string;
   className?: string;
   disableFutureDates?: boolean;
+  defaultToToday?: boolean;
 }
 
 function DateSelector({
@@ -187,10 +188,14 @@ function DateSelector({
   title,
   className,
   disableFutureDates = true,
+  defaultToToday = false,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
-  const years = Array.from({ length: 120 }, (_, i) => currentYear - i);
+  const years = React.useMemo(
+    () => Array.from({ length: 120 }, (_, i) => currentYear - i),
+    [currentYear],
+  );
   const months = [
     "January",
     "February",
@@ -242,6 +247,13 @@ function DateSelector({
     }
     setOpen(false);
   };
+
+  React.useEffect(() => {
+    if (defaultToToday && !selectedDate) {
+      setSelectedDate(new Date());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultToToday]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
