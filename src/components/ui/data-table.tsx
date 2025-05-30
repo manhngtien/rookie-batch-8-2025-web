@@ -10,7 +10,7 @@ import {
   type TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Table,
@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   onPageChange?: (pageIndex: number) => void;
   onSortingChange?: (sort: { id: string; desc: boolean } | null) => void;
   uniqueLastColumn?: boolean;
+  initialSelectedRow?: TData;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,6 +47,7 @@ export function DataTable<TData, TValue>({
   onPageChange,
   onSortingChange,
   uniqueLastColumn = true,
+  initialSelectedRow,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(
     initialState?.sorting ?? [{ id: "fullName", desc: false }],
@@ -90,6 +92,23 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     enableMultiRowSelection: false,
   });
+
+  // Sync initialSelectedRow to rowSelection when it changes
+  useEffect(() => {
+    if (initialSelectedRow && data.length > 0) {
+      const foundRow = data.find(
+        (row) => JSON.stringify(row) === JSON.stringify(initialSelectedRow),
+      );
+      if (foundRow) {
+        // TanStack Table row IDs are usually the index or a unique key
+        const rowIndex = data.indexOf(foundRow);
+        setRowSelection({ [rowIndex]: true });
+      }
+    } else {
+      setRowSelection({});
+    }
+    // Only run when initialSelectedRow or data changes
+  }, [initialSelectedRow, data]);
 
   function RenderHeaders(header: Header<TData, unknown>) {
     return (
