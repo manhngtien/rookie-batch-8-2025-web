@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
@@ -18,6 +18,7 @@ export function SearchPopup<T>({
   sendSearchTerm,
   onSave,
   onCancel,
+  selectedRow,
 }: {
   title: string;
   columns: ColumnDef<T>[];
@@ -35,6 +36,7 @@ export function SearchPopup<T>({
   sendSearchTerm: (value: string) => void;
   onSave: (row: T | undefined) => void;
   onCancel: () => void;
+  selectedRow?: T;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -43,12 +45,18 @@ export function SearchPopup<T>({
     id: "",
     desc: false,
   });
-  const [selectedRow, setSelectedRow] = useState<T | undefined>(undefined);
+  const [localSelectedRow, setLocalSelectedRow] = useState<T | undefined>(
+    undefined,
+  );
 
   sendSearchTerm(useDebounce(searchTerm));
   sendPage(page);
   sendSort(sort);
   sendPageSize(pageSize);
+
+  useEffect(() => {
+    setLocalSelectedRow(selectedRow);
+  }, [selectedRow]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -81,14 +89,15 @@ export function SearchPopup<T>({
           setSort(sort);
           setPage(1);
         }}
-        handleRowClick={(row) => setSelectedRow(row)}
+        handleRowClick={(row) => setLocalSelectedRow(row)}
+        initialSelectedRow={localSelectedRow}
       />
 
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-end gap-2">
         <Button
           id="save-search-popup"
-          onClick={() => onSave(selectedRow)}
-          disabled={!selectedRow}
+          onClick={() => onSave(localSelectedRow)}
+          disabled={!localSelectedRow}
         >
           Save
         </Button>

@@ -38,6 +38,11 @@ export function CreateAssignmentForm({
   onSubmit: (data: z.infer<typeof formSchema>) => void;
   onCancel?: () => void;
 }) {
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
+    undefined,
+  );
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
@@ -45,6 +50,7 @@ export function CreateAssignmentForm({
     desc: false,
   });
   const [searchTerm, setSearchTerm] = useState<string>("");
+
   const [userInputOpened, setUserInputOpened] = useState(false);
   const [assetInputOpened, setAssetInputOpened] = useState(false);
 
@@ -129,17 +135,15 @@ export function CreateAssignmentForm({
   }
 
   function onUserSelect(row: User | undefined) {
-    if (row) {
-      form.setValue("staffCode", row.staffCode);
-      setUserInputOpened(false);
-    }
+    setSelectedUser(row ?? undefined);
+    form.setValue("staffCode", row?.staffCode ?? "");
+    setUserInputOpened(false);
   }
 
   function onAssetSelect(row: Asset | undefined) {
-    if (row) {
-      form.setValue("assetCode", row.assetCode);
-      setAssetInputOpened(false);
-    }
+    setSelectedAsset(row ?? undefined);
+    form.setValue("assetCode", row?.assetCode ?? "");
+    setAssetInputOpened(false);
   }
 
   useEffect(() => {
@@ -160,7 +164,7 @@ export function CreateAssignmentForm({
         <FormField
           control={form.control}
           name="staffCode"
-          render={({ field }) => (
+          render={() => (
             <OneLineFormControl label="User">
               <Popover
                 open={userInputOpened}
@@ -168,10 +172,15 @@ export function CreateAssignmentForm({
                 modal
               >
                 <PopoverTrigger asChild>
-                  <SearchInput className="cursor-pointer" readOnly {...field} />
+                  <SearchInput
+                    value={selectedUser ? selectedUser.fullName : ""}
+                    className="cursor-pointer"
+                    readOnly
+                  />
                 </PopoverTrigger>
                 <PopoverContent
                   className="w-2xl max-w-full"
+                  side="top"
                   align="end"
                   sideOffset={POPOVER_SIDE_OFFSET}
                   alignOffset={POPOVER_ALIGN_OFFSET}
@@ -188,6 +197,7 @@ export function CreateAssignmentForm({
                     sendSearchTerm={getSearchTerm}
                     onSave={onUserSelect}
                     onCancel={() => setUserInputOpened(false)}
+                    selectedRow={selectedUser}
                   />
                 </PopoverContent>
               </Popover>
@@ -198,7 +208,7 @@ export function CreateAssignmentForm({
         <FormField
           control={form.control}
           name="assetCode"
-          render={({ field }) => (
+          render={() => (
             <OneLineFormControl label="Asset">
               <Popover
                 open={assetInputOpened}
@@ -206,10 +216,15 @@ export function CreateAssignmentForm({
                 modal
               >
                 <PopoverTrigger asChild>
-                  <SearchInput className="cursor-pointer" readOnly {...field} />
+                  <SearchInput
+                    className="cursor-pointer"
+                    value={selectedAsset ? selectedAsset.assetName : ""}
+                    readOnly
+                  />
                 </PopoverTrigger>
                 <PopoverContent
                   className="w-2xl max-w-full"
+                  side="top"
                   align="end"
                   sideOffset={POPOVER_SIDE_OFFSET}
                   alignOffset={POPOVER_ALIGN_OFFSET}
@@ -226,6 +241,7 @@ export function CreateAssignmentForm({
                     sendSearchTerm={getSearchTerm}
                     onSave={onAssetSelect}
                     onCancel={() => setAssetInputOpened(false)}
+                    selectedRow={selectedAsset}
                   />
                 </PopoverContent>
               </Popover>
@@ -233,7 +249,7 @@ export function CreateAssignmentForm({
           )}
         />
 
-        <div className="flex justify-end gap-3 pt-4">
+        <div className="flex justify-end gap-2 pt-4">
           {/* TODO: separate this? */}
           <Button
             id="assignment-form-save"
