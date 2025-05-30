@@ -342,14 +342,19 @@ function DateSelector({
 
 function SearchInput({ ...props }: React.ComponentProps<typeof Input>) {
   return (
-    <div className={cn("relative w-full min-w-25 flex-1", props.className)}>
+    <div
+      className={cn(
+        "relative w-full min-w-25 flex-1 text-black",
+        props.className,
+      )}
+    >
       <Input
         id={props.id || "search-input"}
         className="w-full"
         placeholder="Search..."
         {...props}
       />
-      <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
+      <Search className="pointer-events-none absolute top-2.5 right-3 h-4 w-4" />
     </div>
   );
 }
