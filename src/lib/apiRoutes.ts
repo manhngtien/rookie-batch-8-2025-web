@@ -15,8 +15,8 @@ export const API_ROUTES = {
   users: {
     getUsers: addApiPrefix("/Users"),
     createUser: addApiPrefix("/Users"),
-    updateUser: (userId: string) => addApiPrefix(`/Users/${userId}`),
-    deleteUser: (userId: string) => addApiPrefix(`/Users/${userId}`),
+    updateUser: (staffCode: string) => addApiPrefix(`/Users/${staffCode}`),
+    disableUser: (staffCode: string) => addApiPrefix(`/Users/${staffCode}`),
   },
   assets: {
     getAssets: addApiPrefix("/Assets"),
@@ -29,6 +29,14 @@ export const API_ROUTES = {
   },
   categories: {
     getCategories: addApiPrefix("/Categories"),
+  },
+  assignments: {
+    getAssignments: addApiPrefix("/Assignments"),
+    createAssignment: addApiPrefix("/Assignments"),
+    updateAssignment: (assignmentId: string) =>
+      addApiPrefix(`/Assignments/${assignmentId}`),
+    deleteAssignment: (assignmentId: string) =>
+      addApiPrefix(`/Assignments/${assignmentId}`),
   },
   requests: {
     getRequests: addApiPrefix("/ReturningRequest"),

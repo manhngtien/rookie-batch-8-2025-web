@@ -1,5 +1,5 @@
 import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
-import { CalendarIcon, Funnel } from "lucide-react";
+import { CalendarIcon, Funnel, Search } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { DynamicIcon } from "lucide-react/dynamic";
 import React, { useState } from "react";
@@ -15,6 +15,7 @@ import { cn, kebabCase } from "@/lib/utils";
 import { Button } from "./button";
 import { Calendar as CalendarComponent } from "./calendar";
 import { Checkbox } from "./checkbox";
+import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
   Select,
@@ -72,53 +73,75 @@ function ActionButton({
   );
 }
 
-type FilterButtonItems = {
-  title: string;
-  // checked: boolean;
-  // onCheckedChange: () => void;
-};
-
 function FilterButton({
-  filterTitle,
-  items,
-  checkedItem,
-  onCheckedItemChange,
+  label = "Filter",
+  options,
+  defaultSelected = [],
+  onChange,
+  className,
 }: React.ComponentProps<typeof Popover> & {
-  filterTitle: string;
-  items: FilterButtonItems[];
-  checkedItem: "all" | number;
-  onCheckedItemChange: (value: "all" | number) => void;
+  label?: string;
+  options: string[];
+  defaultSelected?: string[];
+  onChange: (selected: string[]) => void;
+  className?: string;
 }) {
+  const [selected, setSelected] = React.useState<string[]>(defaultSelected);
+  const [indeterminate, setIndeterminate] = React.useState(false);
+
+  const allSelected = selected.length === options.length;
+
+  React.useEffect(() => {
+    const isIndeterminate = selected.length > 0 && !allSelected;
+    setIndeterminate(isIndeterminate);
+    onChange(selected);
+  }, [allSelected, onChange, selected]);
+
+  const toggleAll = () => {
+    setSelected(allSelected ? [] : [...options]);
+  };
+
+  const toggleOption = (option: string) => {
+    setSelected((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option],
+    );
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           id="user-type-dropdown"
           variant="outline"
-          className="max-w-44 justify-between text-black hover:cursor-pointer"
+          className={cn(
+            "max-w-full flex-1 justify-between text-black hover:cursor-pointer md:max-w-44",
+            className,
+          )}
         >
-          {filterTitle}
+          {label}
           <Funnel color="black" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[180px] p-2">
+      <PopoverContent className="max-w-44 p-2" align="start">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="all"
-              checked={checkedItem === "all"}
-              onCheckedChange={() => onCheckedItemChange("all")}
+              checked={allSelected || (indeterminate && "indeterminate")}
+              onCheckedChange={toggleAll}
             />
             <label htmlFor="all">All</label>
           </div>
-          {items.map((value, idx) => (
+          {options.map((option) => (
             <div className="flex items-center space-x-2">
               <Checkbox
-                id={kebabCase(value.title) + "-sort"}
-                checked={checkedItem === idx}
-                onCheckedChange={() => onCheckedItemChange(idx)}
+                id={kebabCase(option) + "-sort"}
+                checked={selected.includes(option)}
+                onCheckedChange={() => toggleOption(option)}
               />
-              <label htmlFor={kebabCase(value.title)}>{value.title}</label>
+              <label htmlFor={kebabCase(option) + "-sort"}>{option}</label>
             </div>
           ))}
         </div>
@@ -139,7 +162,7 @@ function DetailDialog<T>({
   return (
     <Dialog open={!!selectedEntity} onOpenChange={closeModal}>
       <DialogContent className="max-w-2xl p-0 text-black">
-        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-200 p-4">
+        <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-100 p-4">
           <DialogTitle className="border-red-500 text-red-500">
             {title ?? "Detailed Information"}
           </DialogTitle>
@@ -155,6 +178,7 @@ interface DateSelectorProps {
   setSelectedDate: (date: Date | null) => void;
   title: string;
   className?: string;
+  disableFutureDates?: boolean;
 }
 
 function DateSelector({
@@ -162,6 +186,7 @@ function DateSelector({
   setSelectedDate,
   title,
   className,
+  disableFutureDates = true,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
@@ -188,7 +213,7 @@ function DateSelector({
       : new Date();
     newDate = setYear(newDate, newYear);
 
-    if (newDate > new Date()) {
+    if (disableFutureDates && newDate > new Date()) {
       newDate = new Date();
     }
 
@@ -202,7 +227,7 @@ function DateSelector({
       : new Date();
     newDate = setMonth(newDate, newMonth);
 
-    if (newDate > new Date()) {
+    if (disableFutureDates && newDate > new Date()) {
       newDate = new Date();
     }
 
@@ -210,7 +235,7 @@ function DateSelector({
   };
 
   const handleDateSelect = (date: Date | undefined) => {
-    if (date && date > new Date()) {
+    if (disableFutureDates && date && date > new Date()) {
       setSelectedDate(new Date());
     } else {
       setSelectedDate(date ?? null);
@@ -224,10 +249,13 @@ function DateSelector({
         <Button
           id={`${kebabCase(title)}-date-selector-button`}
           variant="outline"
-          className={cn("max-w-44 justify-between text-black", className)}
+          className={cn(
+            "max-w-full flex-1 justify-between text-black md:max-w-44",
+            className,
+          )}
         >
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : title}
-          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          <CalendarIcon className="ml-auto h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -289,7 +317,7 @@ function DateSelector({
             initialFocus
             month={selectedDate || new Date()}
             onMonthChange={(newMonth) => setSelectedDate(newMonth)}
-            toDate={new Date()}
+            toDate={disableFutureDates ? new Date() : undefined}
             classNames={{
               day_selected: `bg-[#2F3132] border-[#2F3132] text-white`,
             }}
@@ -300,12 +328,33 @@ function DateSelector({
   );
 }
 
+function SearchInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="relative max-w-full min-w-25 md:max-w-50">
+      <Input
+        id="users-search-bar"
+        className="max-w-full"
+        placeholder="Search..."
+        value={value}
+        onChange={onChange}
+      />
+      <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
+    </div>
+  );
+}
+
 export {
   ActionButton,
   CreateButton,
   DateSelector,
   DetailDialog,
   FilterButton,
-  type FilterButtonItems,
   PageTitle,
+  SearchInput,
 };

@@ -1,100 +1,147 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   CreateButton,
   DateSelector,
   DetailDialog,
   FilterButton,
-  type FilterButtonItems,
+  PageTitle,
+  SearchInput,
 } from "@/components/ui/dashboard-elements";
-import { PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
+import { useDebounce } from "@/hooks/useDebounce";
+import { formatStateLabel, revertStateLabel } from "@/lib/utils";
+import type { AppDispatch, RootState } from "@/store";
+import { fetchAssignments } from "@/store/thunks/assignmentThunk";
 
-// Example mock data for Assignment
-const mockAssignments: Assignment[] = [
-  {
-    id: 1,
-    state: "Accepted",
-    assignedDate: new Date("2025-05-01"),
-    assetCode: "AS001",
-    assetName: "Laptop Dell XPS 13",
-    assignedBy: "Alice Nguyen",
-    assignedTo: "Bob Tran",
-    note: "Urgent assignment",
-  },
-  {
-    id: 2,
-    state: "Waiting for Acceptance",
-    assignedDate: new Date("2025-05-10"),
-    assetCode: "AS002",
-    assetName: 'Monitor Samsung 24"',
-    assignedBy: "Charlie Le",
-    assignedTo: "Daisy Pham",
-    note: "",
-  },
-  {
-    id: 3,
-    state: "Declined",
-    assignedDate: new Date("2025-05-15"),
-    assetCode: "AS003",
-    assetName: "Keyboard Logitech K380",
-    assignedBy: "Eve Hoang",
-    assignedTo: "Frank Vu",
-    note: "User declined due to duplicate",
-  },
-];
-
-const filterItems: FilterButtonItems[] = [
-  {
-    title: "Accepted",
-  },
-  {
-    title: "Declined",
-  },
-  {
-    title: "Waiting for acceptance",
-  },
-];
+const filterItems = ["Accepted", "Declined", "Waiting for acceptance"];
 
 function AssignmentManagementPage() {
-  const [checkedItem, setCheckedItem] = useState<"all" | number>("all");
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
+    id: "assetName",
+    desc: false,
+  });
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
+
+  const { data, total, loading, error } = useSelector(
+    (state: RootState) => state.assignments,
+  );
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  // TODO: hooks??
+
+  // TODO: maybe this sort stuff could be separated
+
+  const orderBy = sort
+    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
+    : "assetnameasc";
+
+  const initialState = {
+    sorting: sort ? [sort] : [{ id: "assetName", desc: false }],
+    pagination: {
+      pageIndex: page - 1,
+      pageSize,
+    },
+  };
+
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   const handleRowClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
   };
 
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await dispatch(
+        fetchAssignments({
+          pageNumber: page,
+          pageSize,
+          assignedDate: selectedDate,
+          searchTerm: debouncedSearchTerm,
+          orderBy,
+          state: selectedStates.map(revertStateLabel),
+        }),
+      ).unwrap();
+      console.info("Assignments fetched successfully", response);
+    } catch (err) {
+      console.error("Failed to fetch assignments:", err);
+    }
+  }, [
+    debouncedSearchTerm,
+    dispatch,
+    orderBy,
+    page,
+    pageSize,
+    selectedDate,
+    selectedStates,
+  ]);
+
+  const handleFilterChange = (selected: string[]) => {
+    setSelectedStates(selected);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>Assignment List</PageTitle>
 
-      <div className="flex">
+      <div className="flex flex-col gap-2 md:flex-row">
         <div className="flex w-full gap-2">
           <FilterButton
-            filterTitle="State"
-            items={filterItems}
-            checkedItem={checkedItem}
-            onCheckedItemChange={setCheckedItem}
+            label="State"
+            options={filterItems}
+            onChange={handleFilterChange}
+            defaultSelected={selectedStates}
           />
           <DateSelector
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             title="Assigned Date"
+            disableFutureDates={false}
           />
         </div>
 
-        <CreateButton>Create new assignment</CreateButton>
+        <div className="flex w-full gap-2 md:justify-end">
+          <SearchInput
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+          />
+
+          <CreateButton>Create new assignment</CreateButton>
+        </div>
       </div>
 
+      {error && <p className="text-center text-red-600">Error: {error}</p>}
+
       <DataTable
-        total={-1}
+        total={total}
         columns={assignmentColumns}
-        data={mockAssignments}
+        data={data}
+        loading={loading}
+        initialState={initialState}
         handleRowClick={(assignment) => handleRowClick(assignment)}
+        onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+        onSortingChange={(sort) => {
+          setSort(sort);
+          setPage(1);
+        }}
       />
 
       {selectedAssignment && (
@@ -103,6 +150,7 @@ function AssignmentManagementPage() {
           closeModal={() => setSelectedAssignment(null)}
           title="Detailed Assignment Information"
         >
+          {/* TODO: maybe this could also be separated to components */}
           <div className="grid grid-cols-2 gap-4 text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>
@@ -114,10 +162,12 @@ function AssignmentManagementPage() {
             <p className="text-left">{selectedAssignment.assignedBy}</p>
             <p className="font-medium">Assigned Date:</p>
             <p className="text-left">
-              {selectedAssignment.assignedDate.toLocaleDateString()}
+              {new Date(selectedAssignment.assignedDate).toLocaleDateString()}
             </p>
             <p className="font-medium">State:</p>
-            <p className="text-left">{selectedAssignment.state}</p>
+            <p className="text-left">
+              {formatStateLabel(selectedAssignment.state)}
+            </p>
             {selectedAssignment.note && (
               <>
                 <p className="font-medium">Note:</p>

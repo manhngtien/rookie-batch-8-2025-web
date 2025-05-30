@@ -1,7 +1,14 @@
+import type { FetchParams } from "@/types";
+
+export interface FetchAssignmentsParams extends FetchParams {
+  assignedDate?: Date | null;
+  state?: string[];
+}
+
 export interface Assignment {
   id: number;
   state: string;
-  assignedDate: Date;
+  assignedDate: string;
   assetCode: string;
   assetName: string;
   assignedBy: string;

@@ -1,7 +1,8 @@
+// src/features/users/components/UserManagementPage.tsx
 import { Funnel, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,28 +17,14 @@ import {
 import { userColumns } from "@/features/users/components/user-columns";
 import UserDetailDialog from "@/features/users/components/user-detail-dialog";
 import type { User } from "@/features/users/types/User";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchUsers } from "@/store/thunks/userThunk";
-
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
 
 function UserManagementPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
   const { users, total, loading, error } = useSelector(
     (state: RootState) => state.users,
   );
@@ -61,7 +48,6 @@ function UserManagementPage() {
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "fullnameasc";
 
-  // Memoize initialState to prevent resetting table state
   const initialState = useMemo(
     () => ({
       sorting: sort ? [sort] : [{ id: "fullName", desc: false }],
@@ -74,6 +60,11 @@ function UserManagementPage() {
   );
 
   useEffect(() => {
+    if (location.state?.newUserCreated || location.state?.userEdited) {
+      window.history.replaceState({}, document.title, location.pathname);
+      return;
+    }
+
     const fetchUsersData = async () => {
       try {
         const typeParam = selectedTypes.includes("All")
@@ -95,7 +86,15 @@ function UserManagementPage() {
     };
 
     fetchUsersData();
-  }, [dispatch, page, pageSize, selectedTypes, debouncedSearchTerm, orderBy]);
+  }, [
+    dispatch,
+    page,
+    pageSize,
+    selectedTypes,
+    debouncedSearchTerm,
+    orderBy,
+    location.state,
+  ]);
 
   const handleRowClick = (user: User) => {
     setSelectedUser(user);

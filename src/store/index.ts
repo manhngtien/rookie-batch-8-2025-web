@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import assetReducer from "@/store/slices/assetSlice";
+import assignmentReducer from "@/store/slices/assignmentSlice";
 import authReducer from "@/store/slices/authSlice";
 import categoryReducer from "@/store/slices/categorySlice";
 import requestReducer from "@/store/slices/requestSlice";
@@ -12,6 +13,7 @@ const store = configureStore({
     users: userReducer,
     assets: assetReducer,
     requests: requestReducer,
+    assignments: assignmentReducer,
     categories: categoryReducer,
   },
 });

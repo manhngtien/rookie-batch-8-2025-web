@@ -1,4 +1,3 @@
-// src/routes/AppRoute.tsx
 import { createBrowserRouter } from "react-router";
 
 import Layout from "@/components/layout";
@@ -11,6 +10,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
 import RequestPage from "@/pages/requests/RequestPage";
 import CreateUserPage from "@/pages/users/CreateUserPage";
+import EditUserPage from "@/pages/users/EditUserPage";
 import UserManagementPage from "@/pages/users/UserMangementPage";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -33,6 +33,10 @@ export const router = createBrowserRouter([
           {
             path: `${APP_ROUTES.users.path}/${APP_ROUTES.users.create}`,
             element: <CreateUserPage />,
+          },
+          {
+            path: `${APP_ROUTES.users.path}/${APP_ROUTES.users.edit}/:staffCode`,
+            element: <EditUserPage />,
           },
           // Assets
           {

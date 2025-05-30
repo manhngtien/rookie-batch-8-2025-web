@@ -17,6 +17,23 @@ export interface FetchUsersParams {
   searchTerm?: string;
   orderBy?: string;
 }
+
+export interface CreateUserRequest {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: boolean;
+  joinedDate: string;
+  type: string;
+  location?: string;
+}
+
+export interface UpdateUserRequest {
+  dateOfBirth: string;
+  gender: boolean;
+  joinedDate: string;
+  type: string;
+}
 export interface User {
   staffCode: string;
   userName: string;

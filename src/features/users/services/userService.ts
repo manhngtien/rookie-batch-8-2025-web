@@ -1,7 +1,9 @@
 import type {
+  CreateUserRequest,
   FetchUsersParams,
   FetchUsersResponse,
   PaginationHeader,
+  UpdateUserRequest,
   User,
 } from "@/features/users/types/User";
 import { API_ROUTES } from "@/lib/apiRoutes";
@@ -46,12 +48,52 @@ const userService = {
     };
   },
 
-  createUser: async (user: User): Promise<{ data: User }> => {
+  createUser: async (user: CreateUserRequest): Promise<{ data: User }> => {
+    const formData = new FormData();
+    formData.append("firstName", user.firstName);
+    formData.append("lastName", user.lastName);
+    formData.append("dateOfBirth", user.dateOfBirth);
+    formData.append("gender", user.gender.toString());
+    formData.append("joinedDate", user.joinedDate);
+    formData.append("type", user.type);
+    if (user.location) {
+      formData.append("location", user.location);
+    }
+
     const response = await apiClient.post<User>(
       API_ROUTES.users.createUser,
-      user,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
     );
     return response;
+  },
+
+  updateUser: async (
+    staffCode: string,
+    user: UpdateUserRequest,
+  ): Promise<{ data: User }> => {
+    const formData = new FormData();
+
+    formData.append("dateOfBirth", user.dateOfBirth);
+    formData.append("gender", user.gender.toString());
+    formData.append("joinedDate", user.joinedDate);
+    formData.append("type", user.type);
+    const updateEnpoint = API_ROUTES.users.updateUser(staffCode);
+    const response = await apiClient.put<User>(updateEnpoint, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response;
+  },
+
+  disableUser: async (staffCode: string): Promise<void> => {
+    const disableEndpoint = API_ROUTES.users.disableUser(staffCode);
+    await apiClient.delete(disableEndpoint);
   },
 };
 

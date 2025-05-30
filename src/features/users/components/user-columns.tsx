@@ -1,8 +1,11 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import type { ColumnDef } from "@tanstack/react-table";
+import { useNavigate } from "react-router";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { User } from "@/features/users/types/User";
+import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatDate } from "@/utils/helpers";
 
 export const userColumns: ColumnDef<User>[] = [
@@ -43,13 +46,18 @@ export const userColumns: ColumnDef<User>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const navigate = useNavigate();
+      const user = row.original;
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="pencil"
             onClick={(e) => {
               e.stopPropagation();
+              navigate(
+                `${APP_ROUTES.users.path}/${APP_ROUTES.users.edit}/${user.staffCode}`,
+              );
             }}
           />
           <ActionButton
