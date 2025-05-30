@@ -6,12 +6,27 @@ export interface Asset {
   assetCode: string;
   assetName: string;
   specification: string;
-  type: number;
   location: number;
-  installedDate: Date;
+  installedDate: string;
   category: Category;
   state: string;
   assignments: Assignment[];
+}
+
+export interface AssetCreate {
+  assetName: string;
+  specification: string;
+  location: number;
+  installedDate: Date;
+  category_id: number;
+  state: string;
+}
+
+export interface AssetUpdate {
+  assetName: string;
+  specification: string;
+  installedDate: string;
+  state: string;
 }
 
 export interface PaginationHeader {
