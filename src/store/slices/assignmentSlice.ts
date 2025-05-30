@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import { addThunkCases } from "@/utils/addThunkCases";
 
-import { fetchAssignments } from "../thunks/assignmentThunk";
+import { createAssignment, fetchAssignments } from "../thunks/assignmentThunk";
 
 interface AssignmentState {
   data: Assignment[];
@@ -30,6 +30,7 @@ const assignmentSlice = createSlice({
   },
   extraReducers: (builder) => {
     addThunkCases(builder, fetchAssignments);
+    addThunkCases(builder, createAssignment);
   },
 });
 

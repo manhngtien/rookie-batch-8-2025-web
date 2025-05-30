@@ -27,7 +27,8 @@ import { userSelectColumns } from "./user-select-columns";
 const POPOVER_SIDE_OFFSET = -55;
 const POPOVER_ALIGN_OFFSET = -20;
 
-const formSchema = z.object({
+// eslint-disable-next-line react-refresh/only-export-components
+export const assignmentFormSchema = z.object({
   staffCode: z.string().min(1, "User is required"),
   assetCode: z.string().min(1, "Asset is required"),
   assignedDate: z.date().refine(
@@ -49,7 +50,7 @@ export function CreateAssignmentForm({
   onSubmit,
   onCancel,
 }: {
-  onSubmit: (data: z.infer<typeof formSchema>) => void;
+  onSubmit: (data: z.infer<typeof assignmentFormSchema>) => void;
   onCancel?: () => void;
 }) {
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
@@ -93,8 +94,8 @@ export function CreateAssignmentForm({
     // error: assetsError,
   } = useSelector((state: RootState) => state.assets);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof assignmentFormSchema>>({
+    resolver: zodResolver(assignmentFormSchema),
     defaultValues: {
       staffCode: "",
       assetCode: "",
