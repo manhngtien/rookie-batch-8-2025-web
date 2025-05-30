@@ -35,7 +35,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="font-medium">Asset Name:</p>
               <p className="text-left">{selectedAsset.assetName}</p>
               <p className="font-medium">Category:</p>
-              <p className="text-left">{selectedAsset.category.categoryName}</p>
+              <p className="text-left">{selectedAsset.category.name}</p>
               <p className="font-medium">Installed Date:</p>
               <p className="text-left">
                 {formatDate(selectedAsset.installedDate)}
