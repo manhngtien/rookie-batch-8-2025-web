@@ -73,7 +73,7 @@ export const updateUser = createAsyncThunk<
 
 export const disableUser = createAsyncThunk<
   void,
-  { userId: string }, // Adjust the payload type based on your API
+  { userId: string },
   { rejectValue: { code?: number; message?: string } }
 >("auth/disableUser", async ({ userId }, { rejectWithValue }) => {
   try {

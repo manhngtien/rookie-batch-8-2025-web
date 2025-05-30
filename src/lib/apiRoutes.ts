@@ -28,7 +28,7 @@ export const API_ROUTES = {
     deleteAsset: (assetCode: string) => addApiPrefix(`/Assets/${assetCode}`),
   },
   categories: {
-    getCategories: addApiPrefix("/AssetCategories"),
+    getCategories: addApiPrefix("/Categories"),
   },
   assignments: {
     getAssignments: addApiPrefix("/Assignments"),

@@ -37,7 +37,9 @@ function DisableUserDialog({
             setError("User not found.");
             break;
           case 1006:
-            setError("User has active assignments and cannot be disabled.");
+            setError(
+              "There are valid assignments belonging to this user. Please close all assignments before disabling user.",
+            );
             break;
           default:
             setError("Failed to disable user. Please try again.");
@@ -48,37 +50,49 @@ function DisableUserDialog({
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setError(null);
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-w-md p-0 text-black"
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-200 p-4">
-          <DialogTitle className="text-red-500">Are you sure?</DialogTitle>
+          <DialogTitle className="text-red-500">
+            {error != null ? "Can not disable user" : "Are you sure?"}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 px-8 pb-4">
-          <p className="text-sm">Do you want to disable this user?</p>
-          <div className="flex justify-start gap-2">
-            <Button
-              id="confirm-disable-button"
-              type="button"
-              className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
-              onClick={handleConfirm}
-            >
-              Disable
-            </Button>
-            <Button
-              id="cancel-disable-button"
-              type="button"
-              variant="outline"
-              className="hover:cursor-pointer"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-          </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          <p className="text-sm">
+            {error != null ? error : "Do you want to disable this user?"}
+          </p>
+          {error == null && (
+            <div className="flex justify-start gap-2">
+              <Button
+                id="confirm-disable-button"
+                type="button"
+                className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
+                onClick={handleConfirm}
+              >
+                Disable
+              </Button>
+              <Button
+                id="cancel-disable-button"
+                type="button"
+                variant="outline"
+                className="hover:cursor-pointer"
+                onClick={() => handleOpenChange(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

@@ -18,23 +18,21 @@ import AssetDetailDialog from "@/features/asset-management/components/asset-deta
 import type { Asset } from "@/features/asset-management/types/Asset";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
+import { fetchCategories } from "@/store/thunks/categoryThunk";
 
 function AssetManagementPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { assets, total, loading, error } = useSelector(
     (state: RootState) => state.assets,
   );
-
-  const allStates = [
-    "All",
-    "Available",
-    "Not_Available",
-    "Assigned",
-    "Waiting_For_Recycling",
-    "Recycled",
-  ];
-
-  const allCategories = ["Electronics", "Furniture"];
+  const categories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
+  const allCategories = categories.map((category) => category.name);
+  console.info("All categories:", allCategories);
+  const shouldRefetch = useSelector(
+    (state: RootState) => state.assets.shouldRefetch,
+  );
 
   const [selectedStates, setSelectedStates] = useState<string[]>(["All"]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -43,6 +41,14 @@ function AssetManagementPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
+  const allStates = [
+    "All",
+    "Available",
+    "Not_Available",
+    "Assigned",
+    "Waiting_For_Recycling",
+    "Recycled",
+  ];
 
   const navigate = useNavigate();
 
@@ -82,27 +88,37 @@ function AssetManagementPage() {
   }
 
   useEffect(() => {
+    const fetchCategoriesData = async () => {
+      try {
+        const response = await dispatch(fetchCategories()).unwrap();
+        console.info("Categories fetched successfully", response);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
     const fetchAssetsData = async () => {
       try {
-        const response = await dispatch(
-          fetchAssetsByParams({
-            orderBy,
-            searchTerm: debouncedSearchTerm,
-            category: selectedCategory,
-            state:
-              selectedStates.length > 0 && !selectedStates.includes("All")
-                ? selectedStates.join(",")
-                : undefined,
-            pageNumber: page,
-            pageSize,
-          }),
-        ).unwrap();
-        console.info("Users fetched successfully", response);
+        if (shouldRefetch) {
+          const response = await dispatch(
+            fetchAssetsByParams({
+              orderBy,
+              searchTerm: debouncedSearchTerm,
+              category: selectedCategory,
+              state:
+                selectedStates.length > 0 && !selectedStates.includes("All")
+                  ? selectedStates.join(",")
+                  : undefined,
+              pageNumber: page,
+              pageSize,
+            }),
+          ).unwrap();
+          console.info("Users fetched successfully", response);
+        }
       } catch (err) {
         console.error("Failed to fetch users:", err);
       }
     };
-
+    fetchCategoriesData();
     fetchAssetsData();
   }, [
     dispatch,
@@ -112,6 +128,7 @@ function AssetManagementPage() {
     orderBy,
     selectedCategory,
     selectedStates,
+    shouldRefetch,
   ]);
 
   const handleRowClick = (asset: Asset) => {
