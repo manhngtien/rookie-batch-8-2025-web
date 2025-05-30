@@ -29,7 +29,6 @@ function DisableUserDialog({
     if (!user) return;
     try {
       await dispatch(disableUser({ userId: user.staffCode })).unwrap();
-      // No need to call setError(null) here; handled by handleOpenChange
       onOpenChange(false);
     } catch (err: unknown) {
       if (err && typeof err === "object" && "code" in err) {

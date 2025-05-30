@@ -1,4 +1,3 @@
-// src/features/users/components/UserManagementPage.tsx
 import { Funnel, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,28 +18,32 @@ import UserDetailDialog from "@/features/users/components/user-detail-dialog";
 import type { User } from "@/features/users/types/User";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { AppDispatch, RootState } from "@/store";
+import { clearLastAction } from "@/store/slices/userSlice";
 import { fetchUsers } from "@/store/thunks/userThunk";
 
 function UserManagementPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  const { users, total, loading, error } = useSelector(
+  const { users, total, loading, error, lastAction } = useSelector(
     (state: RootState) => state.users,
   );
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([
-    "All",
-    "Admin",
-    "Staff",
-  ]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [page, setPage] = useState(1);
+
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    location.state?.selectedTypes ?? ["All", "Admin", "Staff"],
+  );
+  const [searchTerm, setSearchTerm] = useState<string>(
+    location.state?.searchTerm ?? "",
+  );
+  const [page, setPage] = useState<number>(location.state?.page ?? 1);
   const [pageSize] = useState(20);
-  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
-    id: "fullName",
-    desc: false,
-  });
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>(
+    location.state?.sort ?? { id: "fullName", desc: false },
+  );
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [shouldFetch, setShouldFetch] = useState<boolean>(
+    !(location.state?.newUserCreated ?? location.state?.userEdited),
+  );
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -60,13 +63,26 @@ function UserManagementPage() {
   );
 
   useEffect(() => {
+    if (lastAction === "disableUserSuccess") {
+      console.info("User disabled successfully trong page dm");
+      setShouldFetch(true);
+      dispatch(clearLastAction());
+    }
+  }, [lastAction, dispatch]);
+
+  useEffect(() => {
     if (location.state?.newUserCreated || location.state?.userEdited) {
       window.history.replaceState({}, document.title, location.pathname);
+    }
+
+    if (!shouldFetch) {
+      console.info("Skipping fetch due to shouldFetch being false");
       return;
     }
 
     const fetchUsersData = async () => {
       try {
+        console.info("fetching di dmm");
         const typeParam = selectedTypes.includes("All")
           ? undefined
           : selectedTypes;
@@ -82,6 +98,8 @@ function UserManagementPage() {
         console.info("Users fetched successfully", response);
       } catch (err) {
         console.error("Failed to fetch users:", err);
+      } finally {
+        setShouldFetch(false);
       }
     };
 
@@ -93,7 +111,7 @@ function UserManagementPage() {
     selectedTypes,
     debouncedSearchTerm,
     orderBy,
-    location.state,
+    shouldFetch,
   ]);
 
   const handleRowClick = (user: User) => {
@@ -124,6 +142,32 @@ function UserManagementPage() {
       return newTypes;
     });
     setPage(1);
+    setShouldFetch(true);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setPage(1);
+    setShouldFetch(true);
+  };
+
+  const handlePageChange = (pageIndex: number) => {
+    setPage(pageIndex + 1);
+    setShouldFetch(true);
+  };
+
+  const handleSortingChange = (
+    newSort: { id: string; desc: boolean } | null,
+  ) => {
+    setSort(newSort);
+    setPage(1);
+    setShouldFetch(true);
+  };
+
+  const handleNavigateToCreate = () => {
+    navigate("/users/create-user", {
+      state: { selectedTypes, searchTerm, page, sort },
+    });
   };
 
   return (
@@ -179,18 +223,13 @@ function UserManagementPage() {
               className=""
               placeholder="Search..."
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
             <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
           </div>
           <Button
             id="create-new-user-button"
-            onClick={() => {
-              navigate("/users/create-user");
-            }}
+            onClick={handleNavigateToCreate}
             className="bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
           >
             Create new user
@@ -206,11 +245,8 @@ function UserManagementPage() {
         loading={loading}
         handleRowClick={(user) => handleRowClick(user)}
         initialState={initialState}
-        onPageChange={(pageIndex) => setPage(pageIndex + 1)}
-        onSortingChange={(sort) => {
-          setSort(sort);
-          setPage(1);
-        }}
+        onPageChange={handlePageChange}
+        onSortingChange={handleSortingChange}
       />
 
       {selectedUser && (
