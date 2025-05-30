@@ -34,8 +34,8 @@ export const fetchAssignments = createAppThunk<
 
 export const createAssignment = createAppThunk<
   CreateAssignmentRequest,
-  { data: Assignment[]; total: number } // <- "total" is a workaround. TODO: fix on addThunkCases
+  { data: Assignment }
 >("assignments/create", async (assignment) => {
   const response = await assignmentService.createAssignment(assignment);
-  return { data: response.data, total: 1 };
+  return response;
 });

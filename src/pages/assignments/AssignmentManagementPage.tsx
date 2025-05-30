@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 import {
   CreateButton,
@@ -22,6 +22,11 @@ import { fetchAssignments } from "@/store/thunks/assignmentThunk";
 const filterItems = ["Accepted", "Declined", "Waiting for acceptance"];
 
 function AssignmentManagementPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -38,12 +43,8 @@ function AssignmentManagementPage() {
     (state: RootState) => state.assignments,
   );
 
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  // TODO: hooks??
-
-  // TODO: maybe this sort stuff could be separated
+  const newAssignmentCreated = location.state?.newAssignmentCreated;
+  const hasHandledNewAssignment = useRef(false);
 
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
@@ -94,8 +95,19 @@ function AssignmentManagementPage() {
   };
 
   useEffect(() => {
+    if (newAssignmentCreated && !hasHandledNewAssignment.current) {
+      hasHandledNewAssignment.current = true;
+      navigate(location.pathname, { replace: true });
+      return;
+    }
+
+    if (hasHandledNewAssignment.current) {
+      hasHandledNewAssignment.current = false;
+      return;
+    }
+
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, location.pathname, navigate, newAssignmentCreated]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -161,7 +173,6 @@ function AssignmentManagementPage() {
           closeModal={() => setSelectedAssignment(null)}
           title="Detailed Assignment Information"
         >
-          {/* TODO: maybe this could also be separated to components */}
           <div className="grid grid-cols-2 gap-4 text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>
