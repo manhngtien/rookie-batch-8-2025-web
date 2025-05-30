@@ -60,21 +60,21 @@ export function SearchPopup<T>({
   }, [selectedRow]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
-        <PageTitle>{title}</PageTitle>
+    <ScrollArea className="h-[calc(100vh-15rem)]">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-4">
+          <PageTitle>{title}</PageTitle>
 
-        <SearchInput
-          id="search-popup-input"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(1);
-          }}
-        />
-      </div>
+          <SearchInput
+            id="search-popup-input"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
 
-      <ScrollArea className="h-96">
         <DataTable
           columns={columns}
           data={data}
@@ -95,25 +95,25 @@ export function SearchPopup<T>({
           handleRowClick={(row) => setLocalSelectedRow(row)}
           initialSelectedRow={localSelectedRow}
         />
-      </ScrollArea>
 
-      <div className="flex justify-end gap-2">
-        <Button
-          id="save-search-popup"
-          onClick={() => onSave(localSelectedRow)}
-          disabled={!localSelectedRow}
-        >
-          Save
-        </Button>
-        <Button
-          id="close-search-popup"
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-        >
-          Cancel
-        </Button>
+        <div className="flex justify-end gap-2">
+          <Button
+            id="save-search-popup"
+            onClick={() => onSave(localSelectedRow)}
+            disabled={!localSelectedRow}
+          >
+            Save
+          </Button>
+          <Button
+            id="close-search-popup"
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 }
