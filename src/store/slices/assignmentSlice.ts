@@ -30,7 +30,22 @@ const assignmentSlice = createSlice({
   },
   extraReducers: (builder) => {
     addThunkCases(builder, fetchAssignments);
-    addThunkCases(builder, createAssignment);
+
+    // Create assignment, added as a separate case from the one above
+    // TODO: Separate this?
+    builder
+      .addCase(createAssignment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createAssignment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = [action.payload.data, ...state.data];
+      })
+      .addCase(createAssignment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) ?? "An unknown error occurred";
+      });
   },
 });
 

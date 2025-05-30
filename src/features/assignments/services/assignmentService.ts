@@ -1,6 +1,7 @@
 import type { AxiosResponseHeaders } from "axios";
 
 import { API_ROUTES } from "@/lib/apiRoutes";
+import { toLocalISOString } from "@/lib/utils";
 import apiClient from "@/services/apiClient";
 import type { FetchResponse } from "@/types";
 import { getPaginationHeader } from "@/utils/helpers";
@@ -45,18 +46,15 @@ export const assignmentService = {
 
   createAssignment: async (
     assignment: CreateAssignmentRequest,
-  ): Promise<{ data: Assignment[] }> => {
+  ): Promise<{ data: Assignment }> => {
     const formData = new FormData();
 
     formData.append("staffCode", assignment.staffCode);
     formData.append("assetCode", assignment.assetCode);
-    formData.append(
-      "assignedDate",
-      assignment.assignedDate.toLocaleTimeString(),
-    );
+    formData.append("assignedDate", toLocalISOString(assignment.assignedDate));
     formData.append("note", assignment.note || "");
 
-    const response = await apiClient.post<Assignment[]>(
+    const response = await apiClient.post<Assignment>(
       API_ROUTES.assignments.createAssignment,
       formData,
       {

@@ -14,6 +14,7 @@ import { createAssignment } from "@/store/thunks/assignmentThunk";
 export default function CreateAssignmentPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
   const { loading, error } = useSelector(
     (state: RootState) => state.assignments,
   );
