@@ -2,7 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
 
 import assetService from "@/features/asset-management/services/assetService";
-import type { Asset } from "@/features/asset-management/types/Asset";
+import type {
+  Asset,
+  AssetUpdate,
+} from "@/features/asset-management/types/Asset";
 import type { AssetParams } from "@/features/asset-management/types/AssetParams";
 
 export const fetchAssets = createAsyncThunk<
@@ -45,12 +48,12 @@ export const fetchAssetsByParams = createAsyncThunk<
 });
 
 export const createAsset = createAsyncThunk<
-  string,
   Asset,
+  FormData,
   { rejectValue: string }
->("assets/createAsset", async (asset, { rejectWithValue }) => {
+>("assets/createAsset", async (formData, { rejectWithValue }) => {
   try {
-    const response = await assetService.createAsset(asset);
+    const response = await assetService.createAsset(formData);
     console.info("Asset created successfully:", response);
     return response.data;
   } catch (error: unknown) {
@@ -60,3 +63,40 @@ export const createAsset = createAsyncThunk<
     return rejectWithValue("An unexpected error occurred");
   }
 });
+
+export const fetchAssetById = createAsyncThunk<
+  Asset,
+  string,
+  { rejectValue: string }
+>("assets/fetchAssetById", async (assetCode, { rejectWithValue }) => {
+  try {
+    const response = await assetService.getAssetByCode(assetCode);
+    console.info("Asset fetched successfully:", response);
+    return response.data;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(error.message || "Failed to fetch asset by ID");
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});
+
+export const updateAssetById = createAsyncThunk<
+  Asset,
+  { assetCode: string; assetUpdate: AssetUpdate },
+  { rejectValue: string }
+>(
+  "assets/updateAssetById",
+  async ({ assetCode, assetUpdate }, { rejectWithValue }) => {
+    try {
+      const response = await assetService.updateAsset(assetCode, assetUpdate);
+      console.info("Asset updated successfully:", response);
+      return response.data;
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(error.message || "Failed to fetch asset by ID");
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

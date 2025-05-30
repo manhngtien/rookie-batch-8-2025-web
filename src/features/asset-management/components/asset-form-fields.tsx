@@ -20,12 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type { Category } from "@/features/asset-management/types/Category";
 import type { formSchema } from "@/pages/asset-management/CreateNewAssetPage";
-
-interface Category {
-  value: string;
-  label: string;
-}
 
 interface AssetFormFieldsProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -57,18 +53,20 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
 
     const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
 
-    if (categories.some((c) => c.value === formatted)) {
+    if (categories.some((c) => c.name === formatted)) {
       form.setError("category", { message: "Category already exists" });
       return;
     }
 
-    const newCategory = {
-      value: formatted,
-      label: newCategoryName.trim(),
+    const newCategory: Category = {
+      id: null,
+      prefix: formatted,
+      name: formatted,
+      total: null,
     };
 
     setCategories((prev) => [...prev, newCategory]);
-    form.setValue("category", newCategory.value);
+    form.setValue("category", newCategory.name);
     setNewCategoryName("");
     setIsAddingCategory(false);
     setIsDropdownOpen(true);
@@ -81,6 +79,15 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
     form.clearErrors("category");
   };
 
+  const handleCategorySelect = (
+    categoryName: string,
+    form: UseFormReturn<z.infer<typeof formSchema>>,
+  ) => {
+    const selectedCategory = categories.find(
+      (cat) => cat.name === categoryName,
+    );
+    form.setValue("category_id", selectedCategory?.id || 0);
+  };
   return (
     <>
       {/* Name */}
@@ -99,7 +106,18 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
           </FormItem>
         )}
       />
-
+      {/* Category ID */}
+      <FormField
+        control={form.control}
+        name="category_id"
+        render={({ field }) => (
+          <FormItem className="hidden">
+            <FormControl>
+              <Input id="category-id" {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
       {/* Category */}
       <FormField
         control={form.control}
@@ -121,8 +139,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                     className="w-full justify-between text-left"
                   >
                     {field.value
-                      ? categories.find((cat) => cat.value === field.value)
-                          ?.label
+                      ? categories.find((cat) => cat.name === field.value)?.name
                       : "Select a category"}
                   </Button>
                 </FormControl>
@@ -130,13 +147,14 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
               <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[calc(100%-120px-1rem)]">
                 {categories.map((cat) => (
                   <DropdownMenuItem
-                    key={cat.value}
+                    key={cat.name}
                     onSelect={() => {
-                      field.onChange(cat.value);
+                      handleCategorySelect(cat.name, form);
+                      field.onChange(cat.name);
                       setIsDropdownOpen(false);
                     }}
                   >
-                    {cat.label}
+                    {cat.name}
                   </DropdownMenuItem>
                 ))}
                 {!isAddingCategory && (
@@ -146,7 +164,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                       setIsAddingCategory(true);
                       setIsDropdownOpen(true);
                     }}
-                    className="text-sm select-none"
+                    className="text-foreground text-sm select-none"
                   >
                     + Add new category
                   </DropdownMenuItem>
@@ -252,7 +270,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="not-available" id="not-available" />
+                  <RadioGroupItem value="not_available" id="not_available" />
                   <Label htmlFor="not-available" className="text-sm">
                     Not available
                   </Label>
