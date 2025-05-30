@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { Asset } from "@/features/asset-management/types/Asset";
+import { useAssetDeleteDialog } from "@/hooks/useAssetDeleteDialog";
 import { APP_ROUTES } from "@/lib/appRoutes";
 
 export const assetColumns: ColumnDef<Asset>[] = [
@@ -38,6 +39,8 @@ export const assetColumns: ColumnDef<Asset>[] = [
     cell: ({ row }: { row: { original: Asset } }) => {
       const asset = row.original;
       const navigate = useNavigate();
+
+      const { openAssetDeleteDialog } = useAssetDeleteDialog();
       return (
         <div className="-my-4 flex">
           <ActionButton
@@ -50,8 +53,10 @@ export const assetColumns: ColumnDef<Asset>[] = [
           <ActionButton
             iconName="circle-x"
             className="text-foreground"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
+              e.stopPropagation();
+              openAssetDeleteDialog(asset); // ✅ triggers dialog
             }}
           />
         </div>
