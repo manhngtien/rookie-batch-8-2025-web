@@ -39,6 +39,6 @@ export const API_ROUTES = {
       addApiPrefix(`/Assignments/${assignmentId}`),
   },
   requests: {
-    getRequests: addApiPrefix("/ReturningRequest"),
+    getRequests: addApiPrefix("/ReturningRequests"),
   },
 };
