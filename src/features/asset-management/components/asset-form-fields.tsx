@@ -53,7 +53,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
 
     const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
 
-    if (categories.some((c) => c.name === formatted)) {
+    if (categories.some((c) => c.categoryName === formatted)) {
       form.setError("category", { message: "Category already exists" });
       return;
     }
@@ -61,12 +61,12 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
     const newCategory: Category = {
       id: null,
       prefix: formatted,
-      name: formatted,
+      categoryName: formatted,
       total: null,
     };
 
     setCategories((prev) => [...prev, newCategory]);
-    form.setValue("category", newCategory.name);
+    form.setValue("category", newCategory.categoryName);
     setNewCategoryName("");
     setIsAddingCategory(false);
     setIsDropdownOpen(true);
@@ -84,7 +84,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
     form: UseFormReturn<z.infer<typeof formSchema>>,
   ) => {
     const selectedCategory = categories.find(
-      (cat) => cat.name === categoryName,
+      (cat) => cat.categoryName === categoryName,
     );
     form.setValue("category_id", selectedCategory?.id || 0);
   };
@@ -139,7 +139,9 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                     className="w-full justify-between text-left"
                   >
                     {field.value
-                      ? categories.find((cat) => cat.name === field.value)?.name
+                      ? categories.find(
+                          (cat) => cat.categoryName === field.value,
+                        )?.categoryName
                       : "Select a category"}
                   </Button>
                 </FormControl>
@@ -147,14 +149,14 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
               <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[calc(100%-120px-1rem)]">
                 {categories.map((cat) => (
                   <DropdownMenuItem
-                    key={cat.name}
+                    key={cat.categoryName}
                     onSelect={() => {
-                      handleCategorySelect(cat.name, form);
-                      field.onChange(cat.name);
+                      handleCategorySelect(cat.categoryName, form);
+                      field.onChange(cat.categoryName);
                       setIsDropdownOpen(false);
                     }}
                   >
-                    {cat.name}
+                    {cat.categoryName}
                   </DropdownMenuItem>
                 ))}
                 {!isAddingCategory && (
