@@ -47,6 +47,7 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
 
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryPrefix, setNewCategoryPrefix] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -108,7 +109,7 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
       <form
         id="create-asset-form"
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="mx-auto max-w-md space-y-6 p-6 text-black"
+        className="mx-auto max-w-lg space-y-6 p-6 text-black"
       >
         <h2 className="mb-6 text-2xl font-bold text-red-600">
           Create New Asset
@@ -120,7 +121,9 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}
           newCategoryName={newCategoryName}
+          newCategoryPrefix={newCategoryPrefix}
           setNewCategoryName={setNewCategoryName}
+          setNewCategoryPrefix={setNewCategoryPrefix}
           isDropdownOpen={isDropdownOpen}
           setIsDropdownOpen={setIsDropdownOpen}
         />

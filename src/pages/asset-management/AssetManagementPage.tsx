@@ -14,9 +14,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { assetColumns } from "@/features/asset-management/components/asset-columns";
+import AssetDeleteDialog from "@/features/asset-management/components/asset-delete-dialog";
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
+import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
 import type { AppDispatch, RootState } from "@/store";
+import { setShouldRefetch } from "@/store/slices/assetSlice";
 import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
 
@@ -33,9 +36,10 @@ function AssetManagementPage() {
   const shouldRefetch = useSelector(
     (state: RootState) => state.assets.shouldRefetch,
   );
-
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [assetToDelete, setAssetToDelete] = useState<Asset | null>(null);
   const [selectedStates, setSelectedStates] = useState<string[]>(["All"]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedAsset, setSelectedAsset] = React.useState<Asset | null>(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -71,6 +75,11 @@ function AssetManagementPage() {
     [sort, page, pageSize],
   );
 
+  const openAssetDeleteDialog = (asset: Asset) => {
+    setAssetToDelete(asset);
+    setDeleteDialogOpen(true);
+  };
+
   function useDebounce<T>(value: T, delay: number): T {
     const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -103,7 +112,11 @@ function AssetManagementPage() {
             fetchAssetsByParams({
               orderBy,
               searchTerm: debouncedSearchTerm,
-              category: selectedCategory,
+              category:
+                selectedCategories.length > 0 &&
+                !selectedCategories.includes("All")
+                  ? selectedCategories.join(",")
+                  : undefined,
               state:
                 selectedStates.length > 0 && !selectedStates.includes("All")
                   ? selectedStates.join(",")
@@ -126,7 +139,7 @@ function AssetManagementPage() {
     pageSize,
     debouncedSearchTerm,
     orderBy,
-    selectedCategory,
+    selectedCategories,
     selectedStates,
     shouldRefetch,
   ]);
@@ -136,15 +149,30 @@ function AssetManagementPage() {
   };
 
   const handleStateToggle = (state: string) => {
+    dispatch(setShouldRefetch(true));
     setSelectedStates((prev) => {
       if (state === "All") {
         return ["All"];
       }
-      const newSelected = prev.includes(state)
+      let newSelected = prev.includes(state)
         ? prev.filter((s) => s !== state)
         : [...prev.filter((s) => s !== "All"), state];
+      if (newSelected.length === 0) {
+        newSelected = ["All"];
+      }
       console.log("New selected states:", newSelected);
       return newSelected;
+    });
+  };
+
+  const handleCategoryToggle = (category: string) => {
+    dispatch(setShouldRefetch(true));
+    setSelectedCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((c) => c !== category);
+      } else {
+        return [...prev, category];
+      }
     });
   };
 
@@ -200,8 +228,8 @@ function AssetManagementPage() {
                 <div key={category} className="flex items-center space-x-2">
                   <Checkbox
                     id={category}
-                    checked={selectedCategory === category}
-                    onCheckedChange={() => setSelectedCategory(category)}
+                    checked={selectedCategories.includes(category)}
+                    onCheckedChange={() => handleCategoryToggle(category)}
                   />
                   <label htmlFor={category}>{category}</label>
                 </div>
@@ -237,19 +265,29 @@ function AssetManagementPage() {
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {!error && (
-        <DataTable
-          columns={assetColumns}
-          data={assets}
-          total={total}
-          loading={loading}
-          handleRowClick={(asset) => handleRowClick(asset)}
-          initialState={initialState}
-          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
-          onSortingChange={(sort) => {
-            setSort(sort);
-            setPage(1);
-          }}
-        />
+        <AssetDeleteDialogContext.Provider value={{ openAssetDeleteDialog }}>
+          <DataTable
+            columns={assetColumns}
+            data={assets}
+            total={total}
+            loading={loading}
+            handleRowClick={(asset) => handleRowClick(asset)}
+            initialState={initialState}
+            onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+            onSortingChange={(sort) => {
+              dispatch(setShouldRefetch(true));
+              setSort(sort);
+              setPage(1);
+            }}
+          />
+          {assetToDelete && (
+            <AssetDeleteDialog
+              open={deleteDialogOpen}
+              onOpenChange={setDeleteDialogOpen}
+              assetCode={assetToDelete.assetCode}
+            />
+          )}
+        </AssetDeleteDialogContext.Provider>
       )}
       {selectedAsset && (
         <AssetDetailDialog

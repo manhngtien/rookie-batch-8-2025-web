@@ -1,23 +1,24 @@
-import type {
-  Category,
-  CategoryAPIResponse,
-} from "@/features/asset-management/types/Category";
+import type { Category } from "@/features/asset-management/types/Category";
 import { API_ROUTES } from "@/lib/apiRoutes";
 import apiClient from "@/services/apiClient";
 
 const categoryService = {
   getCategories: async (): Promise<{ data: Category[] }> => {
     const response = await apiClient.get(API_ROUTES.categories.getCategories);
-    const raw = response.data;
+    return { data: response.data };
+  },
 
-    const mapped: Category[] = raw.map((item: CategoryAPIResponse) => ({
-      id: item.id ?? null,
-      name: item.categoryName,
-      prefix: item.prefix,
-      total: item.total ?? null,
-    }));
-
-    return { data: mapped };
+  createCategories: async (formData: FormData): Promise<{ data: Category }> => {
+    const response = await apiClient.post(
+      API_ROUTES.categories.createCategories,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Important: Let the browser set the proper multipart boundary
+        },
+      },
+    );
+    return response;
   },
 };
 export default categoryService;

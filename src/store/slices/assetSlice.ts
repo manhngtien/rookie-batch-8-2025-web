@@ -1,8 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { Asset } from "@/features/asset-management/types/Asset";
 import {
   createAsset,
+  deleteAssetById,
   fetchAssetById,
   fetchAssets,
   fetchAssetsByParams,
@@ -34,6 +35,8 @@ interface AssetState {
   selectedAsset: Asset;
   selectedLoading?: boolean;
   updatingLoading?: boolean;
+  editingLoading?: boolean;
+  deletingLoading?: boolean;
 }
 
 const initialState: AssetState = {
@@ -45,6 +48,8 @@ const initialState: AssetState = {
   selectedAsset: emptyAsset,
   selectedLoading: false,
   updatingLoading: false,
+  editingLoading: false,
+  deletingLoading: false,
 };
 
 const assetSlice = createSlice({
@@ -54,6 +59,9 @@ const assetSlice = createSlice({
     resetAssets(state) {
       state.assets = [];
       state.error = null;
+    },
+    setShouldRefetch: (state, action: PayloadAction<boolean>) => {
+      state.shouldRefetch = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -117,18 +125,36 @@ const assetSlice = createSlice({
       })
       .addCase(updateAssetById.fulfilled, (state, action) => {
         state.updatingLoading = false;
+        state.assets = state.assets.filter(
+          (asset) => asset.assetCode !== action.payload.assetCode,
+        );
         state.selectedAsset = emptyAsset;
         state.assets.unshift(action.payload);
         state.shouldRefetch = false;
-        state.total += 1;
+        state.total = state.assets.length;
       })
       .addCase(updateAssetById.rejected, (state, action) => {
         state.updatingLoading = false;
+        state.error = action.payload ?? "An error occurred";
+      })
+      .addCase(deleteAssetById.fulfilled, (state, action) => {
+        state.deletingLoading = false;
+        state.assets = state.assets.filter(
+          (asset) => asset.assetCode !== action.payload.assetCode,
+        );
+        state.error = null;
+      })
+      .addCase(deleteAssetById.pending, (state) => {
+        state.deletingLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteAssetById.rejected, (state, action) => {
+        state.deletingLoading = false;
         state.error = action.payload ?? "An error occurred";
       });
   },
 });
 
-export const { resetAssets } = assetSlice.actions;
+export const { resetAssets, setShouldRefetch } = assetSlice.actions;
 
 export default assetSlice.reducer;

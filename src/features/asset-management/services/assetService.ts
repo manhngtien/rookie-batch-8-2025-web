@@ -36,7 +36,7 @@ const assetService = {
       category: {
         id: apiAsset.category.id,
         prefix: apiAsset.category.prefix,
-        name: apiAsset.category.categoryName, // <-- remap here
+        categoryName: apiAsset.category.categoryName, // <-- remap here
         total: apiAsset.category.total,
       },
       installedDate: new Date(apiAsset.installedDate).toLocaleDateString(
@@ -71,9 +71,9 @@ const assetService = {
     return response;
   },
 
-  deleteAsset: async (assetId: string): Promise<{ data: string }> => {
+  deleteAsset: async (assetCode: string): Promise<{ data: string }> => {
     const response = await apiClient.delete(
-      API_ROUTES.assets.deleteAsset(assetId),
+      API_ROUTES.assets.deleteAsset(assetCode),
     );
     return response;
   },

@@ -29,6 +29,7 @@ export const API_ROUTES = {
   },
   categories: {
     getCategories: addApiPrefix("/Categories"),
+    createCategories: addApiPrefix("/Categories"),
   },
   assignments: {
     getAssignments: addApiPrefix("/Assignments"),
