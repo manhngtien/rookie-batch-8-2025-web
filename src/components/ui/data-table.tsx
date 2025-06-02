@@ -35,6 +35,7 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: (sort: { id: string; desc: boolean } | null) => void;
   uniqueLastColumn?: boolean;
   initialSelectedRow?: TData;
+  canSelectRow?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData, TValue>({
   onSortingChange,
   uniqueLastColumn = true,
   initialSelectedRow,
+  canSelectRow = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(
     initialState?.sorting ?? [{ id: "fullName", desc: false }],
@@ -89,6 +91,7 @@ export function DataTable<TData, TValue>({
         onPageChange?.(newState.pageIndex);
       }
     },
+    enableRowSelection: canSelectRow,
     onRowSelectionChange: setRowSelection,
     enableMultiRowSelection: false,
   });
@@ -163,7 +166,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
                 className="group border-none hover:cursor-pointer"
                 onClick={() => {
-                  table.setRowSelection({ [row.id]: true });
+                  if (canSelectRow) table.setRowSelection({ [row.id]: true });
                   handleRowClick?.(row.original);
                 }}
               >
