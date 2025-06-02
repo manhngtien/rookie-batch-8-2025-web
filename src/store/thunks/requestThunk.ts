@@ -15,7 +15,7 @@ export const fetchRequests = createAsyncThunk<
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      return rejectWithValue(error.message || "Failed to fetch assets");
+      return rejectWithValue(error.message || "Failed to fetch requests");
     }
     return rejectWithValue("An unexpected error occurred");
   }

@@ -31,7 +31,7 @@ function AssetManagementPage() {
   const categories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-  const allCategories = categories.map((category) => category.name);
+  const allCategories = categories.map((category) => category.categoryName);
   console.info("All categories:", allCategories);
   const shouldRefetch = useSelector(
     (state: RootState) => state.assets.shouldRefetch,

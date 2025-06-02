@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as z from "zod";
@@ -26,21 +25,10 @@ import { changePassword } from "@/store/thunks/authThunk";
 
 import type { User } from "../../users/types/User";
 
-const passwordSchema = z.object({
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
-});
-
 function ChangePasswordFirstDialog({ user }: { user: User }) {
   const dispatch = useDispatch<AppDispatch>();
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useSelector((state: RootState) => state.auth);
-
-  const form = useForm<z.infer<typeof passwordSchema>>({
-    resolver: zodResolver(passwordSchema),
-    defaultValues: {
-      newPassword: "",
-    },
-  });
 
   function getInitialPassword(user: User) {
     const dob = user.dateOfBirth?.split("T")[0];
@@ -50,12 +38,39 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
     return `${user.userName}@${ddmmyyyy}`;
   }
 
+  const initialPassword = getInitialPassword(user);
+
+  const passwordSchema = z.object({
+    newPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .refine((val) => /[a-z]/.test(val), {
+        message: "Password must contain at least one lowercase letter",
+      })
+      .refine((val) => /\d/.test(val), {
+        message: "Password must contain at least one number",
+      })
+      .refine((val) => /[!@#$%^&*(),.?":{}|<>]/.test(val), {
+        message: "Password must contain at least one special character",
+      })
+      .refine((val) => val !== initialPassword, {
+        message: "New password must not be the same as your default password",
+      }),
+  });
+
+  const form = useForm<z.infer<typeof passwordSchema>>({
+    resolver: zodResolver(passwordSchema),
+    mode: "onChange",
+    defaultValues: {
+      newPassword: "",
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof passwordSchema>) => {
     try {
-      const oldPassword = getInitialPassword(user);
       const response = await dispatch(
         changePassword({
-          oldPassword,
+          oldPassword: initialPassword,
           newPassword: values.newPassword,
         }),
       ).unwrap();
@@ -67,7 +82,7 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
       }
     } catch (err) {
       console.error("Failed to change password:", err);
-      setError("Failed to change password. Please try again.");
+      // setError("Failed to change password. Please try again.");
     }
   };
 
@@ -92,17 +107,19 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
                 control={form.control}
                 name="newPassword"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2">
-                    <FormLabel className="w-24 !flex-none">
-                      New Password
-                    </FormLabel>
-                    <FormControl className="!grow">
-                      <PasswordInput
-                        className="w-full"
-                        id="new-password"
-                        {...field}
-                      />
-                    </FormControl>
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="w-24 !flex-none">
+                        New Password
+                      </FormLabel>
+                      <FormControl className="!grow">
+                        <PasswordInput
+                          className="w-full"
+                          id="new-password"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -110,12 +127,12 @@ function ChangePasswordFirstDialog({ user }: { user: User }) {
               <Button
                 id="change-password-first-button"
                 type="submit"
-                className="flex justify-self-end bg-red-600 text-white hover:cursor-pointer hover:bg-red-700"
+                disabled={!form.formState.isValid}
+                className="flex justify-self-end bg-red-600 text-white hover:cursor-pointer hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Save
               </Button>
             </form>
-            {error && <p className="text-sm text-red-500">{error}</p>}
           </Form>
         </div>
       </DialogContent>

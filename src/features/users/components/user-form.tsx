@@ -181,6 +181,7 @@ export default function UserForm({
                   <Input
                     id="first-name-input"
                     {...field}
+                    maxLength={128}
                     className="w-full"
                     disabled={isEditing}
                   />
@@ -206,6 +207,7 @@ export default function UserForm({
                   <Input
                     id="last-name-input"
                     {...field}
+                    maxLength={128}
                     className="w-full"
                     disabled={isEditing}
                   />
@@ -289,6 +291,7 @@ export default function UserForm({
                   selectedDate={field.value}
                   setSelectedDate={field.onChange}
                   className="w-full !max-w-full"
+                  disableFutureDates={false}
                 />
                 {joinedDateError && (
                   <p className="mt-1 text-sm font-medium text-red-500">

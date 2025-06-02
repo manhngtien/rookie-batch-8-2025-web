@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router";
 
 import {
   CreateButton,
@@ -13,6 +14,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import { useDebounce } from "@/hooks/useDebounce";
+import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatStateLabel, revertStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssignments } from "@/store/thunks/assignmentThunk";
@@ -20,6 +22,11 @@ import { fetchAssignments } from "@/store/thunks/assignmentThunk";
 const filterItems = ["Accepted", "Declined", "Waiting for acceptance"];
 
 function AssignmentManagementPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -36,11 +43,8 @@ function AssignmentManagementPage() {
     (state: RootState) => state.assignments,
   );
 
-  const dispatch = useDispatch<AppDispatch>();
-
-  // TODO: hooks??
-
-  // TODO: maybe this sort stuff could be separated
+  const newAssignmentCreated = location.state?.newAssignmentCreated;
+  const hasHandledNewAssignment = useRef(false);
 
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
@@ -88,12 +92,22 @@ function AssignmentManagementPage() {
 
   const handleFilterChange = (selected: string[]) => {
     setSelectedStates(selected);
-    setPage(1);
   };
 
   useEffect(() => {
+    if (newAssignmentCreated && !hasHandledNewAssignment.current) {
+      hasHandledNewAssignment.current = true;
+      navigate(location.pathname, { replace: true });
+      return;
+    }
+
+    if (hasHandledNewAssignment.current) {
+      hasHandledNewAssignment.current = false;
+      return;
+    }
+
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, location.pathname, navigate, newAssignmentCreated]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -117,6 +131,7 @@ function AssignmentManagementPage() {
 
         <div className="flex w-full gap-2 md:justify-end">
           <SearchInput
+            id="assignment-search"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -124,7 +139,15 @@ function AssignmentManagementPage() {
             }}
           />
 
-          <CreateButton>Create new assignment</CreateButton>
+          <CreateButton
+            onClick={() => {
+              navigate(
+                `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
+              );
+            }}
+          >
+            Create new assignment
+          </CreateButton>
         </div>
       </div>
 
@@ -150,7 +173,6 @@ function AssignmentManagementPage() {
           closeModal={() => setSelectedAssignment(null)}
           title="Detailed Assignment Information"
         >
-          {/* TODO: maybe this could also be separated to components */}
           <div className="grid grid-cols-2 gap-4 text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>

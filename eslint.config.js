@@ -59,6 +59,7 @@ export default tseslint.config(
             "Button",
             "SelectTrigger",
             "Textarea",
+            "SearchInput",
           ],
         },
       ],

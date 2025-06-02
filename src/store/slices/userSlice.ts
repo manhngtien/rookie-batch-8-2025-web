@@ -13,6 +13,7 @@ interface UserState {
   total: number;
   loading: boolean;
   error: string | null;
+  lastAction?: string | null;
 }
 
 const initialState: UserState = {
@@ -20,8 +21,8 @@ const initialState: UserState = {
   total: 0,
   loading: false,
   error: null,
+  lastAction: null,
 };
-
 const userSlice = createSlice({
   name: "users",
   initialState,
@@ -29,6 +30,9 @@ const userSlice = createSlice({
     resetUsers(state) {
       state.users = [];
       state.error = null;
+    },
+    clearLastAction(state) {
+      state.lastAction = null;
     },
   },
   extraReducers: (builder) => {
@@ -46,7 +50,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
       })
-      //Create user
+      // Create user
       .addCase(createUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -80,14 +84,15 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
       })
-      //Disable user
+      // Disable user
       .addCase(disableUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(disableUser.fulfilled, (state) => {
+        console.info("vo trong slice r");
         state.loading = false;
         state.total -= 1;
+        state.lastAction = "disableUserSuccess";
       })
       .addCase(disableUser.rejected, (state) => {
         state.loading = false;
@@ -95,5 +100,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { resetUsers } = userSlice.actions;
+export const { resetUsers, clearLastAction } = userSlice.actions;
 export default userSlice.reducer;

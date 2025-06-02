@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
@@ -7,6 +8,8 @@ import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { User } from "@/features/users/types/User";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatDate } from "@/utils/helpers";
+
+import DisableUserDialog from "./disable-user-dialog";
 
 export const userColumns: ColumnDef<User>[] = [
   {
@@ -49,6 +52,8 @@ export const userColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const navigate = useNavigate();
       const user = row.original;
+      const [isDialogOpen, setIsDialogOpen] = useState(false);
+
       return (
         <div className="-my-4 flex">
           <ActionButton
@@ -65,7 +70,13 @@ export const userColumns: ColumnDef<User>[] = [
             className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();
+              setIsDialogOpen(true);
             }}
+          />
+          <DisableUserDialog
+            user={user}
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
           />
         </div>
       );
