@@ -114,7 +114,7 @@ function EditAssetPage() {
     if (asset) {
       form.reset({
         name: asset.assetName,
-        category: asset.category.name,
+        category: asset.category.categoryName,
         specification: asset.specification,
         installedDate: new Date(asset.installedDate),
         state: mapToAssetState(asset.state),

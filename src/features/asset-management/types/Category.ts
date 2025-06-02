@@ -1,7 +1,7 @@
 export interface Category {
   id: number | null;
   prefix: string;
-  name: string;
+  categoryName: string;
   total: number | null;
 }
 

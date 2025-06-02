@@ -125,6 +125,7 @@ export function CreateAssignmentForm({
           pageNumber: page,
           pageSize,
           searchTerm,
+          state: "available",
           orderBy: assetsOrderBy,
         }),
       ).unwrap();

@@ -1,5 +1,5 @@
-import { format, getMonth, getYear, setMonth, setYear } from "date-fns";
-import { CalendarIcon, Funnel, Search } from "lucide-react";
+import { format, getYear } from "date-fns";
+import { CalendarIcon, ChevronDown, Funnel, Search } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { DynamicIcon } from "lucide-react/dynamic";
 import React, { useState } from "react";
@@ -17,13 +17,6 @@ import { Calendar as CalendarComponent } from "./calendar";
 import { Checkbox } from "./checkbox";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
 
 function PageTitle({ children }: { children: string }) {
   return <h1 className="text-2xl font-bold text-red-600">{children}</h1>;
@@ -192,52 +185,6 @@ function DateSelector({
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
-  const years = React.useMemo(
-    () => Array.from({ length: 120 }, (_, i) => currentYear - i),
-    [currentYear],
-  );
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const handleYearChange = (year: string) => {
-    const newYear = parseInt(year);
-    let newDate: Date | null = selectedDate
-      ? new Date(selectedDate)
-      : new Date();
-    newDate = setYear(newDate, newYear);
-
-    if (disableFutureDates && newDate > new Date()) {
-      newDate = new Date();
-    }
-
-    setSelectedDate(newDate);
-  };
-
-  const handleMonthChange = (month: string) => {
-    const newMonth = months.indexOf(month);
-    let newDate: Date | null = selectedDate
-      ? new Date(selectedDate)
-      : new Date();
-    newDate = setMonth(newDate, newMonth);
-
-    if (disableFutureDates && newDate > new Date()) {
-      newDate = new Date();
-    }
-
-    setSelectedDate(newDate);
-  };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (disableFutureDates && date && date > new Date()) {
@@ -275,63 +222,35 @@ function DateSelector({
         align="start"
       >
         <div className="rounded-lg bg-white shadow-lg">
-          <div className="flex justify-between p-2">
-            <Select
-              onValueChange={handleMonthChange}
-              value={
-                selectedDate
-                  ? months[getMonth(selectedDate)]
-                  : months[getMonth(new Date())]
-              }
-            >
-              <SelectTrigger id="month-trigger" className="w-[110px]">
-                <SelectValue placeholder="Month" />
-              </SelectTrigger>
-              <SelectContent id="month-content">
-                {months.map((month) => (
-                  <SelectItem id={`month-${month}`} key={month} value={month}>
-                    {month}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              onValueChange={handleYearChange}
-              value={
-                selectedDate
-                  ? getYear(selectedDate).toString()
-                  : getYear(new Date()).toString()
-              }
-            >
-              <SelectTrigger id="year-trigger" className="w-[110px]">
-                <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent
-                id="year-content"
-                className="max-h-100 overflow-y-auto"
-              >
-                {years.map((year) => (
-                  <SelectItem
-                    id={`year-${year}`}
-                    key={year}
-                    value={year.toString()}
-                  >
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
           <CalendarComponent
             mode="single"
+            classNames={{
+              caption_dropdowns: "flex flex-col gap-2 items-center",
+              caption_label: "hidden",
+            }}
             onSelect={handleDateSelect}
             selected={selectedDate || undefined}
             initialFocus
             month={selectedDate || new Date()}
             onMonthChange={(newMonth) => setSelectedDate(newMonth)}
             toDate={disableFutureDates ? new Date() : undefined}
-            classNames={{
-              day_selected: `bg-[#2F3132] border-[#2F3132] text-white`,
+            captionLayout="dropdown-buttons"
+            fromYear={currentYear - 100}
+            toYear={currentYear + 20}
+            components={{
+              Dropdown: ({ className, ...props }) => (
+                <div className="relative w-full flex-1">
+                  <select
+                    id={`calendar-${props.name}-select`}
+                    className={cn(
+                      "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 aria-invalid:border-destructive flex w-full appearance-none items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 pr-9 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                      className,
+                    )}
+                    {...props}
+                  />
+                  <ChevronDown className="pointer-events-none absolute top-2.5 right-3 h-4 w-4" />
+                </div>
+              ),
             }}
           />
         </div>
@@ -350,7 +269,7 @@ function SearchInput({ ...props }: React.ComponentProps<typeof Input>) {
     >
       <Input
         id={props.id || "search-input"}
-        className="w-full"
+        className="w-full pr-9"
         placeholder="Search..."
         {...props}
       />

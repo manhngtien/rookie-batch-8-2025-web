@@ -18,7 +18,7 @@ export const emptyAsset: Asset = {
   state: "available", // or "not_available" as default
   category: {
     id: 0,
-    name: "",
+    categoryName: "",
     prefix: "",
     total: 0,
   },

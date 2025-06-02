@@ -60,21 +60,21 @@ export function SearchPopup<T>({
   }, [selectedRow]);
 
   return (
-    <ScrollArea className="h-[calc(100vh-15rem)]">
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-4">
-          <PageTitle>{title}</PageTitle>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-4">
+        <PageTitle>{title}</PageTitle>
 
-          <SearchInput
-            id="search-popup-input"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
+        <SearchInput
+          id="search-popup-input"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+        />
+      </div>
 
+      <ScrollArea className="h-[calc(100vh-20rem)]">
         <DataTable
           columns={columns}
           data={data}
@@ -94,6 +94,7 @@ export function SearchPopup<T>({
           }}
           handleRowClick={(row) => setLocalSelectedRow(row)}
           initialSelectedRow={localSelectedRow}
+          canSelectRow={true}
         />
 
         <div className="flex justify-end gap-2">
@@ -113,7 +114,7 @@ export function SearchPopup<T>({
             Cancel
           </Button>
         </div>
-      </div>
-    </ScrollArea>
+      </ScrollArea>
+    </div>
   );
 }
