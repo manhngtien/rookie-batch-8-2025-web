@@ -1,6 +1,7 @@
 import { assignmentService } from "@/features/assignments/services/assignmentService";
 import type {
   Assignment,
+  CreateAssignmentRequest,
   FetchAssignmentsParams,
 } from "@/features/assignments/types/Assignment";
 import type { FetchResponse } from "@/types";
@@ -10,7 +11,7 @@ export const fetchAssignments = createAppThunk<
   FetchAssignmentsParams,
   FetchResponse<Assignment[]>
 >(
-  "assignments/fetchAssignments",
+  "assignments/fetch",
   async ({
     pageNumber,
     pageSize,
@@ -30,3 +31,11 @@ export const fetchAssignments = createAppThunk<
     return response;
   },
 );
+
+export const createAssignment = createAppThunk<
+  CreateAssignmentRequest,
+  { data: Assignment }
+>("assignments/create", async (assignment) => {
+  const response = await assignmentService.createAssignment(assignment);
+  return response;
+});

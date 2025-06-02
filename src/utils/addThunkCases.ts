@@ -5,11 +5,13 @@ import type {
   Draft,
 } from "@reduxjs/toolkit";
 
+// TODO: maybe separate the "total" field since not all thunks will return it
+
 type SliceState<T> = {
   data: T;
   loading: boolean;
   error: string | null;
-  total: number;
+  total?: number;
 };
 
 export function addThunkCases<

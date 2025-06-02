@@ -1,11 +1,16 @@
 import type { AxiosResponseHeaders } from "axios";
 
 import { API_ROUTES } from "@/lib/apiRoutes";
+import { toLocalISOString } from "@/lib/utils";
 import apiClient from "@/services/apiClient";
 import type { FetchResponse } from "@/types";
 import { getPaginationHeader } from "@/utils/helpers";
 
-import type { Assignment, FetchAssignmentsParams } from "../types/Assignment";
+import type {
+  Assignment,
+  CreateAssignmentRequest,
+  FetchAssignmentsParams,
+} from "../types/Assignment";
 
 export const assignmentService = {
   getAssignments: async ({
@@ -37,5 +42,28 @@ export const assignmentService = {
       data: response.data,
       total: pagination.totalCount,
     };
+  },
+
+  createAssignment: async (
+    assignment: CreateAssignmentRequest,
+  ): Promise<{ data: Assignment }> => {
+    const formData = new FormData();
+
+    formData.append("staffCode", assignment.staffCode);
+    formData.append("assetCode", assignment.assetCode);
+    formData.append("assignedDate", toLocalISOString(assignment.assignedDate));
+    formData.append("note", assignment.note || "");
+
+    const response = await apiClient.post<Assignment>(
+      API_ROUTES.assignments.createAssignment,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    return response;
   },
 };

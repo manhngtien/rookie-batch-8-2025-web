@@ -15,3 +15,10 @@ export interface Assignment {
   assignedTo: string;
   note: string;
 }
+
+export interface CreateAssignmentRequest {
+  staffCode: string;
+  assetCode: string;
+  assignedDate: Date;
+  note?: string;
+}
