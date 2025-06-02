@@ -91,7 +91,6 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     const formData = new FormData();
-    console.log("Submitting form data:", data);
     formData.append("assetName", data.name);
     formData.append("categoryId", data.category_id?.toString() || "0");
     formData.append("specification", data.specification);

@@ -16,7 +16,7 @@ export const emptyAsset: Asset = {
   specification: "",
   location: 0,
   installedDate: new Date().toLocaleDateString("sv-SE"),
-  state: "available", // or "not_available" as default
+  state: "available",
   category: {
     id: 0,
     categoryName: "",
