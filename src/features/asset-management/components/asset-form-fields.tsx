@@ -1,7 +1,7 @@
 import { Check, X } from "lucide-react";
 import React from "react";
 import type { UseFormReturn } from "react-hook-form";
-import type { z } from "zod";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { DateSelector } from "@/components/ui/dashboard-elements";
@@ -23,6 +23,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { Category } from "@/features/asset-management/types/Category";
 import type { formSchema } from "@/pages/asset-management/CreateNewAssetPage";
 
+export const categoryFormSchema = z.object({
+  newCategoryName: z
+    .string()
+    .min(1, "Category name is required")
+    .max(50, "Name too long"),
+  prefix: z
+    .string()
+    .min(1, "Prefix is required")
+    .max(10, "Prefix too long")
+    .regex(/^[A-Z0-9]+$/, "Only uppercase letters or digits allowed"),
+});
+
 interface AssetFormFieldsProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   categories: Category[];
@@ -30,7 +42,9 @@ interface AssetFormFieldsProps {
   isAddingCategory: boolean;
   setIsAddingCategory: React.Dispatch<React.SetStateAction<boolean>>;
   newCategoryName: string;
+  newCategoryPrefix: string;
   setNewCategoryName: React.Dispatch<React.SetStateAction<string>>;
+  setNewCategoryPrefix: React.Dispatch<React.SetStateAction<string>>;
   isDropdownOpen: boolean;
   setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -41,33 +55,29 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
   setCategories,
   isAddingCategory,
   setIsAddingCategory,
+  newCategoryPrefix,
   newCategoryName,
   setNewCategoryName,
+  setNewCategoryPrefix,
   isDropdownOpen,
   setIsDropdownOpen,
 }) => {
   const handleAddCategory = () => {
-    if (!newCategoryName.trim()) {
-      return;
-    }
+    const formattedName = newCategoryName;
+    const formattedPrefix = newCategoryPrefix.trim().toUpperCase();
 
-    const formatted = newCategoryName.toLowerCase().replace(/\s+/g, "-");
-
-    if (categories.some((c) => c.categoryName === formatted)) {
-      form.setError("category", { message: "Category already exists" });
-      return;
-    }
+    // Check for duplicate name or prefix
 
     const newCategory: Category = {
       id: null,
-      prefix: formatted,
-      categoryName: formatted,
+      prefix: formattedPrefix,
+      categoryName: formattedName,
       total: null,
     };
 
     setCategories((prev) => [...prev, newCategory]);
     form.setValue("category", newCategory.categoryName);
-    setNewCategoryName("");
+    form.setValue("category_id", 0); // set dummy id or handle accordingly
     setIsAddingCategory(false);
     setIsDropdownOpen(true);
   };
@@ -95,7 +105,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
         control={form.control}
         name="name"
         render={({ field }) => (
-          <FormItem className="grid grid-cols-[120px_1fr] items-center gap-4">
+          <FormItem className="grid grid-cols-[120px_1fr] items-center gap-3">
             <Label htmlFor="name" className="text-sm font-medium">
               Name
             </Label>
@@ -172,13 +182,26 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                   </DropdownMenuItem>
                 )}
                 {isAddingCategory && (
-                  <div className="flex items-center space-x-2 px-2 py-1.5">
+                  <div className="flex items-center px-2 py-1.5">
                     <Input
                       id="new-category"
                       value={newCategoryName}
                       onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Enter category name"
-                      className="flex-1"
+                      placeholder="Bluetooth Mouse"
+                      className="flex-6 rounded-none"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCategory();
+                        }
+                      }}
+                    />
+                    <Input
+                      id="new-category-prefix"
+                      value={newCategoryPrefix}
+                      onChange={(e) => setNewCategoryPrefix(e.target.value)}
+                      placeholder="BM"
+                      className="flex-1 rounded-none"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
@@ -191,7 +214,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                       variant="ghost"
                       size="icon"
                       onClick={handleAddCategory}
-                      className="h-6 w-6"
+                      className="ml-2 h-6 w-6"
                     >
                       <Check className="h-4 w-4 text-green-600" />
                     </Button>

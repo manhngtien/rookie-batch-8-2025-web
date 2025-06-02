@@ -20,3 +20,20 @@ export const fetchCategories = createAsyncThunk<
     return rejectWithValue("An unexpected error occurred");
   }
 });
+
+export const createCategories = createAsyncThunk<
+  Category,
+  FormData,
+  { rejectValue: string }
+>("categories/createCategories", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await categoryService.createCategories(formData);
+    console.info("Categories fetched successfully:", response);
+    return response.data;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(error.message || "Failed to fetch categories");
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
+});

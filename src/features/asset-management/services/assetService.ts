@@ -36,7 +36,7 @@ const assetService = {
       category: {
         id: apiAsset.category.id,
         prefix: apiAsset.category.prefix,
-        name: apiAsset.category.categoryName, // <-- remap here
+        categoryName: apiAsset.category.categoryName, // <-- remap here
         total: apiAsset.category.total,
       },
       installedDate: new Date(apiAsset.installedDate).toLocaleDateString(
