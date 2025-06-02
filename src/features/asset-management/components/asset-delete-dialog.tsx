@@ -1,6 +1,6 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,23 +9,22 @@ import {
   DialogChangePasswordHeader,
   DialogChangePasswordTitle,
 } from "@/components/ui/dialog-change-password";
-import type { AppDispatch } from "@/store";
+import type { AppDispatch, RootState } from "@/store";
 import { deleteAssetById } from "@/store/thunks/assetThunk";
 
 interface AssetDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   assetCode: string;
-  onDeleteSuccess?: () => void;
 }
 
 export default function AssetDeleteDialog({
   open,
   onOpenChange,
   assetCode,
-  onDeleteSuccess,
 }: AssetDeleteDialogProps) {
   const [loading, setLoading] = useState(false);
+  const error = useSelector((state: RootState) => state.assets.error);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleConfirmDelete = async () => {
@@ -33,7 +32,6 @@ export default function AssetDeleteDialog({
     try {
       const result = await dispatch(deleteAssetById(assetCode)).unwrap();
       console.info("Asset deleted:", result);
-      if (onDeleteSuccess) onDeleteSuccess();
       onOpenChange(false);
     } catch (err) {
       console.error("Failed to delete asset", err);
@@ -51,8 +49,16 @@ export default function AssetDeleteDialog({
           </DialogChangePasswordTitle>
         </DialogChangePasswordHeader>
         <DialogDescription className="text-primary px-4 py-2">
-          Are you sure you want to delete this asset?
+          Are you sure?
         </DialogDescription>
+
+        {error && (
+          <div className="mx-4 my-2 rounded border border-red-400 bg-red-100 p-3 text-sm text-red-700">
+            <strong>Cannot Delete Asset</strong>
+            <p>{error}</p>
+          </div>
+        )}
+
         <div className="m-4 flex justify-end space-x-4">
           <Button
             id="cancle-delete-asset"

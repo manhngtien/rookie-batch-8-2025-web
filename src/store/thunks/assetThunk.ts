@@ -102,14 +102,15 @@ export const updateAssetById = createAsyncThunk<
 );
 
 export const deleteAssetById = createAsyncThunk<
-  { code: number; message: string },
+  { code: number; message: string; assetCode: string },
   string,
   { rejectValue: string }
 >("assets/deleteAssetById", async (assetCode, { rejectWithValue }) => {
   try {
+    const assetCode = "hehe";
     const response = await assetService.deleteAsset(assetCode);
     console.info("Asset deleted successfully:", response);
-    return { code: 200, message: "Asset deleted successfully!" };
+    return { code: 200, message: "Asset deleted successfully!", assetCode };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       return rejectWithValue(error.message || "Failed to delete asset by ID");

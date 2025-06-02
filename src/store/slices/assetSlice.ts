@@ -137,8 +137,11 @@ const assetSlice = createSlice({
         state.updatingLoading = false;
         state.error = action.payload ?? "An error occurred";
       })
-      .addCase(deleteAssetById.fulfilled, (state) => {
+      .addCase(deleteAssetById.fulfilled, (state, action) => {
         state.deletingLoading = false;
+        state.assets = state.assets.filter(
+          (asset) => asset.assetCode !== action.payload.assetCode,
+        );
         state.error = null;
       })
       .addCase(deleteAssetById.pending, (state) => {

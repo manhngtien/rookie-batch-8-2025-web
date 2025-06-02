@@ -285,7 +285,6 @@ function AssetManagementPage() {
               open={deleteDialogOpen}
               onOpenChange={setDeleteDialogOpen}
               assetCode={assetToDelete.assetCode}
-              onDeleteSuccess={() => dispatch(setShouldRefetch(true))}
             />
           )}
         </AssetDeleteDialogContext.Provider>
