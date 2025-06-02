@@ -28,7 +28,6 @@ export default function RequestPage() {
   const [returnedDateFilter, setReturnedDateFilter] = useState<Date | null>(
     null,
   );
-  // const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStates, setSelectedStates] = useState<string[]>([""]);
   const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
