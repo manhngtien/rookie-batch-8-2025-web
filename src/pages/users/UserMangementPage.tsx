@@ -91,7 +91,6 @@ function UserManagementPage() {
             page,
             pageSize,
             type: typeParam,
-            searchTerm: debouncedSearchTerm,
             orderBy,
           }),
         ).unwrap();
@@ -104,15 +103,30 @@ function UserManagementPage() {
     };
 
     fetchUsersData();
-  }, [
-    dispatch,
-    page,
-    pageSize,
-    selectedTypes,
-    debouncedSearchTerm,
-    orderBy,
-    shouldFetch,
-  ]);
+  }, [dispatch, page, pageSize, selectedTypes, orderBy, shouldFetch]);
+
+  useEffect(() => {
+    const fetchUsersData = async () => {
+      try {
+        const typeParam = selectedTypes.includes("All")
+          ? undefined
+          : selectedTypes;
+        await dispatch(
+          fetchUsers({
+            page,
+            pageSize,
+            type: typeParam,
+            searchTerm: debouncedSearchTerm,
+            orderBy,
+          }),
+        ).unwrap();
+      } catch (err) {
+        console.error("Failed to fetch users (debounced):", err);
+      }
+    };
+
+    fetchUsersData();
+  }, [debouncedSearchTerm]);
 
   const handleRowClick = (user: User) => {
     setSelectedUser(user);
@@ -148,7 +162,6 @@ function UserManagementPage() {
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     setPage(1);
-    setShouldFetch(true);
   };
 
   const handlePageChange = (pageIndex: number) => {
