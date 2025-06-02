@@ -55,7 +55,6 @@ export const assetColumns: ColumnDef<Asset>[] = [
             className="text-foreground"
             onClick={async (e) => {
               e.stopPropagation();
-              e.stopPropagation();
               openAssetDeleteDialog(asset); // ✅ triggers dialog
             }}
           />
