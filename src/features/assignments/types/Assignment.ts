@@ -16,9 +16,15 @@ export interface Assignment {
   note: string;
 }
 
-export interface CreateAssignmentRequest {
-  staffCode: string;
-  assetCode: string;
-  assignedDate: Date;
-  note?: string;
+export interface FetchAssignmentsResponse {
+  data: Assignment[];
+  total: number;
+}
+
+export interface FetchAssignmentsParams {
+  page: number;
+  pageSize: number;
+  assignedDate?: string;
+  searchTerm?: string;
+  orderBy?: string;
 }
