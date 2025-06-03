@@ -6,7 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Asset } from "@/features/asset-management/types/Asset";
+import {
+  type Asset,
+  type ELocation,
+  LocationLabelMap,
+} from "@/features/asset-management/types/Asset";
 import { formatDate } from "@/utils/helpers";
 
 interface AssetDetailDialogProps {
@@ -40,11 +44,13 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="text-left">
                 {formatDate(selectedAsset.installedDate)}
               </p>
-
               <p className="font-medium">State:</p>
               <p className="text-left">{selectedAsset.state}</p>
               <p className="font-medium">Location:</p>
-              <p className="text-left">{selectedAsset.location}</p>
+              <p className="text-left">
+                {LocationLabelMap[selectedAsset.location as ELocation] ??
+                  "Unknown"}
+              </p>{" "}
               <p className="font-medium">Specification:</p>
               <p className="text-left">{selectedAsset.specification}</p>
             </div>

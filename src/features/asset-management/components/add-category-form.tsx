@@ -40,8 +40,8 @@ export const AddCategoryForm: React.FC<AddCategoryFormProps> = ({
       (data) =>
         !existingCategories.some(
           (cat) =>
-            cat.categoryName.toLowerCase() ===
-            data.newCategoryName.toLowerCase(),
+            cat.categoryName.toLowerCase().trim() ===
+            data.newCategoryName.toLowerCase().trim(),
         ),
       {
         message: "Category name already exists",
