@@ -34,7 +34,7 @@ export const API_ROUTES = {
     createCategories: addApiPrefix("/Categories"),
   },
   assignments: {
-    myAssignment: addApiPrefix("/Assignments/myAssignments"),
+    myAssignment: addApiPrefix("/Assignments/my-assignments"),
     getAssignments: addApiPrefix("/Assignments"),
     createAssignment: addApiPrefix("/Assignments"),
     updateAssignment: (assignmentId: string) =>
