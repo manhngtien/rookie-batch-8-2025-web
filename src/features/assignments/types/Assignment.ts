@@ -17,9 +17,18 @@ export interface Assignment {
   note: string;
 }
 
-export interface CreateAssignmentRequest {
+export interface FetchAssignmentsResponse {
+  data: Assignment[];
+  total: number;
+}
+
+export interface AssignmentFormRequest {
   staffCode: string;
   assetCode: string;
-  assignedDate: Date;
+  assignedDate?: Date;
   note?: string;
+}
+
+export interface AssignmentEditRequest extends AssignmentFormRequest {
+  id: number;
 }

@@ -12,6 +12,9 @@ export const API_ROUTES = {
     check: addApiPrefix("/Auth/check"),
     refreshToken: addApiPrefix("/Auth/refresh-token"),
   },
+  assignment: {
+    getAssignments: addApiPrefix("/Assignments"),
+  },
   users: {
     getUsers: addApiPrefix("/Users"),
     createUser: addApiPrefix("/Users"),

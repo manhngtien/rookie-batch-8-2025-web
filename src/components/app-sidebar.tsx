@@ -50,6 +50,7 @@ const data = {
           activePaths: [
             APP_ROUTES.assignment.path,
             `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
+            `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/:id`,
           ],
         },
         {

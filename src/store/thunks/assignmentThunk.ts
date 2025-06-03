@@ -1,7 +1,8 @@
 import { assignmentService } from "@/features/assignments/services/assignmentService";
 import type {
   Assignment,
-  CreateAssignmentRequest,
+  AssignmentEditRequest,
+  AssignmentFormRequest,
   FetchAssignmentsParams,
 } from "@/features/assignments/types/Assignment";
 import type { FetchResponse } from "@/types";
@@ -32,10 +33,26 @@ export const fetchAssignments = createAppThunk<
   },
 );
 
+export const getSingleAssignment = createAppThunk<
+  { id: number },
+  { data: Assignment }
+>("assignments/getById", async (id) => {
+  const response = await assignmentService.getSingleAssignment(id);
+  return response;
+});
+
 export const createAssignment = createAppThunk<
-  CreateAssignmentRequest,
+  AssignmentFormRequest,
   { data: Assignment }
 >("assignments/create", async (assignment) => {
   const response = await assignmentService.createAssignment(assignment);
+  return response;
+});
+
+export const editAssignment = createAppThunk<
+  AssignmentEditRequest,
+  { data: Assignment }
+>("assignments/edit", async (assignment) => {
+  const response = await assignmentService.editAssignment(assignment);
   return response;
 });

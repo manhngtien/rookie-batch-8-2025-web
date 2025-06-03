@@ -7,6 +7,8 @@ import CreateNewAssetPage from "@/pages/asset-management/CreateNewAssetPage";
 import EditAssetPage from "@/pages/asset-management/EditAssetPage";
 import AssignmentManagementPage from "@/pages/assignments/AssignmentManagementPage";
 import CreateAssignmentPage from "@/pages/assignments/CreateAssignmentPage";
+import EditAssignmentPage from "@/pages/assignments/EditAssignmentPage";
+import OwnAssignmentPage from "@/pages/assignments/OwnAssigmentPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
 import RequestPage from "@/pages/requests/RequestPage";
@@ -26,6 +28,10 @@ export const router = createBrowserRouter([
         element: <Layout />,
         errorElement: <NotFound />,
         children: [
+          {
+            index: true,
+            element: <OwnAssignmentPage />,
+          },
           // Users
           {
             path: APP_ROUTES.users.path,
@@ -65,6 +71,10 @@ export const router = createBrowserRouter([
           {
             path: `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.create}`,
             element: <CreateAssignmentPage />,
+          },
+          {
+            path: `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/:id`,
+            element: <EditAssignmentPage />,
           },
         ],
       },

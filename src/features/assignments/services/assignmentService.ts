@@ -8,7 +8,8 @@ import { getPaginationHeader } from "@/utils/helpers";
 
 import type {
   Assignment,
-  CreateAssignmentRequest,
+  AssignmentEditRequest,
+  AssignmentFormRequest,
   FetchAssignmentsParams,
 } from "../types/Assignment";
 
@@ -44,18 +45,60 @@ export const assignmentService = {
     };
   },
 
+  getSingleAssignment: async ({
+    id,
+  }: {
+    id: number;
+  }): Promise<{ data: Assignment }> => {
+    const response = await apiClient.get<Assignment>(
+      `${API_ROUTES.assignments.getAssignments}/${id}`,
+    );
+
+    return response;
+  },
+
   createAssignment: async (
-    assignment: CreateAssignmentRequest,
+    assignment: AssignmentFormRequest,
   ): Promise<{ data: Assignment }> => {
     const formData = new FormData();
 
     formData.append("staffCode", assignment.staffCode);
     formData.append("assetCode", assignment.assetCode);
-    formData.append("assignedDate", toLocalISOString(assignment.assignedDate));
+    formData.append(
+      "assignedDate",
+      assignment.assignedDate ? toLocalISOString(assignment.assignedDate) : "",
+    );
     formData.append("note", assignment.note || "");
 
     const response = await apiClient.post<Assignment>(
       API_ROUTES.assignments.createAssignment,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    return response;
+  },
+
+  editAssignment: async (
+    assignment: AssignmentEditRequest,
+  ): Promise<{ data: Assignment }> => {
+    const formData = new FormData();
+
+    formData.append("id", assignment.id.toString());
+    formData.append("staffCode", assignment.staffCode);
+    formData.append("assetCode", assignment.assetCode);
+    formData.append(
+      "assignedDate",
+      assignment.assignedDate ? toLocalISOString(assignment.assignedDate) : "",
+    );
+    formData.append("note", assignment.note || "");
+
+    const response = await apiClient.put<Assignment>(
+      `${API_ROUTES.assignments.createAssignment}/${assignment.id}`,
       formData,
       {
         headers: {
