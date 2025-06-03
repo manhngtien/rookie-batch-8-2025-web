@@ -273,7 +273,10 @@ function AssetManagementPage() {
           loading={loading}
           handleRowClick={(asset) => handleRowClick(asset)}
           initialState={initialState}
-          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+          onPageChange={(pageIndex) => {
+            dispatch(setShouldRefetch(true));
+            setPage(pageIndex + 1);
+          }}
           onSortingChange={(sort) => {
             dispatch(setShouldRefetch(true));
             setSort(sort);
