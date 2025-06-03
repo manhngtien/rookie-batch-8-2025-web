@@ -3,7 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import { addThunkCases } from "@/utils/addThunkCases";
 
-import { createAssignment, fetchAssignments } from "../thunks/assignmentThunk";
+import {
+  createAssignment,
+  editAssignment,
+  fetchAssignments,
+} from "../thunks/assignmentThunk";
 
 interface AssignmentState {
   data: Assignment[];
@@ -43,6 +47,20 @@ const assignmentSlice = createSlice({
         state.data = [action.payload.data, ...state.data];
       })
       .addCase(createAssignment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) ?? "An unknown error occurred";
+      });
+
+    builder
+      .addCase(editAssignment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editAssignment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = [action.payload.data, ...state.data];
+      })
+      .addCase(editAssignment.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) ?? "An unknown error occurred";
       });

@@ -1,8 +1,12 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import type { ColumnDef } from "@tanstack/react-table";
+import { useNavigate } from "react-router";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
+import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatStateLabel } from "@/lib/utils";
+import { formatDate } from "@/utils/helpers";
 
 import type { Assignment } from "../types/Assignment";
 
@@ -27,13 +31,13 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     ),
   },
   {
-    accessorKey: "assignedTo",
+    accessorKey: "assignedToUser.userName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned to" />
     ),
   },
   {
-    accessorKey: "assignedBy",
+    accessorKey: "assignedByUser.userName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned by" />
     ),
@@ -45,7 +49,7 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("assignedDate"));
-      return <span>{date.toLocaleDateString()}</span>;
+      return <span>{formatDate(date)}</span>;
     },
   },
   {
@@ -60,13 +64,19 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const assignment = row.original;
+      const navigate = useNavigate();
+
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="pencil"
-            onClick={(e) => {
-              e.stopPropagation();
+            disabled={assignment.state === "Waiting for acceptance"}
+            onClick={() => {
+              navigate(
+                `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/${assignment.id}`,
+              );
             }}
           />
           <ActionButton
