@@ -46,7 +46,7 @@ export default function OwnAssignmentPage() {
       try {
         const response = await dispatch(
           fetchAssigmentsHome({
-            page,
+            pageNumber: page,
             pageSize,
             orderBy: orderBy,
           }),
@@ -99,12 +99,16 @@ export default function OwnAssignmentPage() {
             <p className="font-medium">Asset Name:</p>
             <p className="text-left">{selectedAssignment.assetName}</p>
             <p className="font-medium">Assigned To:</p>
-            <p className="text-left">{selectedAssignment.assignedTo}</p>
+            <p className="text-left">
+              {selectedAssignment.assignedToUser.userName}
+            </p>
             <p className="font-medium">Assigned By:</p>
-            <p className="text-left">{selectedAssignment.assignedBy}</p>
+            <p className="text-left">
+              {selectedAssignment.assignedByUser.userName}
+            </p>
             <p className="font-medium">Assigned Date:</p>
             <p className="text-left">
-              {selectedAssignment.assignedDate.toDateString()}
+              {new Date(selectedAssignment.assignedDate).toLocaleDateString()}
             </p>
             <p className="font-medium">State:</p>
             <p className="text-left">{selectedAssignment.state}</p>
