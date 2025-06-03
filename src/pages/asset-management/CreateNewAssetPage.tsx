@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { AssetFormFields } from "@/features/asset-management/components/asset-form-fields";
-import type { Category } from "@/features/asset-management/types/Category";
 import type { AppDispatch, RootState } from "@/store";
 import { createAsset } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
@@ -28,26 +27,14 @@ export const formSchema = z.object({
   }),
 });
 
-interface CreateNewAssetPageProps {
-  onSubmit?: (data: z.infer<typeof formSchema>) => void;
-  onCancel?: () => void;
-}
-
-function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
+function CreateNewAssetPage() {
   const dispatch = useDispatch<AppDispatch>();
-
   const dataCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  console.info("Categories from store:", categories);
-
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [newCategoryPrefix, setNewCategoryPrefix] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -91,17 +78,20 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     const formData = new FormData();
-    console.log("Submitting form data:", data);
     formData.append("assetName", data.name);
-    formData.append("categoryId", data.category_id?.toString() || "0");
+    formData.append("categoryId", data.category_id?.toString() ?? "0");
     formData.append("specification", data.specification);
     const localDateString = data.installedDate.toLocaleDateString("sv-SE");
     formData.append("installedDate", localDateString);
     formData.append("state", data.state);
     const resultAction = await dispatch(createAsset(formData));
     if (createAsset.fulfilled.match(resultAction)) {
-      navigate("/assets"); // ✅ go to Manage Asset page
+      navigate("/assets");
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/assets");
   };
 
   return (
@@ -117,13 +107,8 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
         <AssetFormFields
           form={form}
           categories={dataCategories}
-          setCategories={setCategories}
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}
-          newCategoryName={newCategoryName}
-          newCategoryPrefix={newCategoryPrefix}
-          setNewCategoryName={setNewCategoryName}
-          setNewCategoryPrefix={setNewCategoryPrefix}
           isDropdownOpen={isDropdownOpen}
           setIsDropdownOpen={setIsDropdownOpen}
         />
@@ -132,7 +117,7 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
             id="cancel-button"
             type="button"
             variant="outline"
-            onClick={onCancel}
+            onClick={handleCancel}
           >
             Cancel
           </Button>

@@ -11,8 +11,8 @@ export const APP_ROUTES = {
   assets: {
     path: "/assets",
     create: "create-asset",
-    edit: "edit-asset/:assetCode", // ✅ Add param here
-    getEditPath: (assetCode: string) => `/assets/edit-asset/${assetCode}`, // ✅ Helper
+    edit: "edit-asset/:assetCode",
+    getEditPath: (assetCode: string) => `/assets/edit-asset/${assetCode}`,
   },
   returns: {
     path: "/returns",

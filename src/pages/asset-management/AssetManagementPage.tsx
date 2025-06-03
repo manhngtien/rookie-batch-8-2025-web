@@ -20,12 +20,12 @@ import type { Asset } from "@/features/asset-management/types/Asset";
 import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
 import type { AppDispatch, RootState } from "@/store";
 import { setShouldRefetch } from "@/store/slices/assetSlice";
-import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
+import { fetchAssetById, fetchAssetsByParams } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
 
 function AssetManagementPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { assets, total, loading, error } = useSelector(
+  const { assets, total, loading } = useSelector(
     (state: RootState) => state.assets,
   );
   const categories = useSelector(
@@ -144,8 +144,15 @@ function AssetManagementPage() {
     shouldRefetch,
   ]);
 
-  const handleRowClick = (asset: Asset) => {
-    setSelectedAsset(asset);
+  const handleRowClick = async (asset: Asset) => {
+    try {
+      const fullAsset = await dispatch(
+        fetchAssetById(asset.assetCode),
+      ).unwrap();
+      setSelectedAsset(fullAsset);
+    } catch (err) {
+      console.error("Failed to fetch asset by ID:", err);
+    }
   };
 
   const handleStateToggle = (state: string) => {
@@ -262,33 +269,36 @@ function AssetManagementPage() {
         </Button>
       </div>
 
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {/* {error && <p className="text-red-500">Error: {error}</p>} */}
 
-      {!error && (
-        <AssetDeleteDialogContext.Provider value={{ openAssetDeleteDialog }}>
-          <DataTable
-            columns={assetColumns}
-            data={assets}
-            total={total}
-            loading={loading}
-            handleRowClick={(asset) => handleRowClick(asset)}
-            initialState={initialState}
-            onPageChange={(pageIndex) => setPage(pageIndex + 1)}
-            onSortingChange={(sort) => {
-              dispatch(setShouldRefetch(true));
-              setSort(sort);
-              setPage(1);
-            }}
+      {/* {!error && ( */}
+      <AssetDeleteDialogContext.Provider value={{ openAssetDeleteDialog }}>
+        <DataTable
+          columns={assetColumns}
+          data={assets}
+          total={total}
+          loading={loading}
+          handleRowClick={(asset) => handleRowClick(asset)}
+          initialState={initialState}
+          onPageChange={(pageIndex) => {
+            dispatch(setShouldRefetch(true));
+            setPage(pageIndex + 1);
+          }}
+          onSortingChange={(sort) => {
+            dispatch(setShouldRefetch(true));
+            setSort(sort);
+            setPage(1);
+          }}
+        />
+        {assetToDelete && (
+          <AssetDeleteDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            assetCode={assetToDelete.assetCode}
           />
-          {assetToDelete && (
-            <AssetDeleteDialog
-              open={deleteDialogOpen}
-              onOpenChange={setDeleteDialogOpen}
-              assetCode={assetToDelete.assetCode}
-            />
-          )}
-        </AssetDeleteDialogContext.Provider>
-      )}
+        )}
+      </AssetDeleteDialogContext.Provider>
+      {/* )} */}
       {selectedAsset && (
         <AssetDetailDialog
           selectedAsset={selectedAsset}

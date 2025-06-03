@@ -101,7 +101,7 @@ export default function RequestPage() {
   }, [dispatch, page, pageSize, selectedStates, debouncedSearchTerm, orderBy]);
   const filteredRequests = requests;
   return (
-    <div className="container mx-auto p-4">
+    <div className="container">
       <h1 className="mb-6 text-2xl font-bold text-red-600">Request List</h1>
 
       <div className="mb-4 flex items-center justify-start space-x-4">

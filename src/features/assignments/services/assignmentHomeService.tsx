@@ -12,8 +12,6 @@ const assignmentService = {
   getAssignmentsHome: async ({
     page,
     pageSize,
-    assignedDate,
-    searchTerm,
     orderBy,
   }: FetchAssignmentsParams): Promise<FetchAssignmentsResponse> => {
     const queryParams = new URLSearchParams({
@@ -21,20 +19,12 @@ const assignmentService = {
       PageSize: pageSize.toString(),
     });
 
-    if (assignedDate) {
-      queryParams.append("AssignedDate", assignedDate);
-    }
-
-    if (searchTerm) {
-      queryParams.append("SearchTerm", searchTerm);
-    }
-
     if (orderBy) {
       queryParams.append("OrderBy", orderBy);
     }
 
     const response = await apiClient.get<Assignment[]>(
-      `${API_ROUTES.assignment.getAssignments}?${queryParams.toString()}`,
+      `${API_ROUTES.assignments.myAssignment}?${queryParams.toString()}`,
     );
     const transformedData = response.data.map((item) => ({
       ...item,

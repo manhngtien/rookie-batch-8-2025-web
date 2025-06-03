@@ -64,7 +64,6 @@ function UserManagementPage() {
 
   useEffect(() => {
     if (lastAction === "disableUserSuccess") {
-      console.info("User disabled successfully trong page dm");
       setShouldFetch(true);
       dispatch(clearLastAction());
     }
@@ -82,7 +81,6 @@ function UserManagementPage() {
 
     const fetchUsersData = async () => {
       try {
-        console.info("fetching di dmm");
         const typeParam = selectedTypes.includes("All")
           ? undefined
           : selectedTypes;
@@ -106,6 +104,12 @@ function UserManagementPage() {
   }, [dispatch, page, pageSize, selectedTypes, orderBy, shouldFetch]);
 
   useEffect(() => {
+    if (
+      (location.state?.newUserCreated || location.state?.userEdited) &&
+      debouncedSearchTerm === ""
+    ) {
+      return;
+    }
     const fetchUsersData = async () => {
       try {
         const typeParam = selectedTypes.includes("All")
@@ -162,6 +166,15 @@ function UserManagementPage() {
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     setPage(1);
+    navigate(location.pathname, {
+      replace: true,
+      state: {},
+    });
+    console.info(
+      "Check oci con ko",
+      location.state?.newUserCreated,
+      location.state?.userEdited,
+    );
   };
 
   const handlePageChange = (pageIndex: number) => {

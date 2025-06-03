@@ -13,6 +13,20 @@ export interface Asset {
   assignments: Assignment[];
 }
 
+export const ELocation = {
+  HCM: 1,
+  HN: 2,
+  DN: 3,
+} as const;
+
+export type ELocation = (typeof ELocation)[keyof typeof ELocation];
+
+export const LocationLabelMap: Record<ELocation, string> = {
+  [ELocation.HCM]: "Ho Chi Minh",
+  [ELocation.HN]: "Ha Noi",
+  [ELocation.DN]: "Da Nang",
+};
+
 export interface AssetCreate {
   assetName: string;
   specification: string;

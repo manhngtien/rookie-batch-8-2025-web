@@ -16,7 +16,7 @@ export const emptyAsset: Asset = {
   specification: "",
   location: 0,
   installedDate: new Date().toLocaleDateString("sv-SE"),
-  state: "available", // or "not_available" as default
+  state: "available",
   category: {
     id: 0,
     categoryName: "",
@@ -62,6 +62,14 @@ const assetSlice = createSlice({
     },
     setShouldRefetch: (state, action: PayloadAction<boolean>) => {
       state.shouldRefetch = action.payload;
+    },
+    removeAsset: (state, action: PayloadAction<string>) => {
+      state.assets = state.assets.filter(
+        (asset) => asset.assetCode !== action.payload,
+      );
+    },
+    resetError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -137,15 +145,13 @@ const assetSlice = createSlice({
         state.updatingLoading = false;
         state.error = action.payload ?? "An error occurred";
       })
-      .addCase(deleteAssetById.fulfilled, (state, action) => {
+      .addCase(deleteAssetById.fulfilled, (state) => {
         state.deletingLoading = false;
-        state.assets = state.assets.filter(
-          (asset) => asset.assetCode !== action.payload.assetCode,
-        );
         state.error = null;
       })
       .addCase(deleteAssetById.pending, (state) => {
         state.deletingLoading = true;
+
         state.error = null;
       })
       .addCase(deleteAssetById.rejected, (state, action) => {
@@ -155,6 +161,7 @@ const assetSlice = createSlice({
   },
 });
 
-export const { resetAssets, setShouldRefetch } = assetSlice.actions;
+export const { resetAssets, setShouldRefetch, removeAsset, resetError } =
+  assetSlice.actions;
 
 export default assetSlice.reducer;

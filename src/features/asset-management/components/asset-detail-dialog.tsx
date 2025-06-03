@@ -6,7 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Asset } from "@/features/asset-management/types/Asset";
+import {
+  type Asset,
+  type ELocation,
+  LocationLabelMap,
+} from "@/features/asset-management/types/Asset";
 import { formatDate } from "@/utils/helpers";
 
 interface AssetDetailDialogProps {
@@ -40,11 +44,13 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="text-left">
                 {formatDate(selectedAsset.installedDate)}
               </p>
-
               <p className="font-medium">State:</p>
               <p className="text-left">{selectedAsset.state}</p>
               <p className="font-medium">Location:</p>
-              <p className="text-left">{selectedAsset.location}</p>
+              <p className="text-left">
+                {LocationLabelMap[selectedAsset.location as ELocation] ??
+                  "Unknown"}
+              </p>{" "}
               <p className="font-medium">Specification:</p>
               <p className="text-left">{selectedAsset.specification}</p>
             </div>
@@ -67,17 +73,21 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {/* {selectedAsset.assignments.length > 0 ? (
+                    {selectedAsset.assignments.length > 0 ? (
                       selectedAsset.assignments.map((assignment, index) => (
                         <tr key={index} className="border-b">
-                          <td className="p-2">
-                            {assignment.assignedDate.toLocaleDateString()}
+                          <td className="p-2 text-gray-500">
+                            {assignment.assignedDate}
                           </td>
-                          <td className="p-2">{assignment.assignedTo}</td>
-                          <td className="p-2">{assignment.assignedBy}</td>
-                          <td className="p-2">
+                          <td className="p-2 text-gray-500">
+                            {assignment.assignedToUser.userName}
+                          </td>
+                          <td className="p-2 text-gray-500">
+                            {assignment.assignedByUser.userName}
+                          </td>
+                          <td className="p-2 text-gray-500">
                             {assignment.assignedDate
-                              ? assignment.assignedDate.toLocaleDateString()
+                              ? assignment.assignedDate
                               : "N/A"}
                           </td>
                         </tr>
@@ -88,7 +98,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                           No assignment history
                         </td>
                       </tr>
-                    )} */}
+                    )}
                   </tbody>
                 </table>
               </div>
