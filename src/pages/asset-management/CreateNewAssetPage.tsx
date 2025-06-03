@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { AssetFormFields } from "@/features/asset-management/components/asset-form-fields";
-import type { Category } from "@/features/asset-management/types/Category";
 import type { AppDispatch, RootState } from "@/store";
 import { createAsset } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
@@ -28,33 +27,14 @@ export const formSchema = z.object({
   }),
 });
 
-export const categoryFormSchema = z.object({
-  newCategoryName: z
-    .string()
-    .min(1, "Category name is required")
-    .max(50, "Name too long"),
-  prefix: z
-    .string()
-    .min(1, "Prefix is required")
-    .max(10, "Prefix too long")
-    .regex(/^[A-Z0-9]+$/, "Only uppercase letters or digits allowed"),
-});
-
 function CreateNewAssetPage() {
   const dispatch = useDispatch<AppDispatch>();
-
   const dataCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  console.info("Categories from store:", categories);
-
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [newCategoryPrefix, setNewCategoryPrefix] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -99,18 +79,18 @@ function CreateNewAssetPage() {
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append("assetName", data.name);
-    formData.append("categoryId", data.category_id?.toString() || "0");
+    formData.append("categoryId", data.category_id?.toString() ?? "0");
     formData.append("specification", data.specification);
     const localDateString = data.installedDate.toLocaleDateString("sv-SE");
     formData.append("installedDate", localDateString);
     formData.append("state", data.state);
     const resultAction = await dispatch(createAsset(formData));
     if (createAsset.fulfilled.match(resultAction)) {
-      navigate("/assets"); // ✅ go to Manage Asset page
+      navigate("/assets");
     }
   };
 
-  const handleCancle = () => {
+  const handleCancel = () => {
     navigate("/assets");
   };
 
@@ -126,14 +106,9 @@ function CreateNewAssetPage() {
         </h2>
         <AssetFormFields
           form={form}
-          categories={dataCategories}
-          setCategories={setCategories}
+          categories={dataCategories} // Use Redux store categories directly
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}
-          newCategoryName={newCategoryName}
-          newCategoryPrefix={newCategoryPrefix}
-          setNewCategoryName={setNewCategoryName}
-          setNewCategoryPrefix={setNewCategoryPrefix}
           isDropdownOpen={isDropdownOpen}
           setIsDropdownOpen={setIsDropdownOpen}
         />
@@ -142,7 +117,7 @@ function CreateNewAssetPage() {
             id="cancel-button"
             type="button"
             variant="outline"
-            onClick={handleCancle}
+            onClick={handleCancel}
           >
             Cancel
           </Button>

@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import type { Category } from "@/features/asset-management/types/Category";
-import { fetchCategories } from "@/store/thunks/categoryThunk";
+import {
+  createCategories,
+  fetchCategories,
+} from "@/store/thunks/categoryThunk";
 
 interface CategoryState {
   categories: Category[];
@@ -37,6 +40,19 @@ const categorySlice = createSlice({
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to fetch categories";
+      })
+      // createCategories
+      .addCase(createCategories.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categories.push(action.payload.data);
+      })
+      .addCase(createCategories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to create category";
       });
   },
 });

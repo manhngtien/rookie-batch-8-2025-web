@@ -1,6 +1,5 @@
-import React from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { DateSelector } from "@/components/ui/dashboard-elements";
@@ -24,28 +23,11 @@ import type { formSchema } from "@/pages/asset-management/CreateNewAssetPage";
 
 import { AddCategoryForm } from "./add-category-form";
 
-export const categoryFormSchema = z.object({
-  newCategoryName: z
-    .string()
-    .min(1, "Category name is required")
-    .max(50, "Name too long"),
-  prefix: z
-    .string()
-    .min(1, "Prefix is required")
-    .max(10, "Prefix too long")
-    .regex(/^[A-Z0-9]+$/, "Only uppercase letters or digits allowed"),
-});
-
 interface AssetFormFieldsProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   categories: Category[];
-  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
   isAddingCategory: boolean;
   setIsAddingCategory: React.Dispatch<React.SetStateAction<boolean>>;
-  newCategoryName: string;
-  newCategoryPrefix: string;
-  setNewCategoryName: React.Dispatch<React.SetStateAction<string>>;
-  setNewCategoryPrefix: React.Dispatch<React.SetStateAction<string>>;
   isDropdownOpen: boolean;
   setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -66,7 +48,10 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
       (cat) => cat.categoryName === categoryName,
     );
     form.setValue("category_id", selectedCategory?.id ?? 0);
+    form.setValue("category", categoryName);
+    setIsDropdownOpen(false);
   };
+
   return (
     <>
       {/* Name */}
@@ -117,23 +102,17 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                     variant="outline"
                     className="w-full justify-between text-left"
                   >
-                    {field.value
-                      ? categories.find(
-                          (cat) => cat.categoryName === field.value,
-                        )?.categoryName
-                      : "Select a category"}
+                    {field.value || "Select a category"}
                   </Button>
                 </FormControl>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[calc(100%-120px-1rem)]">
+              <DropdownMenuContent className="max-h-80 w-[var(--radix-dropdown-menu-trigger-width)] min-w-[calc(100%-120px-1rem)]">
                 {categories.map((cat) => (
                   <DropdownMenuItem
                     key={cat.categoryName}
-                    onSelect={() => {
-                      handleCategorySelect(cat.categoryName, form);
-                      field.onChange(cat.categoryName);
-                      setIsDropdownOpen(false);
-                    }}
+                    onSelect={() =>
+                      handleCategorySelect(cat.categoryName, form)
+                    }
                   >
                     {cat.categoryName}
                   </DropdownMenuItem>
@@ -157,9 +136,10 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                       setIsAddingCategory(false);
                       setIsDropdownOpen(true);
                     }}
-                    onSuccess={() => {
+                    onSuccess={(newCategory: Category) => {
                       setIsAddingCategory(false);
                       setIsDropdownOpen(false);
+                      handleCategorySelect(newCategory.categoryName, form); // Auto-select new category
                     }}
                   />
                 )}
@@ -169,7 +149,6 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
           </FormItem>
         )}
       />
-
       {/* Specification */}
       <FormField
         control={form.control}
@@ -186,7 +165,6 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
           </FormItem>
         )}
       />
-
       {/* Installed Date */}
       <FormField
         control={form.control}
@@ -208,7 +186,6 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
           </FormItem>
         )}
       />
-
       {/* State */}
       <FormField
         control={form.control}
