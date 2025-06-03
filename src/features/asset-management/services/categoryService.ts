@@ -1,4 +1,7 @@
-import type { Category } from "@/features/asset-management/types/Category";
+import type {
+  Category,
+  CreateCategoryRequest,
+} from "@/features/asset-management/types/Category";
 import { API_ROUTES } from "@/lib/apiRoutes";
 import apiClient from "@/services/apiClient";
 
@@ -8,13 +11,19 @@ const categoryService = {
     return { data: response.data };
   },
 
-  createCategories: async (formData: FormData): Promise<{ data: Category }> => {
+  createCategories: async (
+    category: CreateCategoryRequest,
+  ): Promise<{ data: Category }> => {
+    const formData = new FormData();
+    formData.append("categoryName", category.categoryName);
+    formData.append("prefix", category.prefix);
+
     const response = await apiClient.post(
       API_ROUTES.categories.createCategories,
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data", // Important: Let the browser set the proper multipart boundary
+          "Content-Type": "multipart/form-data",
         },
       },
     );

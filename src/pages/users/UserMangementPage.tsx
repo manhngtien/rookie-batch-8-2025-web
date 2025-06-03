@@ -64,7 +64,6 @@ function UserManagementPage() {
 
   useEffect(() => {
     if (lastAction === "disableUserSuccess") {
-      console.info("User disabled successfully trong page dm");
       setShouldFetch(true);
       dispatch(clearLastAction());
     }

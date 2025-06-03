@@ -11,3 +11,8 @@ export interface CategoryAPIResponse {
   categoryName: string;
   total: number;
 }
+
+export interface CreateCategoryRequest {
+  categoryName: string;
+  prefix: string;
+}

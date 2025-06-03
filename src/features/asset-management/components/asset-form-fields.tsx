@@ -1,4 +1,3 @@
-import { Check, X } from "lucide-react";
 import React from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -22,6 +21,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { Category } from "@/features/asset-management/types/Category";
 import type { formSchema } from "@/pages/asset-management/CreateNewAssetPage";
+
+import { AddCategoryForm } from "./add-category-form";
 
 export const categoryFormSchema = z.object({
   newCategoryName: z
@@ -52,43 +53,11 @@ interface AssetFormFieldsProps {
 export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
   form,
   categories,
-  setCategories,
   isAddingCategory,
   setIsAddingCategory,
-  newCategoryPrefix,
-  newCategoryName,
-  setNewCategoryName,
-  setNewCategoryPrefix,
   isDropdownOpen,
   setIsDropdownOpen,
 }) => {
-  const handleAddCategory = () => {
-    const formattedName = newCategoryName;
-    const formattedPrefix = newCategoryPrefix.trim().toUpperCase();
-
-    // Check for duplicate name or prefix
-
-    const newCategory: Category = {
-      id: null,
-      prefix: formattedPrefix,
-      categoryName: formattedName,
-      total: null,
-    };
-
-    setCategories((prev) => [...prev, newCategory]);
-    form.setValue("category", newCategory.categoryName);
-    form.setValue("category_id", 0); // set dummy id or handle accordingly
-    setIsAddingCategory(false);
-    setIsDropdownOpen(true);
-  };
-
-  const handleCancelAddCategory = () => {
-    setNewCategoryName("");
-    setIsAddingCategory(false);
-    setIsDropdownOpen(true);
-    form.clearErrors("category");
-  };
-
   const handleCategorySelect = (
     categoryName: string,
     form: UseFormReturn<z.infer<typeof formSchema>>,
@@ -96,7 +65,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
     const selectedCategory = categories.find(
       (cat) => cat.categoryName === categoryName,
     );
-    form.setValue("category_id", selectedCategory?.id || 0);
+    form.setValue("category_id", selectedCategory?.id ?? 0);
   };
   return (
     <>
@@ -182,52 +151,17 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                   </DropdownMenuItem>
                 )}
                 {isAddingCategory && (
-                  <div className="flex items-center px-2 py-1.5">
-                    <Input
-                      id="new-category"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Bluetooth Mouse"
-                      className="flex-6 rounded-none"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddCategory();
-                        }
-                      }}
-                    />
-                    <Input
-                      id="new-category-prefix"
-                      value={newCategoryPrefix}
-                      onChange={(e) => setNewCategoryPrefix(e.target.value)}
-                      placeholder="BM"
-                      className="flex-1 rounded-none"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddCategory();
-                        }
-                      }}
-                    />
-                    <Button
-                      id="add-category-button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleAddCategory}
-                      className="ml-2 h-6 w-6"
-                    >
-                      <Check className="h-4 w-4 text-green-600" />
-                    </Button>
-                    <Button
-                      id="cancel-add-category-button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleCancelAddCategory}
-                      className="h-6 w-6"
-                    >
-                      <X className="h-4 w-4 text-red-600" />
-                    </Button>
-                  </div>
+                  <AddCategoryForm
+                    existingCategories={categories}
+                    onCancel={() => {
+                      setIsAddingCategory(false);
+                      setIsDropdownOpen(true);
+                    }}
+                    onSuccess={() => {
+                      setIsAddingCategory(false);
+                      setIsDropdownOpen(false);
+                    }}
+                  />
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

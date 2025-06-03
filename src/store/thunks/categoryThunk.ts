@@ -2,7 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
 
 import categoryService from "@/features/asset-management/services/categoryService";
-import type { Category } from "@/features/asset-management/types/Category";
+import type {
+  Category,
+  CreateCategoryRequest,
+} from "@/features/asset-management/types/Category";
 
 export const fetchCategories = createAsyncThunk<
   Category[],
@@ -22,14 +25,13 @@ export const fetchCategories = createAsyncThunk<
 });
 
 export const createCategories = createAsyncThunk<
-  Category,
-  FormData,
+  { data: Category },
+  CreateCategoryRequest,
   { rejectValue: string }
->("categories/createCategories", async (formData, { rejectWithValue }) => {
+>("categories/createCategories", async (category, { rejectWithValue }) => {
   try {
-    const response = await categoryService.createCategories(formData);
-    console.info("Categories fetched successfully:", response);
-    return response.data;
+    const response = await categoryService.createCategories(category);
+    return { data: response.data };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       return rejectWithValue(error.message || "Failed to fetch categories");
