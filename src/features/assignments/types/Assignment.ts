@@ -1,3 +1,4 @@
+import type { User } from "@/features/users/types/User";
 import type { FetchParams } from "@/types";
 
 export interface FetchAssignmentsParams extends FetchParams {
@@ -11,8 +12,8 @@ export interface Assignment {
   assignedDate: string;
   assetCode: string;
   assetName: string;
-  assignedBy: string;
-  assignedTo: string;
+  assignedByUser: User;
+  assignedToUser: User;
   note: string;
 }
 

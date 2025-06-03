@@ -70,8 +70,9 @@ export const fetchAssetById = createAsyncThunk<
   { rejectValue: string }
 >("assets/fetchAssetById", async (assetCode, { rejectWithValue }) => {
   try {
+    console.info("Fetching asset by code:", assetCode);
     const response = await assetService.getAssetByCode(assetCode);
-    console.info("Asset fetched successfully:", response);
+    console.info("Asset fetched by code successfully:", response);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {

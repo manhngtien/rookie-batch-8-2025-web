@@ -41,14 +41,11 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
   setIsDropdownOpen,
 }) => {
   const handleCategorySelect = (
-    categoryName: string,
+    selectedCategory: Category,
     form: UseFormReturn<z.infer<typeof formSchema>>,
   ) => {
-    const selectedCategory = categories.find(
-      (cat) => cat.categoryName === categoryName,
-    );
-    form.setValue("category_id", selectedCategory?.id ?? 0);
-    form.setValue("category", categoryName);
+    form.setValue("category_id", selectedCategory.id ?? undefined);
+    form.setValue("category", selectedCategory.categoryName);
     setIsDropdownOpen(false);
   };
 
@@ -110,9 +107,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                 {categories.map((cat) => (
                   <DropdownMenuItem
                     key={cat.categoryName}
-                    onSelect={() =>
-                      handleCategorySelect(cat.categoryName, form)
-                    }
+                    onSelect={() => handleCategorySelect(cat, form)}
                   >
                     {cat.categoryName}
                   </DropdownMenuItem>
@@ -139,7 +134,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                     onSuccess={(newCategory: Category) => {
                       setIsAddingCategory(false);
                       setIsDropdownOpen(false);
-                      handleCategorySelect(newCategory.categoryName, form); // Auto-select new category
+                      handleCategorySelect(newCategory, form); // Auto-select new category
                     }}
                   />
                 )}

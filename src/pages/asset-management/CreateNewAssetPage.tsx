@@ -106,7 +106,7 @@ function CreateNewAssetPage() {
         </h2>
         <AssetFormFields
           form={form}
-          categories={dataCategories} // Use Redux store categories directly
+          categories={dataCategories}
           isAddingCategory={isAddingCategory}
           setIsAddingCategory={setIsAddingCategory}
           isDropdownOpen={isDropdownOpen}
