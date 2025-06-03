@@ -28,12 +28,19 @@ export const formSchema = z.object({
   }),
 });
 
-interface CreateNewAssetPageProps {
-  onSubmit?: (data: z.infer<typeof formSchema>) => void;
-  onCancel?: () => void;
-}
+export const categoryFormSchema = z.object({
+  newCategoryName: z
+    .string()
+    .min(1, "Category name is required")
+    .max(50, "Name too long"),
+  prefix: z
+    .string()
+    .min(1, "Prefix is required")
+    .max(10, "Prefix too long")
+    .regex(/^[A-Z0-9]+$/, "Only uppercase letters or digits allowed"),
+});
 
-function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
+function CreateNewAssetPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   const dataCategories = useSelector(
@@ -104,6 +111,10 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
     }
   };
 
+  const handleCancle = () => {
+    navigate("/assets");
+  };
+
   return (
     <Form {...form}>
       <form
@@ -132,7 +143,7 @@ function CreateNewAssetPage({ onCancel }: CreateNewAssetPageProps) {
             id="cancel-button"
             type="button"
             variant="outline"
-            onClick={onCancel}
+            onClick={handleCancle}
           >
             Cancel
           </Button>

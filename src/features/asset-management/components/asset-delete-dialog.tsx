@@ -1,6 +1,7 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
   DialogChangePasswordHeader,
   DialogChangePasswordTitle,
 } from "@/components/ui/dialog-change-password";
-import type { AppDispatch, RootState } from "@/store";
+import type { AppDispatch } from "@/store";
 import { deleteAssetById } from "@/store/thunks/assetThunk";
 
 interface AssetDeleteDialogProps {
@@ -24,46 +25,61 @@ export default function AssetDeleteDialog({
   assetCode,
 }: AssetDeleteDialogProps) {
   const [loading, setLoading] = useState(false);
-  const error = useSelector((state: RootState) => state.assets.error);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleConfirmDelete = async () => {
     setLoading(true);
     try {
-      const result = await dispatch(deleteAssetById(assetCode)).unwrap();
-      console.info("Asset deleted:", result);
-      onOpenChange(false);
-    } catch (err) {
-      console.error("Failed to delete asset", err);
-    } finally {
-      setLoading(false);
+      await dispatch(deleteAssetById(assetCode)).unwrap();
+    } catch (error) {
+      console.log("Change password failed!", error);
+      setLoading(true);
     }
   };
 
+  const handleDialogOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setLoading(false); // Reset loading whenever dialog closes
+    }
+    onOpenChange(isOpen); // Call parent-provided function
+  };
+
   return (
-    <DialogChangePassword open={open} onOpenChange={onOpenChange}>
+    <DialogChangePassword open={open} onOpenChange={handleDialogOpenChange}>
       <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
-        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-black bg-gray-200 p-4">
           <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
-            Confirm Deletion
+            {loading ? "Cannot delete asset" : "Are you sure?"}
           </DialogChangePasswordTitle>
         </DialogChangePasswordHeader>
+
         <DialogDescription className="text-primary px-4 py-2">
-          Are you sure?
+          {loading ? (
+            <>
+              Cannot delete asset because it belongs to one or more historical
+              assignments.
+              <br />
+              If the asset is no longer usable, please update its state in the{" "}
+              <Link
+                to={`/assets/edit-asset/${assetCode}`}
+                className="text-blue-600 underline hover:text-blue-800"
+              >
+                Edit asset page
+              </Link>
+              .
+            </>
+          ) : (
+            "Are you sure?"
+          )}
         </DialogDescription>
-
-        {error && (
-          <div className="mx-4 my-2 rounded border border-red-400 bg-red-100 p-3 text-sm text-red-700">
-            <strong>Cannot Delete Asset</strong>
-            <p>{error}</p>
-          </div>
-        )}
-
         <div className="m-4 flex justify-end space-x-4">
           <Button
-            id="cancle-delete-asset"
+            id="cancel-delete-asset"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={async () => {
+              onOpenChange(false);
+              setLoading(false);
+            }}
           >
             Cancel
           </Button>
@@ -73,7 +89,7 @@ export default function AssetDeleteDialog({
             disabled={loading}
             onClick={handleConfirmDelete}
           >
-            {loading ? "Deleting..." : "Delete"}
+            Delete
           </Button>
         </div>
       </DialogChangePasswordContent>
