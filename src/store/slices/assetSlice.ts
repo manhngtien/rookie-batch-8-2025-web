@@ -151,6 +151,7 @@ const assetSlice = createSlice({
       })
       .addCase(deleteAssetById.pending, (state) => {
         state.deletingLoading = true;
+
         state.error = null;
       })
       .addCase(deleteAssetById.rejected, (state, action) => {

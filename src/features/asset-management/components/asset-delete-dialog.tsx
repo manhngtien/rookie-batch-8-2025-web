@@ -1,5 +1,5 @@
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router";
 
@@ -11,6 +11,7 @@ import {
   DialogChangePasswordTitle,
 } from "@/components/ui/dialog-change-password";
 import type { AppDispatch } from "@/store";
+import { removeAsset } from "@/store/slices/assetSlice";
 import { deleteAssetById } from "@/store/thunks/assetThunk";
 
 interface AssetDeleteDialogProps {
@@ -24,37 +25,36 @@ export default function AssetDeleteDialog({
   onOpenChange,
   assetCode,
 }: AssetDeleteDialogProps) {
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const handleConfirmDelete = async () => {
-    setLoading(true);
     try {
       await dispatch(deleteAssetById(assetCode)).unwrap();
+      dispatch(removeAsset(assetCode));
+      await onOpenChange(false);
     } catch (error) {
-      console.log("Change password failed!", error);
-      setLoading(true);
+      console.log("Delete asset fail!", error);
+      setError(true);
     }
   };
 
-  const handleDialogOpenChange = (isOpen: boolean) => {
-    if (!isOpen) {
-      setLoading(false); // Reset loading whenever dialog closes
-    }
-    onOpenChange(isOpen); // Call parent-provided function
-  };
+  useEffect(() => {
+    setError(false);
+  }, [open]);
 
   return (
-    <DialogChangePassword open={open} onOpenChange={handleDialogOpenChange}>
+    <DialogChangePassword open={open} onOpenChange={onOpenChange}>
       <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
         <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-black bg-gray-200 p-4">
           <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
-            {loading ? "Cannot delete asset" : "Are you sure?"}
+            {error ? "Cannot delete asset" : "Are you sure?"}
           </DialogChangePasswordTitle>
         </DialogChangePasswordHeader>
 
         <DialogDescription className="text-primary px-4 py-2">
-          {loading ? (
+          {error ? (
             <>
               Cannot delete asset because it belongs to one or more historical
               assignments.
@@ -78,7 +78,7 @@ export default function AssetDeleteDialog({
             variant="outline"
             onClick={async () => {
               onOpenChange(false);
-              setLoading(false);
+              setError(false);
             }}
           >
             Cancel
@@ -86,7 +86,7 @@ export default function AssetDeleteDialog({
           <Button
             id="confirm-delete-asset"
             className="bg-red-600 text-white hover:bg-red-700"
-            disabled={loading}
+            disabled={error}
             onClick={handleConfirmDelete}
           >
             Delete
