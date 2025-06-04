@@ -7,6 +7,7 @@ import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import { useAssetDeleteDialog } from "@/hooks/useAssetDeleteDialog";
 import { APP_ROUTES } from "@/lib/appRoutes";
+import { formatStateLabel } from "@/lib/utils";
 
 export const assetColumns: ColumnDef<Asset>[] = [
   {
@@ -33,6 +34,10 @@ export const assetColumns: ColumnDef<Asset>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="State" />
     ),
+    cell: ({ row }) => {
+      const rawState = row.getValue("state") as string;
+      return <span>{formatStateLabel(rawState)}</span>;
+    },
   },
   {
     id: "actions",
@@ -49,7 +54,8 @@ export const assetColumns: ColumnDef<Asset>[] = [
             disabled={isAssigned}
             onClick={(e) => {
               e.stopPropagation();
-              navigate(APP_ROUTES.assets.getEditPath(asset.assetCode)); // Replace with actual asset code
+              navigate(APP_ROUTES.assets.getEditPath(asset.assetCode));
+              console.info("This is the clicked asset: " + asset); // Replace with actual asset code
             }}
           />
           <ActionButton

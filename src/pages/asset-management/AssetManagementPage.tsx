@@ -18,6 +18,7 @@ import AssetDeleteDialog from "@/features/asset-management/components/asset-dele
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
+import { formatStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { setShouldRefetch } from "@/store/slices/assetSlice";
 import { fetchAssetById, fetchAssetsByParams } from "@/store/thunks/assetThunk";
@@ -157,6 +158,7 @@ function AssetManagementPage() {
 
   const handleStateToggle = (state: string) => {
     dispatch(setShouldRefetch(true));
+    setPage(1);
     setSelectedStates((prev) => {
       if (state === "All") {
         return ["All"];
@@ -174,6 +176,7 @@ function AssetManagementPage() {
 
   const handleCategoryToggle = (category: string) => {
     dispatch(setShouldRefetch(true));
+    setPage(1);
     setSelectedCategories((prev) => {
       if (prev.includes(category)) {
         return prev.filter((c) => c !== category);
@@ -209,7 +212,7 @@ function AssetManagementPage() {
                     checked={selectedStates.includes(state)}
                     onCheckedChange={() => handleStateToggle(state)}
                   />
-                  <label htmlFor={state}>{state}</label>
+                  <label htmlFor={state}>{formatStateLabel(state)}</label>
                 </div>
               ))}
             </div>
@@ -236,7 +239,9 @@ function AssetManagementPage() {
                   <Checkbox
                     id={category}
                     checked={selectedCategories.includes(category)}
-                    onCheckedChange={() => handleCategoryToggle(category)}
+                    onCheckedChange={() => {
+                      handleCategoryToggle(category);
+                    }}
                   />
                   <label htmlFor={category}>{category}</label>
                 </div>
