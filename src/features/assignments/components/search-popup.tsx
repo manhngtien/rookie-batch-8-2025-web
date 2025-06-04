@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export function SearchPopup<T>({
@@ -74,7 +74,7 @@ export function SearchPopup<T>({
         />
       </div>
 
-      <ScrollArea className="h-[calc(100vh-20rem)]">
+      <ScrollArea className="h-[calc(100vh-25rem)] w-full">
         <DataTable
           columns={columns}
           data={data}
@@ -96,25 +96,26 @@ export function SearchPopup<T>({
           initialSelectedRow={localSelectedRow}
           canSelectRow={true}
         />
-
-        <div className="flex justify-end gap-2">
-          <Button
-            id="save-search-popup"
-            onClick={() => onSave(localSelectedRow)}
-            disabled={!localSelectedRow}
-          >
-            Save
-          </Button>
-          <Button
-            id="close-search-popup"
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-        </div>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
+
+      <div className="flex justify-end gap-2">
+        <Button
+          id="save-search-popup"
+          onClick={() => onSave(localSelectedRow)}
+          disabled={!localSelectedRow}
+        >
+          Save
+        </Button>
+        <Button
+          id="close-search-popup"
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 }

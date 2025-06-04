@@ -67,7 +67,6 @@ export default function EditAssignmentPage() {
   const handleSubmit = async (values: z.infer<typeof assignmentFormSchema>) => {
     if (!id) return;
 
-    console.info(values, id, "ddddddddddddd");
     const response = await dispatch(
       editAssignment({
         ...values,

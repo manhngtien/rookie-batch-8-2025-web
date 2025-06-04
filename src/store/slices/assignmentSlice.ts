@@ -5,6 +5,7 @@ import { addThunkCases } from "@/utils/addThunkCases";
 
 import {
   createAssignment,
+  deleteSingleAssignment,
   editAssignment,
   fetchAssignments,
 } from "../thunks/assignmentThunk";
@@ -51,6 +52,7 @@ const assignmentSlice = createSlice({
         state.error = (action.payload as string) ?? "An unknown error occurred";
       });
 
+    // Edit assignment
     builder
       .addCase(editAssignment.pending, (state) => {
         state.loading = true;
@@ -61,6 +63,21 @@ const assignmentSlice = createSlice({
         state.data = [action.payload.data, ...state.data];
       })
       .addCase(editAssignment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) ?? "An unknown error occurred";
+      });
+
+    // Delete assignment
+    builder
+      .addCase(deleteSingleAssignment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteSingleAssignment.fulfilled, (state) => {
+        state.loading = false;
+        state.total--;
+      })
+      .addCase(deleteSingleAssignment.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) ?? "An unknown error occurred";
       });

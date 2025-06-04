@@ -2,10 +2,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { formatStateLabel } from "@/lib/utils";
+import { formatLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
 import type { Assignment } from "../types/Assignment";
+import { assignmentStateMap } from "../types/Assignment";
 
 interface OwnAssignmentColumnsProps {
   onOpenReplyDialog: (
@@ -65,28 +66,29 @@ export const ownAssignmentColumns = ({
     ),
     cell: ({ row }) => {
       const rawState = row.getValue("state") as string;
-      return <span>{formatStateLabel(rawState)}</span>;
+      return <span>{formatLabel(rawState, assignmentStateMap)}</span>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const assignment = row.original;
-      const isWaiting = assignment.state === "Waiting for acceptance";
+      const isWaiting = assignment.state === "Waiting_For_Acceptance";
       const isAccepted = assignment.state === "Accepted";
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="check"
-            disabled={isWaiting || isAccepted}
-            onClick={() => onOpenReplyDialog(assignment, "accept")}
+            disabled={!isWaiting}
+            onClick={() => {
+              onOpenReplyDialog(assignment, "accept");
+            }}
           />
           <ActionButton
             iconName="circle-x"
-            disabled={isWaiting || isAccepted}
+            disabled={!isWaiting}
             className="text-foreground"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               onOpenReplyDialog(assignment, "decline");
             }}
           />

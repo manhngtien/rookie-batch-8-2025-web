@@ -1,4 +1,3 @@
-// src/features/users/components/user-form.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
 import { differenceInYears, isBefore, isWeekend } from "date-fns";
 import { useEffect, useState } from "react";
@@ -35,7 +34,7 @@ const formSchema = z.object({
     .string()
     .min(1, "Last name is required")
     .max(128, "Last name must not exceed 128 characters")
-    .regex(/^[a-zA-Z0-9 ]*$/, "Last name must not contain special characters"),
+    .regex(/^[a-zA-Z0-9 ]*$/, "Last name must not exceed 128 characters"),
   dateOfBirth: z.date({
     required_error: "Date of birth is required",
   }),
@@ -71,7 +70,7 @@ export default function UserForm({
       firstName: "",
       lastName: "",
       gender: undefined,
-      type: "",
+      type: "staff", // Set default type to "staff" for new users
       location: "",
     },
   });
@@ -312,7 +311,7 @@ export default function UserForm({
               <FormLabel className="text-sm font-medium">Type</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value.toLowerCase() || ""}
+                defaultValue={field.value.toLowerCase() || "staff"} // Default to "staff"
               >
                 <FormControl className="w-full">
                   <SelectTrigger id="user-type-select">
