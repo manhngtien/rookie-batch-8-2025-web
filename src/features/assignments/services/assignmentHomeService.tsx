@@ -10,12 +10,12 @@ import type {
 
 const assignmentService = {
   getAssignmentsHome: async ({
-    page,
+    pageNumber,
     pageSize,
     orderBy,
   }: FetchAssignmentsParams): Promise<FetchAssignmentsResponse> => {
     const queryParams = new URLSearchParams({
-      PageNumber: page.toString(),
+      PageNumber: pageNumber.toString(),
       PageSize: pageSize.toString(),
     });
 
@@ -26,10 +26,7 @@ const assignmentService = {
     const response = await apiClient.get<Assignment[]>(
       `${API_ROUTES.assignments.myAssignment}?${queryParams.toString()}`,
     );
-    const transformedData = response.data.map((item) => ({
-      ...item,
-      assignedDate: new Date(item.assignedDate),
-    }));
+    const transformedData = response.data;
     const paginationHeader = response.headers["pagination"];
     if (!paginationHeader) {
       throw new Error("Pagination header missing");

@@ -23,13 +23,29 @@ export const userColumns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Full Name" />
     ),
+    cell: ({ row }) => {
+      const fullName: string = row.getValue("fullName");
+      const maxLength = 30;
+      if (fullName.length > maxLength) {
+        return `${fullName.substring(0, maxLength)}...`;
+      }
+      return fullName;
+    },
   },
   {
     accessorKey: "userName",
+    enableSorting: false,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
-    enableSorting: false,
+    cell: ({ row }) => {
+      const userName: string = row.getValue("userName");
+      const maxLength = 30;
+      if (userName.length > maxLength) {
+        return `${userName.substring(0, maxLength)}...`;
+      }
+      return userName;
+    },
   },
   {
     accessorKey: "joinedDate",

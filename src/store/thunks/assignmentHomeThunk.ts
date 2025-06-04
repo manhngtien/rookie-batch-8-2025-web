@@ -14,12 +14,12 @@ export const fetchAssigmentsHome = createAsyncThunk<
 >(
   "assignmentsHome/fetchAssignmentsHome",
   async (
-    { page, pageSize, assignedDate, searchTerm, orderBy },
+    { pageNumber, pageSize, assignedDate, searchTerm, orderBy },
     { rejectWithValue },
   ) => {
     try {
       const response = await assignmentService.getAssignmentsHome({
-        page,
+        pageNumber,
         pageSize,
         assignedDate,
         searchTerm,

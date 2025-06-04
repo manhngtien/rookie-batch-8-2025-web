@@ -170,11 +170,7 @@ function UserManagementPage() {
       replace: true,
       state: {},
     });
-    console.info(
-      "Check oci con ko",
-      location.state?.newUserCreated,
-      location.state?.userEdited,
-    );
+    console.info(location.state?.newUserCreated, location.state?.userEdited);
   };
 
   const handlePageChange = (pageIndex: number) => {

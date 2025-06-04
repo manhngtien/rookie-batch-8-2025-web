@@ -9,7 +9,7 @@ import { createUser } from "@/store/thunks/userThunk";
 const CreateUserPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.users);
+  const { error } = useSelector((state: RootState) => state.users);
 
   const handleCreateUser = async (data: {
     type: string;
@@ -39,7 +39,6 @@ const CreateUserPage = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (

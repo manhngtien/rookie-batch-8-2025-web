@@ -31,11 +31,11 @@ const UserDetailDialog: React.FC<UserDetailDialogProps> = ({
           <div className="space-y-4 px-8 py-2">
             <div className="grid grid-cols-2 gap-4 text-gray-500">
               <p className="font-medium">Staff Code:</p>
-              <p className="text-left">{selectedUser.staffCode}</p>
+              <p className="text-left break-words">{selectedUser.staffCode}</p>
               <p className="font-medium">Full Name:</p>
-              <p className="text-left">{`${selectedUser.firstName} ${selectedUser.lastName}`}</p>
+              <p className="text-left break-words">{`${selectedUser.firstName} ${selectedUser.lastName}`}</p>
               <p className="font-medium">Username:</p>
-              <p className="text-left">{selectedUser.userName}</p>
+              <p className="text-left break-words">{selectedUser.userName}</p>
               <p className="font-medium">Date of Birth:</p>
               <p className="text-left">
                 {selectedUser.dateOfBirth
@@ -55,7 +55,7 @@ const UserDetailDialog: React.FC<UserDetailDialogProps> = ({
               <p className="font-medium">Type:</p>
               <p className="text-left">{selectedUser.type}</p>
               <p className="font-medium">Location:</p>
-              <p className="text-left">{selectedUser.location}</p>
+              <p className="text-left break-words">{selectedUser.location}</p>
             </div>
           </div>
         )}
