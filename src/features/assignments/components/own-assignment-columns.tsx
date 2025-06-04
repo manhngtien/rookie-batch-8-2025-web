@@ -2,10 +2,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { formatStateLabel } from "@/lib/utils";
+import { formatLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
 import type { Assignment } from "../types/Assignment";
+import { assignmentStateMap } from "../types/Assignment";
 
 export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
   {
@@ -56,7 +57,7 @@ export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
     ),
     cell: ({ row }) => {
       const rawState = row.getValue("state") as string;
-      return <span>{formatStateLabel(rawState)}</span>;
+      return <span>{formatLabel(rawState, assignmentStateMap)}</span>;
     },
   },
   {
@@ -68,7 +69,7 @@ export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
         <div className="-my-4 flex">
           <ActionButton
             iconName="check"
-            disabled={assignment.state === "Waiting for acceptance"}
+            disabled={assignment.state === "Waiting_For_Acceptance"}
             onClick={() => {}}
           />
           <ActionButton

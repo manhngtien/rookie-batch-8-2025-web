@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
+import { Button } from "@/components/ui/button";
 import {
   CreateButton,
   DateSelector,
@@ -12,83 +12,63 @@ import {
 } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
-import type { Assignment } from "@/features/assignments/types/Assignment";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useAssignments } from "@/features/assignments/hooks/useAssignments";
+import { useDeleteAssignment } from "@/features/assignments/hooks/useDeleteAssignment";
+import {
+  type Assignment,
+  assignmentStateMap,
+} from "@/features/assignments/types/Assignment";
 import { APP_ROUTES } from "@/lib/appRoutes";
-import { formatStateLabel, revertStateLabel } from "@/lib/utils";
-import type { AppDispatch, RootState } from "@/store";
-import { fetchAssignments } from "@/store/thunks/assignmentThunk";
+import { formatLabel } from "@/lib/utils";
 
-const filterItems = ["Accepted", "Declined", "Waiting for acceptance"];
+const filterItems = Object.values(assignmentStateMap);
 
 function AssignmentManagementPage() {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
   const location = useLocation();
+
+  const {
+    data,
+    total,
+    loading,
+    error,
+    setPage,
+    setSort,
+    selectedDate,
+    setSelectedDate,
+    searchTerm,
+    setSearchTerm,
+    selectedStates,
+    setSelectedStates,
+    initialState,
+    fetchData,
+  } = useAssignments();
 
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
-  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
-    id: "assetName",
-    desc: false,
-  });
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedStates, setSelectedStates] = useState<string[]>([]);
 
-  const { data, total, loading, error } = useSelector(
-    (state: RootState) => state.assignments,
-  );
+  const { deleteAssignment } = useDeleteAssignment(selectedAssignment);
+
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const newAssignmentCreated = location.state?.newAssignmentCreated;
   const hasHandledNewAssignment = useRef(false);
 
-  const orderBy = sort
-    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
-    : "assetnameasc";
-
-  const initialState = {
-    sorting: sort ? [sort] : [{ id: "assetName", desc: false }],
-    pagination: {
-      pageIndex: page - 1,
-      pageSize,
-    },
-  };
-
-  const debouncedSearchTerm = useDebounce(searchTerm);
-
   const handleRowClick = (assignment: Assignment) => {
+    setOpenDetailDialog(true);
     setSelectedAssignment(assignment);
   };
 
-  const fetchData = useCallback(async () => {
-    try {
-      const response = await dispatch(
-        fetchAssignments({
-          pageNumber: page,
-          pageSize,
-          assignedDate: selectedDate,
-          searchTerm: debouncedSearchTerm,
-          orderBy,
-          state: selectedStates.map(revertStateLabel),
-        }),
-      ).unwrap();
-      console.info("Assignments fetched successfully", response);
-    } catch (err) {
-      console.error("Failed to fetch assignments:", err);
-    }
-  }, [
-    debouncedSearchTerm,
-    dispatch,
-    orderBy,
-    page,
-    pageSize,
-    selectedDate,
-    selectedStates,
-  ]);
+  const handleCloseDetailDialog = () => {
+    setSelectedAssignment(null);
+    setOpenDetailDialog(false);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setSelectedAssignment(null);
+    setOpenDeleteDialog(false);
+  };
 
   const handleFilterChange = (selected: string[]) => {
     setSelectedStates(selected);
@@ -155,7 +135,18 @@ function AssignmentManagementPage() {
 
       <DataTable
         total={total}
-        columns={assignmentColumns}
+        columns={assignmentColumns({
+          onEdit: (assignment) => {
+            navigate(
+              `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/${assignment.id}`,
+            );
+          },
+          onDelete: (assignment) => {
+            setSelectedAssignment(assignment);
+            setOpenDeleteDialog(true);
+          },
+          onAssignmentReturn: () => console.log("hehe"),
+        })}
         data={data}
         loading={loading}
         initialState={initialState}
@@ -167,10 +158,11 @@ function AssignmentManagementPage() {
         }}
       />
 
-      {selectedAssignment && (
+      {/* Detail dialog */}
+      {selectedAssignment && openDetailDialog && (
         <DetailDialog<Assignment>
           selectedEntity={selectedAssignment}
-          closeModal={() => setSelectedAssignment(null)}
+          closeModal={handleCloseDetailDialog}
           title="Detailed Assignment Information"
         >
           <div className="grid grid-cols-2 gap-4 text-gray-500">
@@ -192,7 +184,7 @@ function AssignmentManagementPage() {
             </p>
             <p className="font-medium">State:</p>
             <p className="text-left">
-              {formatStateLabel(selectedAssignment.state)}
+              {formatLabel(selectedAssignment.state, assignmentStateMap)}
             </p>
             {selectedAssignment.note && (
               <>
@@ -200,6 +192,39 @@ function AssignmentManagementPage() {
                 <p className="text-left">{selectedAssignment.note}</p>
               </>
             )}
+          </div>
+        </DetailDialog>
+      )}
+
+      {/* Update dialog */}
+      {openDeleteDialog && (
+        <DetailDialog
+          selectedEntity={selectedAssignment}
+          closeModal={handleCloseDeleteDialog}
+          title="Are you sure?"
+        >
+          <div className="flex flex-col gap-4">
+            Do you want to delete this assignment?
+            <div className="flex justify-end gap-2">
+              <Button
+                id="delete-assignment-confirm"
+                onClick={() => {
+                  deleteAssignment();
+                  fetchData();
+                  handleCloseDeleteDialog();
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                id="delete-assignment-cancel"
+                type="button"
+                variant="outline"
+                onClick={handleCloseDeleteDialog}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </DetailDialog>
       )}
