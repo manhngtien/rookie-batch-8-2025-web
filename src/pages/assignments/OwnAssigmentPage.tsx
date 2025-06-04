@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DetailDialog, PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { Spinner } from "@/components/ui/spinner";
-import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
+import { ownAssignmentColumns } from "@/features/assignments/components/own-assignment-columns";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssigmentsHome } from "@/store/thunks/assignmentHomeThunk";
@@ -30,6 +30,7 @@ export default function OwnAssignmentPage() {
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "assetnameasc";
+
   const initialState = useMemo(
     () => ({
       sorting: sort ? [sort] : [{ id: "assetname", desc: false }],
@@ -74,7 +75,7 @@ export default function OwnAssignmentPage() {
       {!loading && !error && (
         <DataTable
           total={total}
-          columns={assignmentColumns}
+          columns={ownAssignmentColumns}
           data={filteredAssigments}
           initialState={initialState}
           handleRowClick={(assignment) => handleRowClick(assignment)}
