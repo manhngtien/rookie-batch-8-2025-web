@@ -1,6 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 
@@ -46,16 +45,24 @@ export const assignmentFormSchema = z.object({
   note: z.string().optional(),
 });
 
-export function CreateAssignmentForm({
+export function AssignmentForm({
+  form,
   onSubmit,
   onCancel,
+  initialUser,
+  initialAsset,
 }: {
+  form: UseFormReturn<z.infer<typeof assignmentFormSchema>>;
   onSubmit: (data: z.infer<typeof assignmentFormSchema>) => void;
   onCancel?: () => void;
+  initialUser?: User;
+  initialAsset?: Asset;
 }) {
-  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(
+    initialUser,
+  );
   const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
-    undefined,
+    initialAsset,
   );
 
   // Pagination and sorting states
@@ -93,14 +100,6 @@ export function CreateAssignmentForm({
     loading: assetsLoading,
     // error: assetsError,
   } = useSelector((state: RootState) => state.assets);
-
-  const form = useForm<z.infer<typeof assignmentFormSchema>>({
-    resolver: zodResolver(assignmentFormSchema),
-    defaultValues: {
-      staffCode: "",
-      assetCode: "",
-    },
-  });
 
   const fetchUsersData = useCallback(async () => {
     try {
@@ -185,6 +184,14 @@ export function CreateAssignmentForm({
       fetchAssetData();
     }
   }, [fetchAssetData, isAssetInputOpened]);
+
+  useEffect(() => {
+    setSelectedUser(initialUser);
+  }, [initialUser]);
+
+  useEffect(() => {
+    setSelectedAsset(initialAsset);
+  }, [initialAsset]);
 
   return (
     <Form {...form}>

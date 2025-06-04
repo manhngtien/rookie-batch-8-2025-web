@@ -1,4 +1,4 @@
-import { format, getYear } from "date-fns";
+import { format, getMonth, getYear } from "date-fns";
 import { CalendarIcon, ChevronDown, Funnel, Search } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { DynamicIcon } from "lucide-react/dynamic";
@@ -185,13 +185,21 @@ function DateSelector({
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
+  const currentMonth = getMonth(new Date());
+
+  const getToMonth = (selectedYear: number) => {
+    if (!disableFutureDates) return undefined;
+    if (selectedYear < currentYear) return undefined;
+    if (selectedYear === currentYear) return new Date();
+    return undefined;
+  };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (disableFutureDates && date && date > new Date()) {
-      setSelectedDate(new Date());
-    } else {
-      setSelectedDate(date ?? null);
+      return;
     }
+    setSelectedDate(date ?? null);
+
     setOpen(false);
   };
 
@@ -232,11 +240,24 @@ function DateSelector({
             selected={selectedDate || undefined}
             initialFocus
             month={selectedDate || new Date()}
-            onMonthChange={(newMonth) => setSelectedDate(newMonth)}
+            onMonthChange={(newMonth) => {
+              if (
+                disableFutureDates &&
+                getYear(newMonth) === currentYear &&
+                getMonth(newMonth) > currentMonth
+              ) {
+                return;
+              }
+              setSelectedDate(newMonth);
+            }}
             toDate={disableFutureDates ? new Date() : undefined}
             captionLayout="dropdown-buttons"
+            toMonth={getToMonth(
+              selectedDate ? getYear(selectedDate) : currentYear,
+            )}
             fromYear={currentYear - 100}
-            toYear={currentYear + 20}
+            toYear={disableFutureDates ? currentYear : currentYear + 20}
+            disabled={disableFutureDates ? [{ after: new Date() }] : undefined}
             components={{
               Dropdown: ({ className, ...props }) => (
                 <div className="relative w-full flex-1">

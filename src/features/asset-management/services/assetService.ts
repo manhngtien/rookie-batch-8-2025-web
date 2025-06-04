@@ -30,18 +30,17 @@ const assetService = {
 
     const apiAsset = response.data;
 
-    // Manually map categoryName → name
     const mappedAsset: Asset = {
       ...apiAsset,
       category: {
         id: apiAsset.category.id,
         prefix: apiAsset.category.prefix,
-        categoryName: apiAsset.category.categoryName, // <-- remap here
+        categoryName: apiAsset.category.categoryName,
         total: apiAsset.category.total,
       },
       installedDate: new Date(apiAsset.installedDate).toLocaleDateString(
         "sv-SE",
-      ), // ensure date is Date object
+      ),
     };
 
     return { data: mappedAsset };

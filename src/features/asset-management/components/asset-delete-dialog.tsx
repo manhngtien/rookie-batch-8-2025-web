@@ -53,7 +53,7 @@ export default function AssetDeleteDialog({
           </DialogChangePasswordTitle>
         </DialogChangePasswordHeader>
 
-        <DialogDescription className="text-primary px-4 py-2">
+        <DialogDescription className="text-primary px-4">
           {error ? (
             <>
               Cannot delete asset because it belongs to one or more historical
@@ -69,10 +69,18 @@ export default function AssetDeleteDialog({
               .
             </>
           ) : (
-            "Are you sure?"
+            "Do you want to delete this asset?"
           )}
         </DialogDescription>
-        <div className="m-4 flex justify-end space-x-4">
+        <div className="m-4 flex justify-start space-x-4">
+          <Button
+            id="confirm-delete-asset"
+            className="bg-red-600 text-white hover:bg-red-700"
+            disabled={error}
+            onClick={handleConfirmDelete}
+          >
+            Delete
+          </Button>
           <Button
             id="cancel-delete-asset"
             variant="outline"
@@ -82,14 +90,6 @@ export default function AssetDeleteDialog({
             }}
           >
             Cancel
-          </Button>
-          <Button
-            id="confirm-delete-asset"
-            className="bg-red-600 text-white hover:bg-red-700"
-            disabled={error}
-            onClick={handleConfirmDelete}
-          >
-            Delete
           </Button>
         </div>
       </DialogChangePasswordContent>

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { Calendar, Funnel, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import GeneralDialog from "@/components/general-dialog";
@@ -15,23 +15,58 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { requestColumns } from "@/features/requests/components/request_columns";
-import type Request from "@/features/requests/types/Request";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchRequests } from "@/store/thunks/requestThunk";
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function RequestPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { requests, loading, error } = useSelector(
+  const { requests, total, loading, error } = useSelector(
     (state: RootState) => state.requests,
   );
-  const [filteredRequests, setFilteredRequests] = useState<Request[]>(requests);
   const [returnedDateFilter, setReturnedDateFilter] = useState<Date | null>(
     null,
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
+    id: "assetName",
+    desc: false,
+  });
   const [selectedStates, setSelectedStates] = useState<string[]>([""]);
   const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
   const [openDialogCancel, setOpenDialogCancel] = useState<boolean>(false);
+
+  const debouncedSearchTerm = useDebounce(searchQuery, 500);
+  const orderBy = sort
+    ? `${sort.id}${sort.desc ? "Desc" : "Asc"}`
+    : "assetNameAsc";
+  const initialState = useMemo(
+    () => ({
+      sorting: sort ? [sort] : [{ id: "assetName", desc: false }],
+      pagination: {
+        pageIndex: page - 1,
+        pageSize,
+      },
+    }),
+    [sort, page, pageSize],
+  );
   function handleStateCheck(state: string) {
     if (!selectedStates.includes(state))
       setSelectedStates((prev) => [...prev, state]);
@@ -43,35 +78,30 @@ export default function RequestPage() {
     setReturnedDateFilter(null);
   };
   useEffect(() => {
-    dispatch(fetchRequests());
-  }, [dispatch]);
+    const fetchRequestsData = async () => {
+      try {
+        const stateParam =
+          selectedStates.length <= 1 ? undefined : selectedStates;
+        const response = await dispatch(
+          fetchRequests({
+            page,
+            pageSize,
+            state: stateParam,
+            searchTerm: debouncedSearchTerm,
+            orderBy,
+          }),
+        ).unwrap();
+        console.info("Users fetched successfully", response);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
 
-  useEffect(() => {
-    let result = [...requests];
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (request) =>
-          request.assetCode.toLowerCase().includes(query) ||
-          request.assetName.toLowerCase().includes(query) ||
-          request.requestedBy.toLowerCase().includes(query),
-      );
-    }
-    if (returnedDateFilter) {
-      result = result.filter(
-        (request) => request.returnedDate === returnedDateFilter,
-      );
-    }
-    if (selectedStates.length > 1) {
-      result = result.filter((request) =>
-        selectedStates.includes(request.state),
-      );
-    }
-    setFilteredRequests(result);
-  }, [requests, searchQuery, selectedStates, returnedDateFilter]);
-
+    fetchRequestsData();
+  }, [dispatch, page, pageSize, selectedStates, debouncedSearchTerm, orderBy]);
+  const filteredRequests = requests;
   return (
-    <div className="container mx-auto p-4">
+    <div className="container">
       <h1 className="mb-6 text-2xl font-bold text-red-600">Request List</h1>
 
       <div className="mb-4 flex items-center justify-start space-x-4">
@@ -102,9 +132,9 @@ export default function RequestPage() {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="wtfr"
-                    checked={selectedStates?.includes("Waiting for returning")}
+                    checked={selectedStates?.includes("Waiting_for_returning")}
                     onCheckedChange={() =>
-                      handleStateCheck("Waiting for returning")
+                      handleStateCheck("Waiting_for_returning")
                     }
                   />
                   <label htmlFor="wtfr">Waiting for return</label>
@@ -117,7 +147,7 @@ export default function RequestPage() {
               <Button
                 id="returned-date-filter"
                 variant="outline"
-                className="w-[180px] justify-between"
+                className="w-[180px] justify-between text-black"
               >
                 {returnedDateFilter
                   ? format(returnedDateFilter, "dd/MM/yyyy")
@@ -164,7 +194,13 @@ export default function RequestPage() {
       {error && <p className="text-red-500">Error: {error}</p>}
       {!loading && !error && (
         <DataTable
-          total={-1}
+          onPageChange={(pageIndex) => setPage(pageIndex + 1)}
+          onSortingChange={(sort) => {
+            setSort(sort);
+            setPage(1);
+          }}
+          initialState={initialState}
+          total={total}
           columns={requestColumns}
           data={filteredRequests}
         />

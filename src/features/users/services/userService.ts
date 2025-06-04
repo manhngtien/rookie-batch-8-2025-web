@@ -38,6 +38,7 @@ const userService = {
       `${API_ROUTES.users.getUsers}?${queryParams.toString()}`,
     );
     const paginationHeader = response.headers["pagination"];
+
     if (!paginationHeader) {
       throw new Error("Pagination header missing");
     }

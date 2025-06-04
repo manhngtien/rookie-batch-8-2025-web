@@ -12,9 +12,11 @@ export const API_ROUTES = {
     check: addApiPrefix("/Auth/check"),
     refreshToken: addApiPrefix("/Auth/refresh-token"),
   },
+
   users: {
     getUsers: addApiPrefix("/Users"),
     createUser: addApiPrefix("/Users"),
+
     updateUser: (staffCode: string) => addApiPrefix(`/Users/${staffCode}`),
     disableUser: (staffCode: string) => addApiPrefix(`/Users/${staffCode}`),
   },
@@ -32,6 +34,7 @@ export const API_ROUTES = {
     createCategories: addApiPrefix("/Categories"),
   },
   assignments: {
+    myAssignment: addApiPrefix("/Assignments/myAssignments"),
     getAssignments: addApiPrefix("/Assignments"),
     createAssignment: addApiPrefix("/Assignments"),
     updateAssignment: (assignmentId: string) =>

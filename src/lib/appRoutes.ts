@@ -20,6 +20,7 @@ export const APP_ROUTES = {
   assignment: {
     path: "/assignment",
     create: "create-assignment",
+    edit: "edit-assignment",
   },
   reports: {
     path: "/reports",

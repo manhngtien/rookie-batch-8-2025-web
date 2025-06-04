@@ -179,9 +179,13 @@ function AssignmentManagementPage() {
             <p className="font-medium">Asset Name:</p>
             <p className="text-left">{selectedAssignment.assetName}</p>
             <p className="font-medium">Assigned To:</p>
-            <p className="text-left">{selectedAssignment.assignedTo}</p>
+            <p className="text-left">
+              {selectedAssignment.assignedToUser.userName}
+            </p>
             <p className="font-medium">Assigned By:</p>
-            <p className="text-left">{selectedAssignment.assignedBy}</p>
+            <p className="text-left">
+              {selectedAssignment.assignedByUser.userName}
+            </p>
             <p className="font-medium">Assigned Date:</p>
             <p className="text-left">
               {new Date(selectedAssignment.assignedDate).toLocaleDateString()}

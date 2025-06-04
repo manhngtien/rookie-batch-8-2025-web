@@ -20,7 +20,7 @@ import type { Asset } from "@/features/asset-management/types/Asset";
 import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
 import type { AppDispatch, RootState } from "@/store";
 import { setShouldRefetch } from "@/store/slices/assetSlice";
-import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
+import { fetchAssetById, fetchAssetsByParams } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
 
 function AssetManagementPage() {
@@ -144,8 +144,15 @@ function AssetManagementPage() {
     shouldRefetch,
   ]);
 
-  const handleRowClick = (asset: Asset) => {
-    setSelectedAsset(asset);
+  const handleRowClick = async (asset: Asset) => {
+    try {
+      const fullAsset = await dispatch(
+        fetchAssetById(asset.assetCode),
+      ).unwrap();
+      setSelectedAsset(fullAsset);
+    } catch (err) {
+      console.error("Failed to fetch asset by ID:", err);
+    }
   };
 
   const handleStateToggle = (state: string) => {

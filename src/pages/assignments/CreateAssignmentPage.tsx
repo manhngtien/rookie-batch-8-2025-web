@@ -1,11 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import type { z } from "zod";
 
 import { PageTitle } from "@/components/ui/dashboard-elements";
 import {
-  type assignmentFormSchema,
-  CreateAssignmentForm,
+  AssignmentForm,
+  assignmentFormSchema,
 } from "@/features/assignments/components/assignment-form";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import type { AppDispatch, RootState } from "@/store";
@@ -18,6 +20,14 @@ export default function CreateAssignmentPage() {
   const { loading, error } = useSelector(
     (state: RootState) => state.assignments,
   );
+
+  const form = useForm<z.infer<typeof assignmentFormSchema>>({
+    resolver: zodResolver(assignmentFormSchema),
+    defaultValues: {
+      staffCode: "",
+      assetCode: "",
+    },
+  });
 
   const handleSubmit = async (values: z.infer<typeof assignmentFormSchema>) => {
     const response = await dispatch(createAssignment(values));
@@ -39,7 +49,11 @@ export default function CreateAssignmentPage() {
   return (
     <div className="mx-auto my-auto flex max-w-lg min-w-md flex-col gap-6 bg-white p-6">
       <PageTitle>Create New Assignment</PageTitle>
-      <CreateAssignmentForm onSubmit={handleSubmit} onCancel={handleCancel} />
+      <AssignmentForm
+        form={form}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
     </div>
   );
 }

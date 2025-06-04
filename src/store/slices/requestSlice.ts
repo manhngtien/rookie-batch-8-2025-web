@@ -7,11 +7,13 @@ import { fetchRequests } from "../thunks/requestThunk";
 interface RequestState {
   requests: Request[];
   loading: boolean;
+  total: number;
   error: string | null;
 }
 const initialState: RequestState = {
   requests: [],
   loading: false,
+  total: 0,
   error: null,
 };
 
@@ -32,7 +34,8 @@ const requestSlice = createSlice({
       })
       .addCase(fetchRequests.fulfilled, (state, action) => {
         state.loading = false;
-        state.requests = action.payload;
+        state.total = action.payload.total;
+        state.requests = action.payload.data;
       })
       .addCase(fetchRequests.rejected, (state, action) => {
         state.loading = false;
