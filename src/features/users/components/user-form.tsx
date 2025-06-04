@@ -316,7 +316,7 @@ export default function UserForm({
               >
                 <FormControl className="w-full">
                   <SelectTrigger id="user-type-select">
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder="" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
