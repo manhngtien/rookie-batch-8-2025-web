@@ -157,6 +157,7 @@ function AssetManagementPage() {
 
   const handleStateToggle = (state: string) => {
     dispatch(setShouldRefetch(true));
+    setPage(1);
     setSelectedStates((prev) => {
       if (state === "All") {
         return ["All"];
@@ -174,6 +175,7 @@ function AssetManagementPage() {
 
   const handleCategoryToggle = (category: string) => {
     dispatch(setShouldRefetch(true));
+    setPage(1);
     setSelectedCategories((prev) => {
       if (prev.includes(category)) {
         return prev.filter((c) => c !== category);
@@ -236,7 +238,9 @@ function AssetManagementPage() {
                   <Checkbox
                     id={category}
                     checked={selectedCategories.includes(category)}
-                    onCheckedChange={() => handleCategoryToggle(category)}
+                    onCheckedChange={() => {
+                      handleCategoryToggle(category);
+                    }}
                   />
                   <label htmlFor={category}>{category}</label>
                 </div>

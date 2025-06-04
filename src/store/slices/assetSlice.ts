@@ -29,6 +29,7 @@ export const emptyAsset: Asset = {
 interface AssetState {
   assets: Asset[];
   shouldRefetch: boolean;
+  page: number;
   total: number;
   loading: boolean;
   error: string | null;
@@ -42,6 +43,7 @@ interface AssetState {
 const initialState: AssetState = {
   assets: [],
   shouldRefetch: true,
+  page: 1,
   total: 0,
   loading: false,
   error: null,
@@ -62,6 +64,9 @@ const assetSlice = createSlice({
     },
     setShouldRefetch: (state, action: PayloadAction<boolean>) => {
       state.shouldRefetch = action.payload;
+    },
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
     },
     removeAsset: (state, action: PayloadAction<string>) => {
       state.assets = state.assets.filter(
@@ -170,6 +175,7 @@ export const {
   removeAsset,
   resetError,
   clearSelectedAsset,
+  setPage,
 } = assetSlice.actions;
 
 export default assetSlice.reducer;
