@@ -68,6 +68,9 @@ const assetSlice = createSlice({
         (asset) => asset.assetCode !== action.payload,
       );
     },
+    clearSelectedAsset(state) {
+      state.selectedAsset = emptyAsset;
+    },
     resetError: (state) => {
       state.error = null;
     },
@@ -161,7 +164,12 @@ const assetSlice = createSlice({
   },
 });
 
-export const { resetAssets, setShouldRefetch, removeAsset, resetError } =
-  assetSlice.actions;
+export const {
+  resetAssets,
+  setShouldRefetch,
+  removeAsset,
+  resetError,
+  clearSelectedAsset,
+} = assetSlice.actions;
 
 export default assetSlice.reducer;

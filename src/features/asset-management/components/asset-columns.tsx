@@ -49,7 +49,8 @@ export const assetColumns: ColumnDef<Asset>[] = [
             disabled={isAssigned}
             onClick={(e) => {
               e.stopPropagation();
-              navigate(APP_ROUTES.assets.getEditPath(asset.assetCode)); // Replace with actual asset code
+              navigate(APP_ROUTES.assets.getEditPath(asset.assetCode));
+              console.info("This is the clicked asset: " + asset); // Replace with actual asset code
             }}
           />
           <ActionButton

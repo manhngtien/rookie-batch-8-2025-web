@@ -2,15 +2,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useWatch } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { EditAssetFormFields } from "@/features/asset-management/components/edit-asset-form-fields";
-import type { AssetUpdate } from "@/features/asset-management/types/Asset";
-import type { AppDispatch, RootState } from "@/store";
+import type {
+  Asset,
+  AssetUpdate,
+} from "@/features/asset-management/types/Asset";
+import type { AppDispatch } from "@/store";
 import { fetchAssetById, updateAssetById } from "@/store/thunks/assetThunk";
 
 type AssetState =
@@ -18,18 +21,21 @@ type AssetState =
   | "not_available"
   | "waiting_for_recycling"
   | "recycled";
+// | "assigned";
 
 function mapToAssetState(input: string): AssetState {
   const normalized = input.toLowerCase();
   if (
     normalized === "available" ||
     normalized === "not_available" ||
-    normalized == "waiting_for_recycling" ||
-    normalized == "recycled"
+    normalized === "waiting_for_recycling" ||
+    normalized === "recycled"
+    // normalized === "assigned"
   ) {
     return normalized;
+  } else {
+    throw new Error(`Invalid state from API: ${input}`);
   }
-  throw new Error(`Invalid state from API: ${input}`);
 }
 
 export const editFormSchema = z.object({
@@ -52,9 +58,6 @@ function EditAssetPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { assetCode = "" } = useParams<{ assetCode?: string }>();
-
-  const asset = useSelector((state: RootState) => state.assets.selectedAsset);
-  console.info(asset);
 
   const handleSubmit = async (data: z.infer<typeof editFormSchema>) => {
     if (!assetCode) return;
@@ -105,23 +108,26 @@ function EditAssetPage() {
   };
 
   useEffect(() => {
-    if (assetCode) {
-      dispatch(fetchAssetById(assetCode));
+    async function fetchAndReset() {
+      try {
+        const asset = await dispatch(fetchAssetById(assetCode)).unwrap();
+        console.log(asset as Asset);
+        if (asset) {
+          form.reset({
+            name: asset.assetName,
+            category: asset.category.categoryName,
+            specification: asset.specification,
+            installedDate: new Date(asset.installedDate),
+            state: mapToAssetState(asset.state),
+            category_id: asset.category.id,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch asset:", error);
+      }
     }
-  }, [assetCode, dispatch]);
-
-  useEffect(() => {
-    if (asset) {
-      form.reset({
-        name: asset.assetName,
-        category: asset.category.categoryName,
-        specification: asset.specification,
-        installedDate: new Date(asset.installedDate),
-        state: mapToAssetState(asset.state),
-        category_id: asset.category.id,
-      });
-    }
-  }, [asset, form]);
+    fetchAndReset();
+  }, [assetCode, dispatch, form]);
 
   return (
     <Form {...form}>
