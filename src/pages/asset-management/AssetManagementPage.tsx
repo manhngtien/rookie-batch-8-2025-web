@@ -18,6 +18,7 @@ import AssetDeleteDialog from "@/features/asset-management/components/asset-dele
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
+import { formatStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { setShouldRefetch } from "@/store/slices/assetSlice";
 import { fetchAssetById, fetchAssetsByParams } from "@/store/thunks/assetThunk";
@@ -211,7 +212,7 @@ function AssetManagementPage() {
                     checked={selectedStates.includes(state)}
                     onCheckedChange={() => handleStateToggle(state)}
                   />
-                  <label htmlFor={state}>{state}</label>
+                  <label htmlFor={state}>{formatStateLabel(state)}</label>
                 </div>
               ))}
             </div>
