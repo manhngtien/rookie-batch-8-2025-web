@@ -7,7 +7,16 @@ import { formatDate } from "@/utils/helpers";
 
 import type { Assignment } from "../types/Assignment";
 
-export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
+interface OwnAssignmentColumnsProps {
+  onOpenReplyDialog: (
+    assignment: Assignment,
+    actionType: "accept" | "decline",
+  ) => void;
+}
+
+export const ownAssignmentColumns = ({
+  onOpenReplyDialog,
+}: OwnAssignmentColumnsProps): ColumnDef<Assignment>[] => [
   {
     id: "number",
     header: ({ column }) => (
@@ -63,24 +72,28 @@ export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
     id: "actions",
     cell: ({ row }) => {
       const assignment = row.original;
-
+      const isWaiting = assignment.state === "Waiting for acceptance";
+      const isAccepted = assignment.state === "Accepted";
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="check"
-            disabled={assignment.state === "Waiting for acceptance"}
-            onClick={() => {}}
+            disabled={isWaiting || isAccepted}
+            onClick={() => onOpenReplyDialog(assignment, "accept")}
           />
           <ActionButton
             iconName="circle-x"
+            disabled={isWaiting || isAccepted}
             className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();
+              onOpenReplyDialog(assignment, "decline");
             }}
           />
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
+            disabled={!isAccepted}
             onClick={(e) => {
               e.stopPropagation();
             }}

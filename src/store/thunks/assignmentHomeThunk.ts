@@ -35,3 +35,24 @@ export const fetchAssigmentsHome = createAsyncThunk<
     }
   },
 );
+
+export const replyAssignment = createAsyncThunk<
+  void,
+  { assignmentId: number; isAccepted: boolean },
+  { rejectValue: string }
+>(
+  "assignmentsHome/replyAssignment",
+  async ({ assignmentId, isAccepted }, { rejectWithValue }) => {
+    try {
+      await assignmentService.replyAssignment(assignmentId, isAccepted);
+    } catch (error: unknown) {
+      console.error("Caught error while replying to assignment:", error);
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.message || "Failed to reply to assignment",
+        );
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

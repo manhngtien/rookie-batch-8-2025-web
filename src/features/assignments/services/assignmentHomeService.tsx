@@ -37,6 +37,20 @@ const assignmentService = {
       total: pagination.totalCount,
     };
   },
+
+  replyAssignment: async (
+    assignmentId: number,
+    isAccepted: boolean,
+  ): Promise<void> => {
+    const url = `${API_ROUTES.assignments.replyAssignment(assignmentId)}`;
+
+    const requestBody = {
+      assignmentId: assignmentId,
+      isAccepted: isAccepted,
+    };
+
+    await apiClient.put(url, requestBody);
+  },
 };
 
 export default assignmentService;

@@ -2,7 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import type { Assignment } from "@/features/assignments/types/Assignment";
 
-import { fetchAssigmentsHome } from "../thunks/assignmentHomeThunk";
+import {
+  fetchAssigmentsHome,
+  replyAssignment,
+} from "../thunks/assignmentHomeThunk";
 
 interface AssignmentState {
   assignments: Assignment[];
@@ -40,6 +43,17 @@ const assignmentHomeSlice = createSlice({
       .addCase(fetchAssigmentsHome.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
+      })
+      .addCase(replyAssignment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(replyAssignment.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(replyAssignment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to reply to assignment";
       });
   },
 });
