@@ -18,7 +18,7 @@ export const categoryFormSchema = z.object({
   newCategoryPrefix: z
     .string()
     .min(1, "Prefix is required")
-    .max(10, "Prefix too long")
+    .max(2, "Prefix too long")
     .regex(/^[A-Z0-9]+$/, "Only uppercase letters or digits allowed"),
 });
 
