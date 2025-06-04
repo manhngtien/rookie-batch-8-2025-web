@@ -2,12 +2,22 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { formatStateLabel } from "@/lib/utils";
+import { formatLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
 import type { Assignment } from "../types/Assignment";
+import { assignmentStateMap } from "../types/Assignment";
 
-export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
+interface OwnAssignmentColumnsProps {
+  onOpenReplyDialog: (
+    assignment: Assignment,
+    actionType: "accept" | "decline",
+  ) => void;
+}
+
+export const ownAssignmentColumns = ({
+  onOpenReplyDialog,
+}: OwnAssignmentColumnsProps): ColumnDef<Assignment>[] => [
   {
     id: "number",
     header: ({ column }) => (
@@ -56,31 +66,36 @@ export const ownAssignmentColumns: ColumnDef<Assignment>[] = [
     ),
     cell: ({ row }) => {
       const rawState = row.getValue("state") as string;
-      return <span>{formatStateLabel(rawState)}</span>;
+      return <span>{formatLabel(rawState, assignmentStateMap)}</span>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const assignment = row.original;
-
+      const isWaiting = assignment.state === "Waiting_For_Acceptance";
+      const isAccepted = assignment.state === "Accepted";
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="check"
-            disabled={assignment.state === "Waiting for acceptance"}
-            onClick={() => {}}
+            disabled={!isWaiting}
+            onClick={() => {
+              onOpenReplyDialog(assignment, "accept");
+            }}
           />
           <ActionButton
             iconName="circle-x"
+            disabled={!isWaiting}
             className="text-foreground"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
+              onOpenReplyDialog(assignment, "decline");
             }}
           />
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
+            disabled={!isAccepted}
             onClick={(e) => {
               e.stopPropagation();
             }}

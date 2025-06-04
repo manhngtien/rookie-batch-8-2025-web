@@ -109,4 +109,16 @@ export const assignmentService = {
 
     return response;
   },
+
+  deleteSingleAssignment: async ({
+    id,
+  }: {
+    id: number;
+  }): Promise<{ status: number }> => {
+    const response = await apiClient.delete(
+      `${API_ROUTES.assignments.getAssignments}/${id}`,
+    );
+
+    return response;
+  },
 };

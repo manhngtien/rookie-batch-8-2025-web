@@ -56,3 +56,11 @@ export const editAssignment = createAppThunk<
   const response = await assignmentService.editAssignment(assignment);
   return response;
 });
+
+export const deleteSingleAssignment = createAppThunk<
+  { id: number },
+  { status: number }
+>("assignments/getById", async (id) => {
+  const response = await assignmentService.deleteSingleAssignment(id);
+  return response;
+});

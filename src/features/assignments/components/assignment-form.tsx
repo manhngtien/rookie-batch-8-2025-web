@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -15,10 +13,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import type { User } from "@/features/users/types/User";
-import type { AppDispatch, RootState } from "@/store";
-import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
-import { fetchUsers } from "@/store/thunks/userThunk";
 
+import { useAssetList } from "../hooks/useAssetList";
+import { useUserList } from "../hooks/useUserList";
 import { assetSelectColumns } from "./asset-select-columns";
 import { SearchPopup } from "./search-popup";
 import { userSelectColumns } from "./user-select-columns";
@@ -58,105 +55,41 @@ export function AssignmentForm({
   initialUser?: User;
   initialAsset?: Asset;
 }) {
-  const [selectedUser, setSelectedUser] = useState<User | undefined>(
-    initialUser,
-  );
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
-    initialAsset,
-  );
-
-  // Pagination and sorting states
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
-    id: "",
-    desc: false,
-  });
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [userInputOpened, setUserInputOpened] = useState(false);
-  const [assetInputOpened, setAssetInputOpened] = useState(false);
-
-  const usersOrderBy = sort
-    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
-    : "fullnameasc";
-  const assetsOrderBy = sort
-    ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
-    : "assetnameasc";
-
-  const isUserInputOpened = userInputOpened === true;
-  const isAssetInputOpened = assetInputOpened === true;
-
-  const dispatch = useDispatch<AppDispatch>();
   const {
-    users,
-    total: totalUsers,
-    loading: usersLoading,
-    // error: usersError,
-  } = useSelector((state: RootState) => state.users);
-  const {
+    selectedAsset,
+    setSelectedAsset,
+    setAssetsPage,
+    setAssetsPageSize,
+    setAssetsSort,
+    setAssetsSearchTerm,
+    assetInputOpened,
+    setAssetInputOpened,
     assets,
-    total: totalAssets,
-    loading: assetsLoading,
-    // error: assetsError,
-  } = useSelector((state: RootState) => state.assets);
+    totalAssets,
+    assetsLoading,
+  } = useAssetList(initialAsset);
 
-  const fetchUsersData = useCallback(async () => {
-    try {
-      const response = await dispatch(
-        fetchUsers({
-          page,
-          pageSize,
-          searchTerm,
-          orderBy: usersOrderBy,
-        }),
-      ).unwrap();
-      console.info("Users fetched successfully", response);
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
-    }
-  }, [dispatch, usersOrderBy, page, pageSize, searchTerm]);
+  const {
+    selectedUser,
+    setSelectedUser,
+    setUsersPage,
+    setUsersPageSize,
+    setUsersSort,
+    setUsersSearchTerm,
+    userInputOpened,
+    setUserInputOpened,
+    users,
+    totalUsers,
+    usersLoading,
+  } = useUserList(initialUser);
 
-  const fetchAssetData = useCallback(async () => {
-    try {
-      const response = await dispatch(
-        fetchAssetsByParams({
-          pageNumber: page,
-          pageSize,
-          searchTerm,
-          state: "available",
-          orderBy: assetsOrderBy,
-        }),
-      ).unwrap();
-      console.info("Users fetched successfully", response);
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
-    }
-  }, [dispatch, page, pageSize, searchTerm, assetsOrderBy]);
-
-  function getSearchTerm(value: string) {
-    setSearchTerm(value);
-  }
-
-  function getPage(value: number) {
-    setPage(value);
-  }
-
-  function getSort(value: { id: string; desc: boolean } | null) {
-    setSort(value);
-  }
-
-  function getPageSize(value: number) {
-    setPageSize(value);
-  }
-
-  function onUserSelect(row: User | undefined) {
+  function onUserSave(row: User | undefined) {
     setSelectedUser(row ?? undefined);
     form.setValue("staffCode", row?.staffCode ?? "");
     setUserInputOpened(false);
   }
 
-  function onAssetSelect(row: Asset | undefined) {
+  function onAssetSave(row: Asset | undefined) {
     setSelectedAsset(row ?? undefined);
     form.setValue("assetCode", row?.assetCode ?? "");
     setAssetInputOpened(false);
@@ -172,26 +105,6 @@ export function AssignmentForm({
 
     return allFieldsFilled;
   };
-
-  useEffect(() => {
-    if (isUserInputOpened) {
-      fetchUsersData();
-    }
-  }, [fetchUsersData, isUserInputOpened]);
-
-  useEffect(() => {
-    if (isAssetInputOpened) {
-      fetchAssetData();
-    }
-  }, [fetchAssetData, isAssetInputOpened]);
-
-  useEffect(() => {
-    setSelectedUser(initialUser);
-  }, [initialUser]);
-
-  useEffect(() => {
-    setSelectedAsset(initialAsset);
-  }, [initialAsset]);
 
   return (
     <Form {...form}>
@@ -230,11 +143,11 @@ export function AssignmentForm({
                     data={users}
                     total={totalUsers}
                     loading={usersLoading}
-                    sendPage={getPage}
-                    sendSort={getSort}
-                    sendPageSize={getPageSize}
-                    sendSearchTerm={getSearchTerm}
-                    onSave={onUserSelect}
+                    sendPage={setUsersPage}
+                    sendSort={setUsersSort}
+                    sendPageSize={setUsersPageSize}
+                    sendSearchTerm={setUsersSearchTerm}
+                    onSave={onUserSave}
                     onCancel={() => setUserInputOpened(false)}
                     selectedRow={selectedUser}
                   />
@@ -275,11 +188,11 @@ export function AssignmentForm({
                     data={assets}
                     total={totalAssets}
                     loading={assetsLoading}
-                    sendPage={getPage}
-                    sendSort={getSort}
-                    sendPageSize={getPageSize}
-                    sendSearchTerm={getSearchTerm}
-                    onSave={onAssetSelect}
+                    sendPage={setAssetsPage}
+                    sendSort={setAssetsSort}
+                    sendPageSize={setAssetsPageSize}
+                    sendSearchTerm={setAssetsSearchTerm}
+                    onSave={onAssetSave}
                     onCancel={() => setAssetInputOpened(false)}
                     selectedRow={selectedAsset}
                   />

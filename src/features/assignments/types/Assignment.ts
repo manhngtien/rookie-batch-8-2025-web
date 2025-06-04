@@ -6,9 +6,20 @@ export interface FetchAssignmentsParams extends FetchParams {
   state?: string[];
 }
 
+export type AssignmentState =
+  | "Accepted"
+  | "Declined"
+  | "Waiting_For_Acceptance";
+
+export const assignmentStateMap: Record<AssignmentState, string> = {
+  Accepted: "Accepted",
+  Declined: "Declined",
+  Waiting_For_Acceptance: "Waiting for Acceptance",
+};
+
 export interface Assignment {
   id: number;
-  state: string;
+  state: AssignmentState;
   assignedDate: string;
   assetCode: string;
   assetName: string;

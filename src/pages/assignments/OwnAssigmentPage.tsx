@@ -5,6 +5,7 @@ import { DetailDialog, PageTitle } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
 import { Spinner } from "@/components/ui/spinner";
 import { ownAssignmentColumns } from "@/features/assignments/components/own-assignment-columns";
+import ReplyAssignmentDialog from "@/features/assignments/components/reply-assignment-dialog";
 import type { Assignment } from "@/features/assignments/types/Assignment";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssigmentsHome } from "@/store/thunks/assignmentHomeThunk";
@@ -22,11 +23,27 @@ export default function OwnAssignmentPage() {
     id: "assetname",
     desc: false,
   });
+  const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
+  const [dialogAssignment, setDialogAssignment] = useState<Assignment | null>(
+    null,
+  );
+  const [dialogActionType, setDialogActionType] = useState<
+    "accept" | "decline"
+  >("accept");
 
   const handleRowClick = (assignment: Assignment) => {
-    console.log(assignment);
     setSelectedAssignment(assignment);
   };
+
+  const handleOpenReplyDialog = (
+    assignment: Assignment,
+    actionType: "accept" | "decline",
+  ) => {
+    setDialogAssignment(assignment);
+    setDialogActionType(actionType);
+    setIsReplyDialogOpen(true);
+  };
+
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "assetnameasc";
@@ -42,6 +59,11 @@ export default function OwnAssignmentPage() {
     [sort, page, pageSize],
   );
 
+  const columns = useMemo(
+    () => ownAssignmentColumns({ onOpenReplyDialog: handleOpenReplyDialog }),
+    [],
+  );
+
   useEffect(() => {
     const fetchAssignmentsData = async () => {
       try {
@@ -52,9 +74,9 @@ export default function OwnAssignmentPage() {
             orderBy: orderBy,
           }),
         ).unwrap();
-        console.info("Users fetched successfully", response);
+        console.info("Assignments fetched successfully", response);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("Failed to fetch assignments:", err);
       }
     };
 
@@ -62,6 +84,7 @@ export default function OwnAssignmentPage() {
   }, [dispatch, page, pageSize, orderBy]);
 
   const filteredAssigments = assignments;
+
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>My Assignments</PageTitle>
@@ -75,7 +98,7 @@ export default function OwnAssignmentPage() {
       {!loading && !error && (
         <DataTable
           total={total}
-          columns={ownAssignmentColumns}
+          columns={columns}
           data={filteredAssigments}
           initialState={initialState}
           handleRowClick={(assignment) => handleRowClick(assignment)}
@@ -121,6 +144,21 @@ export default function OwnAssignmentPage() {
             )}
           </div>
         </DetailDialog>
+      )}
+
+      {dialogAssignment && (
+        <ReplyAssignmentDialog
+          open={isReplyDialogOpen}
+          onOpenChange={(open) => {
+            setIsReplyDialogOpen(open);
+            if (!open) {
+              setDialogAssignment(null);
+              setDialogActionType("accept");
+            }
+          }}
+          assignment={dialogAssignment}
+          actionType={dialogActionType}
+        />
       )}
     </div>
   );

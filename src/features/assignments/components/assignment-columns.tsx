@@ -1,22 +1,31 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import type { ColumnDef } from "@tanstack/react-table";
-import { useNavigate } from "react-router";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { APP_ROUTES } from "@/lib/appRoutes";
-import { formatStateLabel } from "@/lib/utils";
+import { formatLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
-import type { Assignment } from "../types/Assignment";
+import { type Assignment, assignmentStateMap } from "../types/Assignment";
 
-export const assignmentColumns: ColumnDef<Assignment>[] = [
+export const assignmentColumns = ({
+  onEdit,
+  onDelete,
+  onAssignmentReturn,
+}: {
+  onEdit: (assignment: Assignment) => void;
+  onDelete: (assignment: Assignment) => void;
+  onAssignmentReturn: (assignment: Assignment) => void;
+}): ColumnDef<Assignment>[] => [
   {
     id: "number",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="No." />
     ),
-    cell: ({ row }) => row.index + 1,
+    cell: ({ row, table }) => {
+      const pageIndex = table.options.state.pagination?.pageIndex || 0;
+      const pageSize = table.options.state.pagination?.pageSize || 20;
+      return pageIndex * pageSize + row.index + 1;
+    },
   },
   {
     accessorKey: "assetCode",
@@ -59,39 +68,31 @@ export const assignmentColumns: ColumnDef<Assignment>[] = [
     ),
     cell: ({ row }) => {
       const rawState = row.getValue("state") as string;
-      return <span>{formatStateLabel(rawState)}</span>;
+      return <span>{formatLabel(rawState, assignmentStateMap)}</span>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const assignment = row.original;
-      const navigate = useNavigate();
-
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="pencil"
-            disabled={assignment.state === "Waiting for acceptance"}
-            onClick={() => {
-              navigate(
-                `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/${assignment.id}`,
-              );
-            }}
+            disabled={assignment.state !== "Waiting_For_Acceptance"}
+            onClick={() => onEdit(assignment)}
           />
           <ActionButton
             iconName="circle-x"
             className="text-foreground"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            disabled={assignment.state !== "Waiting_For_Acceptance"}
+            onClick={() => onDelete(assignment)}
           />
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            disabled={assignment.state !== "Accepted"}
+            onClick={() => onAssignmentReturn(assignment)}
           />
         </div>
       );
