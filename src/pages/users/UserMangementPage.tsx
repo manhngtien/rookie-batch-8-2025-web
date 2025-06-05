@@ -28,7 +28,8 @@ function UserManagementPage() {
   const { users, total, loading, error, lastAction } = useSelector(
     (state: RootState) => state.users,
   );
-
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const currentUserLocation = currentUser?.location;
   const [selectedTypes, setSelectedTypes] = useState<string[]>(
     location.state?.selectedTypes ?? ["All", "Admin", "Staff"],
   );
@@ -192,6 +193,11 @@ function UserManagementPage() {
     });
   };
 
+  const columns = useMemo(
+    () => userColumns({ currentUserLocation }),
+    [currentUserLocation],
+  );
+
   return (
     <div className="flex flex-col gap-4">
       <PageTitle>User List</PageTitle>
@@ -261,7 +267,7 @@ function UserManagementPage() {
 
       {error && <p className="text-center text-red-600">Error: {error}</p>}
       <DataTable
-        columns={userColumns}
+        columns={columns}
         data={users}
         total={total}
         loading={loading}

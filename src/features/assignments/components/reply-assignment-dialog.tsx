@@ -19,6 +19,7 @@ interface ReplyAssignmentDialogProps {
   onOpenChange: (open: boolean) => void;
   assignment?: Assignment;
   actionType: "accept" | "decline";
+  onReplySuccess?: () => void;
 }
 
 export default function ReplyAssignmentDialog({
@@ -26,6 +27,7 @@ export default function ReplyAssignmentDialog({
   onOpenChange,
   assignment,
   actionType,
+  onReplySuccess,
 }: ReplyAssignmentDialogProps) {
   const [error, setError] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -40,6 +42,7 @@ export default function ReplyAssignmentDialog({
         }),
       ).unwrap();
       onOpenChange(false);
+      onReplySuccess?.();
       console.log(
         `Assignment ${assignment.id} has been ${actionType}ed successfully.`,
       );
@@ -59,7 +62,7 @@ export default function ReplyAssignmentDialog({
         </DialogChangePasswordHeader>
 
         <DialogDescription className="text-primary px-4">
-          Do you want to {actionType} this assignment {assignment?.id}
+          Do you want to {actionType} this assignment
         </DialogDescription>
         {error && (
           <p className="px-4 text-red-600">Failed to process the request.</p>
