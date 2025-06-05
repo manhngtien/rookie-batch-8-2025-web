@@ -51,7 +51,7 @@ export default function RequestPage() {
     id: "assetName",
     desc: false,
   });
-  const [selectedStates, setSelectedStates] = useState<string[]>([""]);
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
   const [openDialogCancel, setOpenDialogCancel] = useState<boolean>(false);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);

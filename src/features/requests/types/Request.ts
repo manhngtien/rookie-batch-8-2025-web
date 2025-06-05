@@ -33,5 +33,5 @@ export interface ChangeRequestParams {
 
 export const RequestState: Record<string, string> = {
   Completed: "Completed",
-  WaitingForReturning: "Waiting for returning",
+  Waiting_For_Returning: "Waiting for returning",
 };

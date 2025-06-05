@@ -97,7 +97,7 @@ export const ownAssignmentColumns = ({
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
-            disabled={!isAccepted}
+            disabled={!isAccepted || assignment.isReturned}
             onClick={() => {
               onOpenReturnRequestDialog(assignment);
             }}

@@ -49,11 +49,10 @@ export default function OwnAssignmentPage() {
     setIsReplyDialogOpen(true);
   };
 
-  // Add handler for opening return request dialog
   const handleOpenReturnRequestDialog = useCallback(
     (assignment: Assignment) => {
       setDialogReturnRequest(assignment);
-      setIsReturnRequestDialogOpen(true); // Set dialog open state
+      setIsReturnRequestDialogOpen(true);
     },
     [],
   );
@@ -96,9 +95,9 @@ export default function OwnAssignmentPage() {
     () =>
       ownAssignmentColumns({
         onOpenReplyDialog: handleOpenReplyDialog,
-        onOpenReturnRequestDialog: handleOpenReturnRequestDialog, // Use new handler
+        onOpenReturnRequestDialog: handleOpenReturnRequestDialog,
       }),
-    [handleOpenReplyDialog, handleOpenReturnRequestDialog], // Add dependency
+    [handleOpenReplyDialog, handleOpenReturnRequestDialog],
   );
 
   useEffect(() => {
@@ -188,7 +187,6 @@ export default function OwnAssignmentPage() {
         <UserReturnRequestDialog
           open={isReturnRequestDialogOpen}
           onOpenChange={(open) => {
-            console.log("Return request dialog open state:", open);
             setIsReturnRequestDialogOpen(open);
             if (!open) {
               setDialogReturnRequest(null);
