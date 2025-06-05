@@ -192,15 +192,6 @@ function DateSelector({
   today.setHours(0, 0, 0, 0);
 
   const getToMonth = (selectedYear: number) => {
-    // If neither future nor past dates are disabled, no upper bound.
-    if (!disableFutureDates && !disablePastDates) return undefined;
-
-    // If both future and past dates are disabled, only allow the current month for the current year.
-    if (disableFutureDates && disablePastDates) {
-      if (selectedYear === currentYear) return new Date();
-      return undefined;
-    }
-
     // If only future dates are disabled, restrict selectable months for the current year.
     if (disableFutureDates) {
       if (selectedYear < currentYear) return undefined;
@@ -210,6 +201,17 @@ function DateSelector({
 
     // If only past dates are disabled, we don't set an upper month boundary.
     return undefined;
+  };
+
+  const getDisabledDates = () => {
+    const disabled = [];
+    if (disableFutureDates) {
+      disabled.push({ after: new Date() });
+    }
+    if (disablePastDates) {
+      disabled.push({ before: today });
+    }
+    return disabled.length > 0 ? disabled : undefined;
   };
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -223,23 +225,35 @@ function DateSelector({
     setOpen(false);
   };
 
+  const handleMonthChange = (newMonth: Date) => {
+    const isCurrentMonth =
+      getYear(newMonth) === currentYear && getMonth(newMonth) === currentMonth;
+
+    if (
+      (disableFutureDates &&
+        getYear(newMonth) === currentYear &&
+        getMonth(newMonth) > currentMonth) ||
+      (disablePastDates &&
+        getYear(newMonth) === currentYear &&
+        getMonth(newMonth) < currentMonth)
+    ) {
+      return;
+    }
+
+    if (disablePastDates && isCurrentMonth) {
+      setSelectedDate(today);
+      return;
+    }
+
+    setSelectedDate(newMonth);
+  };
+
   React.useEffect(() => {
     if (defaultToToday && !selectedDate) {
       setSelectedDate(new Date());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultToToday]);
-
-  const getDisabledDates = () => {
-    const disabled = [];
-    if (disableFutureDates) {
-      disabled.push({ after: new Date() });
-    }
-    if (disablePastDates) {
-      disabled.push({ before: today });
-    }
-    return disabled.length > 0 ? disabled : undefined;
-  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -271,22 +285,11 @@ function DateSelector({
             selected={selectedDate || undefined}
             initialFocus
             month={selectedDate || new Date()}
-            onMonthChange={(newMonth) => {
-              if (
-                (disableFutureDates &&
-                  getYear(newMonth) === currentYear &&
-                  getMonth(newMonth) > currentMonth) ||
-                (disablePastDates &&
-                  getYear(newMonth) === currentYear &&
-                  getMonth(newMonth) < currentMonth)
-              ) {
-                return;
-              }
-              setSelectedDate(newMonth);
-            }}
+            onMonthChange={handleMonthChange}
             toDate={disableFutureDates ? new Date() : undefined}
             fromDate={disablePastDates ? today : undefined}
             captionLayout="dropdown-buttons"
+            fromMonth={disablePastDates ? today : undefined}
             toMonth={getToMonth(
               selectedDate ? getYear(selectedDate) : currentYear,
             )}
