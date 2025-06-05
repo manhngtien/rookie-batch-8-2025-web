@@ -74,6 +74,7 @@ function EditAssetPage() {
         updateAssetById({ assetCode, assetUpdate: updateData }),
       ).unwrap();
       console.info("result Action", resultAction);
+
       navigate("/assets");
     } catch (error) {
       console.error("Failed to update asset:", error);
