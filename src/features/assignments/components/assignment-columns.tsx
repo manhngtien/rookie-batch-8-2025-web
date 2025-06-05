@@ -97,7 +97,7 @@ export const assignmentColumns = ({
             iconName="undo-2"
             className="text-blue-500"
             disabled={
-              assignment.state !== "Accepted" && assignment.isReturned === false
+              assignment.state !== "Accepted" || assignment.isReturned === true
             }
             onClick={() => onAssignmentReturn(assignment)}
           />
