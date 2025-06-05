@@ -1,3 +1,5 @@
+import type { FetchParams } from "@/types";
+
 export interface PaginationHeader {
   totalCount: number;
   pageSize: number;
@@ -20,12 +22,13 @@ export interface FetchRequestsResponse {
   total: number;
 }
 
-export interface FetchRequestsParams {
-  page: number;
-  pageSize: number;
+export interface FetchRequestsParams extends FetchParams {
   state?: string[];
-  searchTerm?: string;
-  orderBy?: string;
+  returnedDate?: Date | null;
+}
+
+export interface ChangeRequestParams {
+  returningRequestId: string;
 }
 
 export const State = {

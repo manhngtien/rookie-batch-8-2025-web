@@ -1,37 +1,50 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { isAxiosError } from "axios";
-
 import requestService from "@/features/requests/services/requestService";
+import type Request from "@/features/requests/types/Request";
 import {
+  type ChangeRequestParams,
   type FetchRequestsParams,
-  type FetchRequestsResponse,
 } from "@/features/requests/types/Request";
+import type { FetchResponse } from "@/types";
+import { createAppThunk } from "@/utils/thunkFactory";
 
-export const fetchRequests = createAsyncThunk<
-  FetchRequestsResponse,
+export const fetchRequests = createAppThunk<
   FetchRequestsParams,
-  { rejectValue: string }
+  FetchResponse<Request[]>
 >(
   "requests/fetchRequests",
-  async (
-    { page, pageSize, state, searchTerm, orderBy },
-    { rejectWithValue },
-  ) => {
-    try {
-      const response = await requestService.getRequests({
-        page,
-        pageSize,
-        state,
-        searchTerm,
-        orderBy,
-      });
-      return response;
-    } catch (error: unknown) {
-      console.error("Caught error:", error);
-      if (isAxiosError(error)) {
-        return rejectWithValue(error.message || "Failed to fetch assets");
-      }
-      return rejectWithValue("An unexpected error occurred");
-    }
+  async ({
+    pageNumber,
+    returnedDate,
+    pageSize,
+    state,
+    searchTerm,
+    orderBy,
+  }) => {
+    const response = await requestService.getRequests({
+      pageNumber,
+      pageSize,
+      returnedDate,
+      state,
+      searchTerm,
+      orderBy,
+    });
+    return response;
   },
 );
+
+export const changeToCompleted = createAppThunk<
+  ChangeRequestParams,
+  { data: Request }
+>("requests/complete", async (returningRequestId) => {
+  const response =
+    await requestService.changeRequestComplete(returningRequestId);
+  return response;
+});
+
+export const changeToCancel = createAppThunk<
+  ChangeRequestParams,
+  { data: Request }
+>("requests/cancel", async (returningRequestId) => {
+  const response = await requestService.changeRequestCancel(returningRequestId);
+  return response;
+});
