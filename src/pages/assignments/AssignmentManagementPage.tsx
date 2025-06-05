@@ -14,12 +14,14 @@ import { DataTable } from "@/components/ui/data-table";
 import { assignmentColumns } from "@/features/assignments/components/assignment-columns";
 import { useAssignments } from "@/features/assignments/hooks/useAssignments";
 import { useDeleteAssignment } from "@/features/assignments/hooks/useDeleteAssignment";
+import { useReturnAssignment } from "@/features/assignments/hooks/useReturnAssignment";
 import {
   type Assignment,
   assignmentStateMap,
 } from "@/features/assignments/types/Assignment";
 import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatLabel } from "@/lib/utils";
+import { formatDate } from "@/utils/helpers";
 
 const filterItems = Object.values(assignmentStateMap);
 
@@ -48,9 +50,11 @@ function AssignmentManagementPage() {
     useState<Assignment | null>(null);
 
   const { deleteAssignment } = useDeleteAssignment(selectedAssignment);
+  const { returnAssignment } = useReturnAssignment(selectedAssignment);
 
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openReturnDialog, setOpenReturnDialog] = useState(false);
 
   const newAssignmentCreated = location.state?.newAssignmentCreated;
   const hasHandledNewAssignment = useRef(false);
@@ -68,6 +72,11 @@ function AssignmentManagementPage() {
   const handleCloseDeleteDialog = () => {
     setSelectedAssignment(null);
     setOpenDeleteDialog(false);
+  };
+
+  const handleCloseReturnDialog = () => {
+    setSelectedAssignment(null);
+    setOpenReturnDialog(false);
   };
 
   const handleFilterChange = (selected: string[]) => {
@@ -145,7 +154,10 @@ function AssignmentManagementPage() {
             setSelectedAssignment(assignment);
             setOpenDeleteDialog(true);
           },
-          onAssignmentReturn: () => console.log("hehe"),
+          onAssignmentReturn: (assignment) => {
+            setSelectedAssignment(assignment);
+            setOpenReturnDialog(true);
+          },
         })}
         data={data}
         loading={loading}
@@ -180,7 +192,7 @@ function AssignmentManagementPage() {
             </p>
             <p className="font-medium">Assigned Date:</p>
             <p className="text-left">
-              {new Date(selectedAssignment.assignedDate).toLocaleDateString()}
+              {formatDate(selectedAssignment.assignedDate)}
             </p>
             <p className="font-medium">State:</p>
             <p className="text-left">
@@ -196,7 +208,7 @@ function AssignmentManagementPage() {
         </DetailDialog>
       )}
 
-      {/* Update dialog */}
+      {/* Delete dialog */}
       {openDeleteDialog && (
         <DetailDialog
           selectedEntity={selectedAssignment}
@@ -208,9 +220,9 @@ function AssignmentManagementPage() {
             <div className="flex justify-end gap-2">
               <Button
                 id="delete-assignment-confirm"
-                onClick={() => {
-                  deleteAssignment();
-                  fetchData();
+                onClick={async () => {
+                  await deleteAssignment();
+                  await fetchData();
                   handleCloseDeleteDialog();
                 }}
               >
@@ -223,6 +235,39 @@ function AssignmentManagementPage() {
                 onClick={handleCloseDeleteDialog}
               >
                 Cancel
+              </Button>
+            </div>
+          </div>
+        </DetailDialog>
+      )}
+
+      {/* Returning request dialog */}
+      {openReturnDialog && (
+        <DetailDialog
+          selectedEntity={selectedAssignment}
+          closeModal={handleCloseReturnDialog}
+          title="Are you sure?"
+        >
+          <div className="flex flex-col gap-4">
+            Do you want to create a returning request for this asset?
+            <div className="flex justify-end gap-2">
+              <Button
+                id="delete-assignment-confirm"
+                onClick={async () => {
+                  await returnAssignment();
+                  await fetchData();
+                  handleCloseReturnDialog();
+                }}
+              >
+                Yes
+              </Button>
+              <Button
+                id="delete-assignment-cancel"
+                type="button"
+                variant="outline"
+                onClick={handleCloseReturnDialog}
+              >
+                No
               </Button>
             </div>
           </div>

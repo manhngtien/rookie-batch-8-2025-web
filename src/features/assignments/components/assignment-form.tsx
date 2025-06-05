@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
@@ -67,6 +68,7 @@ export function AssignmentForm({
     assets,
     totalAssets,
     assetsLoading,
+    assetsSort,
   } = useAssetList(initialAsset);
 
   const {
@@ -81,6 +83,7 @@ export function AssignmentForm({
     users,
     totalUsers,
     usersLoading,
+    usersSort,
   } = useUserList(initialUser);
 
   function onUserSave(row: User | undefined) {
@@ -105,6 +108,14 @@ export function AssignmentForm({
 
     return allFieldsFilled;
   };
+
+  useEffect(() => {
+    if (selectedAsset) {
+      form.setValue("assetCode", selectedAsset.assetCode, {
+        shouldValidate: true,
+      });
+    }
+  }, [form, selectedAsset]);
 
   return (
     <Form {...form}>
@@ -150,6 +161,7 @@ export function AssignmentForm({
                     onSave={onUserSave}
                     onCancel={() => setUserInputOpened(false)}
                     selectedRow={selectedUser}
+                    initialSort={usersSort?.id || ""}
                   />
                 </PopoverContent>
               </Popover>
@@ -195,6 +207,7 @@ export function AssignmentForm({
                     onSave={onAssetSave}
                     onCancel={() => setAssetInputOpened(false)}
                     selectedRow={selectedAsset}
+                    initialSort={assetsSort?.id || ""}
                   />
                 </PopoverContent>
               </Popover>
@@ -215,6 +228,7 @@ export function AssignmentForm({
                   className="w-full !max-w-full"
                   disableFutureDates={false}
                   defaultToToday={true}
+                  disablePastDates={true}
                 />
               </div>
             </OneLineFormControl>

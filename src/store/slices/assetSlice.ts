@@ -79,6 +79,17 @@ const assetSlice = createSlice({
     resetError: (state) => {
       state.error = null;
     },
+    addAsset: (state, action: PayloadAction<Asset>) => {
+      // Prevent duplicates by assetCode
+      if (
+        !state.assets.some(
+          (asset) => asset.assetCode === action.payload.assetCode,
+        )
+      ) {
+        state.assets.unshift(action.payload);
+        state.total += 1;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -174,6 +185,7 @@ export const {
   resetError,
   clearSelectedAsset,
   setPage,
+  addAsset,
 } = assetSlice.actions;
 
 export default assetSlice.reducer;

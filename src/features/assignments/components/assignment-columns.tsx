@@ -40,12 +40,14 @@ export const assignmentColumns = ({
     ),
   },
   {
+    id: "assignedTo",
     accessorKey: "assignedToUser.userName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned to" />
     ),
   },
   {
+    id: "assignedBy",
     accessorKey: "assignedByUser.userName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned by" />
@@ -85,13 +87,18 @@ export const assignmentColumns = ({
           <ActionButton
             iconName="circle-x"
             className="text-foreground"
-            disabled={assignment.state !== "Waiting_For_Acceptance"}
+            disabled={
+              assignment.state !== "Waiting_For_Acceptance" &&
+              assignment.state !== "Declined"
+            }
             onClick={() => onDelete(assignment)}
           />
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
-            disabled={assignment.state !== "Accepted"}
+            disabled={
+              assignment.state !== "Accepted" && assignment.isReturned === false
+            }
             onClick={() => onAssignmentReturn(assignment)}
           />
         </div>

@@ -26,6 +26,7 @@ export interface Assignment {
   assignedByUser: User;
   assignedToUser: User;
   note: string;
+  isReturned: boolean;
 }
 
 export interface FetchAssignmentsResponse {

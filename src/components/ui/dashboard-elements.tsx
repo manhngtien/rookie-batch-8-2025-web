@@ -172,6 +172,7 @@ interface DateSelectorProps {
   title: string;
   className?: string;
   disableFutureDates?: boolean;
+  disablePastDates?: boolean;
   defaultToToday?: boolean;
 }
 
@@ -181,16 +182,33 @@ function DateSelector({
   title,
   className,
   disableFutureDates = true,
+  disablePastDates = false,
   defaultToToday = false,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
   const currentMonth = getMonth(new Date());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const getToMonth = (selectedYear: number) => {
-    if (!disableFutureDates) return undefined;
-    if (selectedYear < currentYear) return undefined;
-    if (selectedYear === currentYear) return new Date();
+    // If neither future nor past dates are disabled, no upper bound.
+    if (!disableFutureDates && !disablePastDates) return undefined;
+
+    // If both future and past dates are disabled, only allow the current month for the current year.
+    if (disableFutureDates && disablePastDates) {
+      if (selectedYear === currentYear) return new Date();
+      return undefined;
+    }
+
+    // If only future dates are disabled, restrict selectable months for the current year.
+    if (disableFutureDates) {
+      if (selectedYear < currentYear) return undefined;
+      if (selectedYear === currentYear) return new Date();
+      return undefined;
+    }
+
+    // If only past dates are disabled, we don't set an upper month boundary.
     return undefined;
   };
 
@@ -198,8 +216,10 @@ function DateSelector({
     if (disableFutureDates && date && date > new Date()) {
       return;
     }
+    if (disablePastDates && date && date < today) {
+      return;
+    }
     setSelectedDate(date ?? null);
-
     setOpen(false);
   };
 
@@ -209,6 +229,17 @@ function DateSelector({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultToToday]);
+
+  const getDisabledDates = () => {
+    const disabled = [];
+    if (disableFutureDates) {
+      disabled.push({ after: new Date() });
+    }
+    if (disablePastDates) {
+      disabled.push({ before: today });
+    }
+    return disabled.length > 0 ? disabled : undefined;
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -242,22 +273,26 @@ function DateSelector({
             month={selectedDate || new Date()}
             onMonthChange={(newMonth) => {
               if (
-                disableFutureDates &&
-                getYear(newMonth) === currentYear &&
-                getMonth(newMonth) > currentMonth
+                (disableFutureDates &&
+                  getYear(newMonth) === currentYear &&
+                  getMonth(newMonth) > currentMonth) ||
+                (disablePastDates &&
+                  getYear(newMonth) === currentYear &&
+                  getMonth(newMonth) < currentMonth)
               ) {
                 return;
               }
               setSelectedDate(newMonth);
             }}
             toDate={disableFutureDates ? new Date() : undefined}
+            fromDate={disablePastDates ? today : undefined}
             captionLayout="dropdown-buttons"
             toMonth={getToMonth(
               selectedDate ? getYear(selectedDate) : currentYear,
             )}
-            fromYear={currentYear - 100}
+            fromYear={disablePastDates ? currentYear : currentYear - 100}
             toYear={disableFutureDates ? currentYear : currentYear + 20}
-            disabled={disableFutureDates ? [{ after: new Date() }] : undefined}
+            disabled={getDisabledDates()}
             components={{
               Dropdown: ({ className, ...props }) => (
                 <div className="relative w-full flex-1">

@@ -8,6 +8,7 @@ import {
   deleteSingleAssignment,
   editAssignment,
   fetchAssignments,
+  returnSingleAssignment,
 } from "../thunks/assignmentThunk";
 
 interface AssignmentState {
@@ -78,6 +79,21 @@ const assignmentSlice = createSlice({
         state.total--;
       })
       .addCase(deleteSingleAssignment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) ?? "An unknown error occurred";
+      });
+
+    // Return assignment
+    builder
+      .addCase(returnSingleAssignment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(returnSingleAssignment.fulfilled, (state) => {
+        state.loading = false;
+        state.total--;
+      })
+      .addCase(returnSingleAssignment.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) ?? "An unknown error occurred";
       });

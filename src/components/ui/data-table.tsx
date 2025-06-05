@@ -106,6 +106,9 @@ export function DataTable<TData, TValue>({
         // TanStack Table row IDs are usually the index or a unique key
         const rowIndex = data.indexOf(foundRow);
         setRowSelection({ [rowIndex]: true });
+      } else {
+        // If the selected user is not found in the new data, clear selection.
+        setRowSelection({});
       }
     } else {
       setRowSelection({});
