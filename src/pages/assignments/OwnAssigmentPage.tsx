@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"; // Add useCallback
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DetailDialog, PageTitle } from "@/components/ui/dashboard-elements";
@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ownAssignmentColumns } from "@/features/assignments/components/own-assignment-columns";
 import ReplyAssignmentDialog from "@/features/assignments/components/reply-assignment-dialog";
 import type { Assignment } from "@/features/assignments/types/Assignment";
+import UserReturnRequestDialog from "@/features/requests/components/user-return-dialog";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssigmentsHome } from "@/store/thunks/assignmentHomeThunk";
 
@@ -24,12 +25,16 @@ export default function OwnAssignmentPage() {
     desc: false,
   });
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
+  const [isReturnRequestDialogOpen, setIsReturnRequestDialogOpen] =
+    useState(false);
   const [dialogAssignment, setDialogAssignment] = useState<Assignment | null>(
     null,
   );
   const [dialogActionType, setDialogActionType] = useState<
     "accept" | "decline"
   >("accept");
+  const [dialogReturnRequest, setDialogReturnRequest] =
+    useState<Assignment | null>(null);
 
   const handleRowClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
@@ -44,11 +49,19 @@ export default function OwnAssignmentPage() {
     setIsReplyDialogOpen(true);
   };
 
+  // Add handler for opening return request dialog
+  const handleOpenReturnRequestDialog = useCallback(
+    (assignment: Assignment) => {
+      setDialogReturnRequest(assignment);
+      setIsReturnRequestDialogOpen(true); // Set dialog open state
+    },
+    [],
+  );
+
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "assetnameasc";
 
-  // Memoize fetchAssignmentsData to prevent unnecessary re-renders
   const fetchAssignmentsData = useCallback(async () => {
     try {
       const response = await dispatch(
@@ -80,8 +93,12 @@ export default function OwnAssignmentPage() {
   );
 
   const columns = useMemo(
-    () => ownAssignmentColumns({ onOpenReplyDialog: handleOpenReplyDialog }),
-    [],
+    () =>
+      ownAssignmentColumns({
+        onOpenReplyDialog: handleOpenReplyDialog,
+        onOpenReturnRequestDialog: handleOpenReturnRequestDialog, // Use new handler
+      }),
+    [handleOpenReplyDialog, handleOpenReturnRequestDialog], // Add dependency
   );
 
   useEffect(() => {
@@ -164,6 +181,21 @@ export default function OwnAssignmentPage() {
           assignment={dialogAssignment}
           actionType={dialogActionType}
           onReplySuccess={handleReplySuccess}
+        />
+      )}
+
+      {dialogReturnRequest && (
+        <UserReturnRequestDialog
+          open={isReturnRequestDialogOpen}
+          onOpenChange={(open) => {
+            console.log("Return request dialog open state:", open);
+            setIsReturnRequestDialogOpen(open);
+            if (!open) {
+              setDialogReturnRequest(null);
+            }
+          }}
+          assignment={dialogReturnRequest}
+          onReturnRequest={handleReplySuccess}
         />
       )}
     </div>

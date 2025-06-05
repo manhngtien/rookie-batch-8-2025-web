@@ -31,9 +31,7 @@ export interface ChangeRequestParams {
   returningRequestId: string;
 }
 
-export const State = {
+export const RequestState: Record<string, string> = {
   Completed: "Completed",
   WaitingForReturning: "Waiting for returning",
-} as const;
-
-export type State = (typeof State)[keyof typeof State];
+};

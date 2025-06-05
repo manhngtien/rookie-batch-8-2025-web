@@ -11,7 +11,8 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { requestColumns } from "@/features/requests/components/request_columns";
 import type Request from "@/features/requests/types/Request";
-import { revertStateLabel } from "@/lib/utils";
+import { RequestState } from "@/features/requests/types/Request";
+import { revertLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import {
   changeToCancel,
@@ -108,7 +109,9 @@ export default function RequestPage() {
           fetchRequests({
             pageNumber: page,
             pageSize,
-            state: selectedStates.map(revertStateLabel),
+            state: selectedStates.map((label) =>
+              revertLabel(label, RequestState),
+            ),
             searchTerm: debouncedSearchTerm,
             orderBy,
           }),

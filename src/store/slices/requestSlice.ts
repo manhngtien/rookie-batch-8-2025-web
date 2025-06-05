@@ -39,7 +39,7 @@ const requestSlice = createSlice({
       })
       .addCase(fetchRequests.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? "An error occurred";
+        state.error = action.error.message ?? "An error occurred";
       });
   },
 });
