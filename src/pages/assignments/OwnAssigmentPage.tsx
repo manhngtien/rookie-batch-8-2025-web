@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react"; // Add useCallback
 import { useDispatch, useSelector } from "react-redux";
 
 import { DetailDialog, PageTitle } from "@/components/ui/dashboard-elements";
@@ -48,6 +48,26 @@ export default function OwnAssignmentPage() {
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "assetnameasc";
 
+  // Memoize fetchAssignmentsData to prevent unnecessary re-renders
+  const fetchAssignmentsData = useCallback(async () => {
+    try {
+      const response = await dispatch(
+        fetchAssigmentsHome({
+          pageNumber: page,
+          pageSize,
+          orderBy: orderBy,
+        }),
+      ).unwrap();
+      console.info("Assignments fetched successfully", response);
+    } catch (err) {
+      console.error("Failed to fetch assignments:", err);
+    }
+  }, [dispatch, page, pageSize, orderBy]);
+
+  const handleReplySuccess = useCallback(() => {
+    fetchAssignmentsData();
+  }, [fetchAssignmentsData]);
+
   const initialState = useMemo(
     () => ({
       sorting: sort ? [sort] : [{ id: "assetname", desc: false }],
@@ -65,23 +85,8 @@ export default function OwnAssignmentPage() {
   );
 
   useEffect(() => {
-    const fetchAssignmentsData = async () => {
-      try {
-        const response = await dispatch(
-          fetchAssigmentsHome({
-            pageNumber: page,
-            pageSize,
-            orderBy: orderBy,
-          }),
-        ).unwrap();
-        console.info("Assignments fetched successfully", response);
-      } catch (err) {
-        console.error("Failed to fetch assignments:", err);
-      }
-    };
-
     fetchAssignmentsData();
-  }, [dispatch, page, pageSize, orderBy]);
+  }, [fetchAssignmentsData]);
 
   const filteredAssigments = assignments;
 
@@ -158,6 +163,7 @@ export default function OwnAssignmentPage() {
           }}
           assignment={dialogAssignment}
           actionType={dialogActionType}
+          onReplySuccess={handleReplySuccess}
         />
       )}
     </div>
