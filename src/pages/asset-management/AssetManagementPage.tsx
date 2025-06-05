@@ -257,6 +257,7 @@ function AssetManagementPage() {
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => {
+              dispatch(setShouldRefetch(true));
               setSearchTerm(e.target.value);
               setPage(1);
             }}

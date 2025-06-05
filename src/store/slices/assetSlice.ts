@@ -147,7 +147,6 @@ const assetSlice = createSlice({
         state.selectedAsset = emptyAsset;
         state.assets.unshift(action.payload);
         state.shouldRefetch = false;
-        state.total = state.assets.length;
       })
       .addCase(updateAssetById.rejected, (state, action) => {
         state.updatingLoading = false;
@@ -159,7 +158,6 @@ const assetSlice = createSlice({
       })
       .addCase(deleteAssetById.pending, (state) => {
         state.deletingLoading = true;
-
         state.error = null;
       })
       .addCase(deleteAssetById.rejected, (state, action) => {
