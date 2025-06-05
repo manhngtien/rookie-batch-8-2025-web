@@ -2,15 +2,20 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
+import { formatStateLabel } from "@/lib/utils";
 
 import type Request from "../types/Request";
 
-export const requestColumns: ColumnDef<Request>[] = [
+export const requestColumns = (
+  onCheckClick: (request: Request) => void,
+  onCancelClick: (request: Request) => void,
+): ColumnDef<Request>[] => [
   {
-    accessorKey: "id",
+    id: "number",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="No." />
     ),
+    cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "assetCode",
@@ -53,28 +58,30 @@ export const requestColumns: ColumnDef<Request>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="State" />
     ),
+    cell: ({ row }) => {
+      const rawState = row.getValue("state") as string;
+      return <span>{formatStateLabel(rawState)}</span>;
+    },
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const request = row.original;
       return (
         <div className="-my-4 flex">
           <ActionButton
-            iconName="pencil"
-            onClick={(e) => {
-              e.stopPropagation();
+            disabled={request.state === "Completed"}
+            iconName="check"
+            className="text-red-500"
+            onClick={() => {
+              onCheckClick(request);
             }}
           />
           <ActionButton
+            disabled={request.state === "Completed"}
             iconName="circle-x"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          />
-          <ActionButton
-            iconName="undo-2"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
+              onCancelClick(request);
             }}
           />
         </div>
