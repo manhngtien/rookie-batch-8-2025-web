@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -171,8 +170,6 @@ export default function RequestPage() {
               setPage(1);
             }}
           />
-
-          <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
       </div>
 
