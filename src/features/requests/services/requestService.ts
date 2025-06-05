@@ -47,6 +47,11 @@ const requestService = {
       total: pagination.totalCount,
     };
   },
+
+  cancleRequest: async (returningRequestId: number): Promise<string> => {
+    await apiClient.put(API_ROUTES.requests.cancleRequest(returningRequestId));
+    return "Cancel request successful"; // ✅ manually return something
+  },
 };
 
 export default requestService;

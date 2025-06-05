@@ -39,9 +39,7 @@ export const fetchAssetsByParams = createAsyncThunk<
     };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      return rejectWithValue(
-        error.message || "Failed to fetch assets by params",
-      );
+      return rejectWithValue(error.message || "Failed to cancle request by id");
     }
     return rejectWithValue("An unexpected error occurred");
   }
@@ -70,7 +68,7 @@ export const fetchAssetById = createAsyncThunk<
   { rejectValue: string }
 >("assets/fetchAssetById", async (assetCode, { rejectWithValue }) => {
   try {
-    console.info("Fetching asset by code:", assetCode);
+    // console.info("Fetching asset by code:", assetCode);
     const response = await assetService.getAssetByCode(assetCode);
     console.info("Asset fetched by code successfully:", response);
     return response.data;
@@ -91,7 +89,7 @@ export const updateAssetById = createAsyncThunk<
   async ({ assetCode, assetUpdate }, { rejectWithValue }) => {
     try {
       const response = await assetService.updateAsset(assetCode, assetUpdate);
-      console.info("Asset updated successfully:", response);
+      // console.info("Asset updated successfully:", response);
       return response.data;
     } catch (error: unknown) {
       if (isAxiosError(error)) {

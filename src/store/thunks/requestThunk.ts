@@ -35,3 +35,23 @@ export const fetchRequests = createAsyncThunk<
     }
   },
 );
+
+export const cancleRequest = createAsyncThunk<
+  string,
+  number,
+  { rejectValue: string }
+>(
+  "requests/cancelRequests",
+  async (returningRequestId, { rejectWithValue }) => {
+    try {
+      const response = await requestService.cancleRequest(returningRequestId);
+      return response; // "Cancel request successful"
+    } catch (error: unknown) {
+      console.error("Caught error:", error);
+      if (isAxiosError(error)) {
+        return rejectWithValue(error.message || "Failed to cancel request");
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

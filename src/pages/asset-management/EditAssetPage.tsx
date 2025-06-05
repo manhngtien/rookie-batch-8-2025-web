@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { EditAssetFormFields } from "@/features/asset-management/components/edit-asset-form-fields";
 import type {
-  Asset,
+  // Asset,
   AssetUpdate,
 } from "@/features/asset-management/types/Asset";
 import type { AppDispatch } from "@/store";
@@ -112,7 +112,7 @@ function EditAssetPage() {
     async function fetchAndReset() {
       try {
         const asset = await dispatch(fetchAssetById(assetCode)).unwrap();
-        console.log(asset as Asset);
+        // console.log(asset as Asset);
         if (asset) {
           form.reset({
             name: asset.assetName,

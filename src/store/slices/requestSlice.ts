@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import type Request from "@/features/requests/types/Request";
 
-import { fetchRequests } from "../thunks/requestThunk";
+import { cancleRequest, fetchRequests } from "../thunks/requestThunk";
 
 interface RequestState {
   requests: Request[];
@@ -40,6 +40,17 @@ const requestSlice = createSlice({
       .addCase(fetchRequests.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "An error occurred";
+      })
+      .addCase(cancleRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancleRequest.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(cancleRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to cancel request";
       });
   },
 });
