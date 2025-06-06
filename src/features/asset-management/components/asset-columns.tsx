@@ -15,12 +15,28 @@ export const assetColumns: ColumnDef<Asset>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Asset Code" />
     ),
+    cell: ({ row }) => {
+      const assetCode: string = row.getValue("assetCode");
+      const maxLength = 20;
+      if (assetCode.length > maxLength) {
+        return `${assetCode.substring(0, maxLength)}...`;
+      }
+      return assetCode;
+    },
   },
   {
     accessorKey: "assetName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Asset Name" />
     ),
+    cell: ({ row }) => {
+      const assetName: string = row.getValue("assetName");
+      const maxLength = 30;
+      if (assetName.length > maxLength) {
+        return `${assetName.substring(0, maxLength)}...`;
+      }
+      return assetName;
+    },
   },
   {
     id: "category",
@@ -28,6 +44,14 @@ export const assetColumns: ColumnDef<Asset>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
+    cell: ({ row }) => {
+      const category: string = row.getValue("category");
+      const maxLength = 20;
+      if (category.length > maxLength) {
+        return `${category.substring(0, maxLength)}...`;
+      }
+      return category;
+    },
   },
   {
     accessorKey: "state",

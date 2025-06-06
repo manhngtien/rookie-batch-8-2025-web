@@ -228,7 +228,7 @@ function AssetManagementPage() {
               </span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[15rem] p-2">
+          <PopoverContent className="max-h-56 w-[15rem] overflow-auto p-2">
             <div className="space-y-2">
               {allCategories.map((category) => (
                 <div key={category} className="flex items-center space-x-2">

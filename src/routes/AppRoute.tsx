@@ -11,6 +11,7 @@ import EditAssignmentPage from "@/pages/assignments/EditAssignmentPage";
 import OwnAssignmentPage from "@/pages/assignments/OwnAssigmentPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import NotFound from "@/pages/NotFound";
+import ReportPage from "@/pages/report/ReportPage";
 import RequestPage from "@/pages/requests/RequestPage";
 import CreateUserPage from "@/pages/users/CreateUserPage";
 import EditUserPage from "@/pages/users/EditUserPage";
@@ -75,6 +76,11 @@ export const router = createBrowserRouter([
           {
             path: `${APP_ROUTES.assignment.path}/${APP_ROUTES.assignment.edit}/:id`,
             element: <EditAssignmentPage />,
+          },
+          // Assignments
+          {
+            path: APP_ROUTES.reports.path,
+            element: <ReportPage />,
           },
         ],
       },

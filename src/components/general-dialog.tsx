@@ -16,12 +16,14 @@ export default function GeneralDialog({
   description,
   content,
   isOpen,
+  confirmButtonTitle,
   onClose,
   onConfirm,
 }: {
   header: string;
   description: string;
   content: ReactNode | undefined;
+  confirmButtonTitle?: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -46,7 +48,7 @@ export default function GeneralDialog({
             className="hover:cursor-pointer"
             onClick={onConfirm}
           >
-            Log out
+            {confirmButtonTitle ? confirmButtonTitle : "Log out"}
           </Button>
           <Button
             id={`${kebabCase(header)}-cancel-button`}

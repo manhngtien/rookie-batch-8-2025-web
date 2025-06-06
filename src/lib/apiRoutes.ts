@@ -46,8 +46,9 @@ export const API_ROUTES = {
   },
   requests: {
     getRequests: addApiPrefix("/ReturningRequests"),
-
-    cancleRequest: (returningRequestId: number) =>
-      addApiPrefix(`/ReturningRequest/${returningRequestId}/cancle`),
+    changeRequestComplete: (requestId: string) =>
+      addApiPrefix(`/ReturningRequests/${requestId}/complete`),
+    changeRequestCancel: (requestId: string) =>
+      addApiPrefix(`/ReturningRequests/${requestId}/cancel`),
   },
 };
