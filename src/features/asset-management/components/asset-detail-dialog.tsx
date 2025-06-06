@@ -24,7 +24,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
 }) => {
   return (
     <Dialog open={!!selectedAsset} onOpenChange={closeModal}>
-      <DialogContent className="max-w-2xl p-0 text-black">
+      <DialogContent className="max-w-3xl p-0 text-black">
         <DialogHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
           <DialogTitle className="border-red-500 pb-2 text-red-500">
             Detailed Asset Information
@@ -32,7 +32,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
         </DialogHeader>
 
         {selectedAsset && (
-          <div className="space-y-4 px-8 py-2">
+          <div className="w-full space-y-4 px-8 py-2 break-words">
             <div className="grid grid-cols-2 gap-4 text-gray-500">
               <p className="font-medium">Asset Code:</p>
               <p className="text-left">{selectedAsset.assetCode}</p>
@@ -81,10 +81,10 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                           <td className="p-2 text-gray-500">
                             {assignment.assignedDate}
                           </td>
-                          <td className="p-2 text-gray-500">
+                          <td className="max-w-3xs p-2 break-words text-gray-500">
                             {assignment.assignedToUser.userName}
                           </td>
-                          <td className="p-2 text-gray-500">
+                          <td className="max-w-3xs p-2 break-words text-gray-500">
                             {assignment.assignedByUser.userName}
                           </td>
                           <td className="p-2 text-gray-500">
