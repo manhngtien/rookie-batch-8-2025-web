@@ -26,14 +26,13 @@ export default function AssetDeleteDialog({
   assetCode,
 }: AssetDeleteDialogProps) {
   const [error, setError] = useState(false);
-
   const dispatch = useDispatch<AppDispatch>();
 
   const handleConfirmDelete = async () => {
     try {
       await dispatch(deleteAssetById(assetCode)).unwrap();
       dispatch(removeAsset(assetCode));
-      await onOpenChange(false);
+      onOpenChange(false);
     } catch (error) {
       console.log("Delete asset fail!", error);
       setError(true);

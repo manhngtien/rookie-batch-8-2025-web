@@ -181,7 +181,9 @@ function AssignmentManagementPage() {
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>
             <p className="font-medium">Asset Name:</p>
-            <p className="text-left">{selectedAssignment.assetName}</p>
+            <p className="text-left break-words">
+              {selectedAssignment.assetName}
+            </p>
             <p className="font-medium">Assigned To:</p>
             <p className="text-left">
               {selectedAssignment.assignedToUser.userName}

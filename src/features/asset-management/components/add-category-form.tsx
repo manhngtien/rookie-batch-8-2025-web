@@ -14,7 +14,7 @@ export const categoryFormSchema = z.object({
   newCategoryName: z
     .string()
     .min(1, "Category name is required")
-    .max(50, "Name too long"),
+    .max(20, "Name too long"),
   newCategoryPrefix: z
     .string()
     .min(1, "Prefix is required")

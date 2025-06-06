@@ -13,12 +13,15 @@ import { createAsset } from "@/store/thunks/assetThunk";
 import { fetchCategories } from "@/store/thunks/categoryThunk";
 
 export const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Name is required").max(20, "Name is too long"),
   category: z.string({
     required_error: "Category is required",
   }),
   category_id: z.number().optional(),
-  specification: z.string().min(1, "Specification is required"),
+  specification: z
+    .string()
+    .min(1, "Specification is required")
+    .max(100, "Specification is too long"),
   installedDate: z.date({
     required_error: "Installed date is required",
   }),

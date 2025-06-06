@@ -33,7 +33,6 @@ function AssetManagementPage() {
     (state: RootState) => state.categories.categories,
   );
   const allCategories = categories.map((category) => category.categoryName);
-  console.info("All categories:", allCategories);
   const shouldRefetch = useSelector(
     (state: RootState) => state.assets.shouldRefetch,
   );
@@ -100,8 +99,7 @@ function AssetManagementPage() {
   useEffect(() => {
     const fetchCategoriesData = async () => {
       try {
-        const response = await dispatch(fetchCategories()).unwrap();
-        console.info("Categories fetched successfully", response);
+        await dispatch(fetchCategories()).unwrap();
       } catch (err) {
         console.error("Failed to fetch categories:", err);
       }
@@ -109,7 +107,7 @@ function AssetManagementPage() {
     const fetchAssetsData = async () => {
       try {
         if (shouldRefetch) {
-          const response = await dispatch(
+          await dispatch(
             fetchAssetsByParams({
               orderBy,
               searchTerm: debouncedSearchTerm,
@@ -126,7 +124,6 @@ function AssetManagementPage() {
               pageSize,
             }),
           ).unwrap();
-          console.info("Users fetched successfully", response);
         }
       } catch (err) {
         console.error("Failed to fetch users:", err);
@@ -169,7 +166,6 @@ function AssetManagementPage() {
       if (newSelected.length === 0) {
         newSelected = ["All"];
       }
-      console.log("New selected states:", newSelected);
       return newSelected;
     });
   };
@@ -232,7 +228,7 @@ function AssetManagementPage() {
               </span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[15rem] p-2">
+          <PopoverContent className="max-h-56 w-[15rem] overflow-auto p-2">
             <div className="space-y-2">
               {allCategories.map((category) => (
                 <div key={category} className="flex items-center space-x-2">

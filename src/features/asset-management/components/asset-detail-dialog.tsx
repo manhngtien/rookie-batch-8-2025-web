@@ -37,7 +37,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               <p className="font-medium">Asset Code:</p>
               <p className="text-left">{selectedAsset.assetCode}</p>
               <p className="font-medium">Asset Name:</p>
-              <p className="text-left">{selectedAsset.assetName}</p>
+              <p className="text-left break-words">{selectedAsset.assetName}</p>
               <p className="font-medium">Category:</p>
               <p className="text-left">{selectedAsset.category.categoryName}</p>
               <p className="font-medium">Installed Date:</p>
@@ -52,7 +52,9 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                   "Unknown"}
               </p>{" "}
               <p className="font-medium">Specification:</p>
-              <p className="text-left">{selectedAsset.specification}</p>
+              <p className="text-left break-words">
+                {selectedAsset.specification}
+              </p>
             </div>
             <div>
               <div className="mb-2 flex flex-col items-start gap-5">

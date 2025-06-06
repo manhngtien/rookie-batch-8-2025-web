@@ -28,6 +28,14 @@ export const requestColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Asset Name" />
     ),
+    cell: ({ row }) => {
+      const assetName: string = row.getValue("assetName");
+      const maxLength = 30;
+      if (assetName.length > maxLength) {
+        return `${assetName.substring(0, maxLength)}...`;
+      }
+      return assetName;
+    },
   },
   {
     accessorKey: "requestedBy",
