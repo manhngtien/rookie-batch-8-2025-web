@@ -61,7 +61,11 @@ const assignmentSlice = createSlice({
       })
       .addCase(editAssignment.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = [action.payload.data, ...state.data];
+        const updatedAssignment = action.payload.data;
+        state.data = [
+          updatedAssignment,
+          ...state.data.filter((data) => data.id !== updatedAssignment.id),
+        ];
       })
       .addCase(editAssignment.rejected, (state, action) => {
         state.loading = false;
