@@ -114,6 +114,7 @@ export default function RequestPage() {
             ),
             searchTerm: debouncedSearchTerm,
             orderBy,
+            returnedDate: returnedDateFilter,
           }),
         ).unwrap();
         console.info("Users fetched successfully", response);
@@ -144,7 +145,7 @@ export default function RequestPage() {
     },
   );
   return (
-    <div className="container">
+    <div>
       <h1 className="mb-6 text-2xl font-bold text-red-600">Request List</h1>
 
       <div className="mb-4 flex items-center justify-start space-x-4">
@@ -158,7 +159,7 @@ export default function RequestPage() {
           <DateSelector
             selectedDate={returnedDateFilter}
             setSelectedDate={setReturnedDateFilter}
-            title="Assigned Date"
+            title="Returned Date"
             disableFutureDates={false}
           />
         </div>

@@ -53,6 +53,14 @@ export const assignmentColumns = ({
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned to" />
     ),
+    cell: ({ row }) => {
+      const userName: string = row.getValue("assignedTo");
+      const maxLength = 30;
+      if (userName.length > maxLength) {
+        return `${userName.substring(0, maxLength)}...`;
+      }
+      return userName;
+    },
   },
   {
     id: "assignedBy",
@@ -60,6 +68,14 @@ export const assignmentColumns = ({
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned by" />
     ),
+    cell: ({ row }) => {
+      const userName: string = row.getValue("assignedBy");
+      const maxLength = 30;
+      if (userName.length > maxLength) {
+        return `${userName.substring(0, maxLength)}...`;
+      }
+      return userName;
+    },
   },
   {
     accessorKey: "assignedDate",

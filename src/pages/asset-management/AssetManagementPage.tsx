@@ -1,13 +1,12 @@
-import { Funnel, Search } from "lucide-react";
+import { Funnel } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PageTitle } from "@/components/ui/dashboard-elements";
+import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -18,6 +17,7 @@ import AssetDeleteDialog from "@/features/asset-management/components/asset-dele
 import AssetDetailDialog from "@/features/asset-management/components/asset-detail-dialog";
 import type { Asset } from "@/features/asset-management/types/Asset";
 import { AssetDeleteDialogContext } from "@/hooks/useAssetDeleteDialog";
+import { useDebounce } from "@/hooks/useDebounce";
 import { formatStateLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import { setShouldRefetch } from "@/store/slices/assetSlice";
@@ -79,22 +79,6 @@ function AssetManagementPage() {
     setAssetToDelete(asset);
     setDeleteDialogOpen(true);
   };
-
-  function useDebounce<T>(value: T, delay: number): T {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [value, delay]);
-
-    return debouncedValue;
-  }
 
   useEffect(() => {
     const fetchCategoriesData = async () => {
@@ -246,20 +230,16 @@ function AssetManagementPage() {
           </PopoverContent>
         </Popover>
 
-        <div className="relative w-[20rem]">
-          <Input
-            id="asset-assignment-search-bar"
-            className=""
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => {
-              dispatch(setShouldRefetch(true));
-              setSearchTerm(e.target.value);
-              setPage(1);
-            }}
-          />
-          <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
-        </div>
+        <SearchInput
+          id="asset-assignment-search-bar"
+          value={searchTerm}
+          onChange={(e) => {
+            dispatch(setShouldRefetch(true));
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+        />
+
         <Button
           id="create-asset-button"
           onClick={() => {

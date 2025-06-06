@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-import { Button } from "@/components/ui/button";
+import GeneralDialog from "@/components/general-dialog";
 import {
   CreateButton,
   DateSelector,
@@ -69,10 +69,22 @@ function AssignmentManagementPage() {
     setOpenDetailDialog(false);
   };
 
+  async function handleDeleteAssignment() {
+    await deleteAssignment();
+    await fetchData();
+    handleCloseDeleteDialog();
+  }
+
   const handleCloseDeleteDialog = () => {
     setSelectedAssignment(null);
     setOpenDeleteDialog(false);
   };
+
+  async function handleReturnAssignment() {
+    await returnAssignment();
+    await fetchData();
+    handleCloseReturnDialog();
+  }
 
   const handleCloseReturnDialog = () => {
     setSelectedAssignment(null);
@@ -177,7 +189,7 @@ function AssignmentManagementPage() {
           closeModal={handleCloseDetailDialog}
           title="Detailed Assignment Information"
         >
-          <div className="grid grid-cols-2 gap-4 text-gray-500">
+          <div className="grid grid-cols-2 gap-4 break-words text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>
             <p className="font-medium">Asset Name:</p>
@@ -211,70 +223,28 @@ function AssignmentManagementPage() {
       )}
 
       {/* Delete dialog */}
-      {openDeleteDialog && (
-        <DetailDialog
-          selectedEntity={selectedAssignment}
-          closeModal={handleCloseDeleteDialog}
-          title="Are you sure?"
-        >
-          <div className="flex flex-col gap-4">
-            Do you want to delete this assignment?
-            <div className="flex justify-end gap-2">
-              <Button
-                id="delete-assignment-confirm"
-                onClick={async () => {
-                  await deleteAssignment();
-                  await fetchData();
-                  handleCloseDeleteDialog();
-                }}
-              >
-                Delete
-              </Button>
-              <Button
-                id="delete-assignment-cancel"
-                type="button"
-                variant="outline"
-                onClick={handleCloseDeleteDialog}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DetailDialog>
-      )}
+      <GeneralDialog
+        confirmButtonTitle="Yes"
+        declineButtonTitle="No"
+        onConfirm={handleDeleteAssignment}
+        content
+        description="Do you want to delete this assignment?"
+        header="Are you sure?"
+        isOpen={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+      />
 
       {/* Returning request dialog */}
-      {openReturnDialog && (
-        <DetailDialog
-          selectedEntity={selectedAssignment}
-          closeModal={handleCloseReturnDialog}
-          title="Are you sure?"
-        >
-          <div className="flex flex-col gap-4">
-            Do you want to create a returning request for this asset?
-            <div className="flex justify-end gap-2">
-              <Button
-                id="delete-assignment-confirm"
-                onClick={async () => {
-                  await returnAssignment();
-                  await fetchData();
-                  handleCloseReturnDialog();
-                }}
-              >
-                Yes
-              </Button>
-              <Button
-                id="delete-assignment-cancel"
-                type="button"
-                variant="outline"
-                onClick={handleCloseReturnDialog}
-              >
-                No
-              </Button>
-            </div>
-          </div>
-        </DetailDialog>
-      )}
+      <GeneralDialog
+        confirmButtonTitle="Yes"
+        declineButtonTitle="No"
+        onConfirm={handleReturnAssignment}
+        content
+        description="Do you want to create a returning request for this asset?"
+        header="Are you sure?"
+        isOpen={openReturnDialog}
+        onClose={handleCloseReturnDialog}
+      />
     </div>
   );
 }

@@ -71,7 +71,7 @@ export default function ChangePasswordDialog({
     <>
       <DialogChangePassword open={open} onOpenChange={onOpenChange}>
         <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
-          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-100 p-4">
             <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
               Change password
             </DialogChangePasswordTitle>
@@ -91,7 +91,7 @@ export default function ChangePasswordDialog({
         onOpenChange={setSuccessDialogOpen}
       >
         <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
-          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-black bg-gray-200 p-4">
+          <DialogChangePasswordHeader className="w-full rounded-t-lg border-b-1 border-b-gray-400 bg-gray-100 p-4">
             <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
               Change password
             </DialogChangePasswordTitle>
