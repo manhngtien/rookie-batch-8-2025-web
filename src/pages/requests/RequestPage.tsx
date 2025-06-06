@@ -70,6 +70,7 @@ export default function RequestPage() {
 
   const handleFilterChange = (selected: string[]) => {
     setSelectedStates(selected);
+    setPage(1);
   };
   const confirmComplete = async () => {
     if (selectedRequest === null) return;

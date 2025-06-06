@@ -39,10 +39,13 @@ function mapToAssetState(input: string): AssetState {
 }
 
 export const editFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Name is required").max(20, "Name is too long"),
   category: z.string().min(1, "Category is required"),
   category_id: z.number().optional().nullable(),
-  specification: z.string().min(1, "Specification is required"),
+  specification: z
+    .string()
+    .min(1, "Specification is required")
+    .max(100, "Specification is too long"),
   installedDate: z.date({
     required_error: "Installed date is required",
   }),
