@@ -311,7 +311,7 @@ export default function UserForm({
               <FormLabel className="text-sm font-medium">Type</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value.toLowerCase() || "staff"} // Default to "staff"
+                defaultValue={field.value.toLowerCase() || "staff"}
               >
                 <FormControl className="w-full">
                   <SelectTrigger id="user-type-select">

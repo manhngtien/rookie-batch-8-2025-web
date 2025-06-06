@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DetailDialog, PageTitle } from "@/components/ui/dashboard-elements";
@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ownAssignmentColumns } from "@/features/assignments/components/own-assignment-columns";
 import ReplyAssignmentDialog from "@/features/assignments/components/reply-assignment-dialog";
 import type { Assignment } from "@/features/assignments/types/Assignment";
+import UserReturnRequestDialog from "@/features/requests/components/user-return-dialog";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchAssigmentsHome } from "@/store/thunks/assignmentHomeThunk";
 
@@ -24,12 +25,16 @@ export default function OwnAssignmentPage() {
     desc: false,
   });
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
+  const [isReturnRequestDialogOpen, setIsReturnRequestDialogOpen] =
+    useState(false);
   const [dialogAssignment, setDialogAssignment] = useState<Assignment | null>(
     null,
   );
   const [dialogActionType, setDialogActionType] = useState<
     "accept" | "decline"
   >("accept");
+  const [dialogReturnRequest, setDialogReturnRequest] =
+    useState<Assignment | null>(null);
 
   const handleRowClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
@@ -44,9 +49,36 @@ export default function OwnAssignmentPage() {
     setIsReplyDialogOpen(true);
   };
 
+  const handleOpenReturnRequestDialog = useCallback(
+    (assignment: Assignment) => {
+      setDialogReturnRequest(assignment);
+      setIsReturnRequestDialogOpen(true);
+    },
+    [],
+  );
+
   const orderBy = sort
     ? `${sort.id}${sort.desc ? "desc" : "asc"}`.toLowerCase()
     : "assetnameasc";
+
+  const fetchAssignmentsData = useCallback(async () => {
+    try {
+      const response = await dispatch(
+        fetchAssigmentsHome({
+          pageNumber: page,
+          pageSize,
+          orderBy: orderBy,
+        }),
+      ).unwrap();
+      console.info("Assignments fetched successfully", response);
+    } catch (err) {
+      console.error("Failed to fetch assignments:", err);
+    }
+  }, [dispatch, page, pageSize, orderBy]);
+
+  const handleReplySuccess = useCallback(() => {
+    fetchAssignmentsData();
+  }, [fetchAssignmentsData]);
 
   const initialState = useMemo(
     () => ({
@@ -60,28 +92,17 @@ export default function OwnAssignmentPage() {
   );
 
   const columns = useMemo(
-    () => ownAssignmentColumns({ onOpenReplyDialog: handleOpenReplyDialog }),
-    [],
+    () =>
+      ownAssignmentColumns({
+        onOpenReplyDialog: handleOpenReplyDialog,
+        onOpenReturnRequestDialog: handleOpenReturnRequestDialog,
+      }),
+    [handleOpenReplyDialog, handleOpenReturnRequestDialog],
   );
 
   useEffect(() => {
-    const fetchAssignmentsData = async () => {
-      try {
-        const response = await dispatch(
-          fetchAssigmentsHome({
-            pageNumber: page,
-            pageSize,
-            orderBy: orderBy,
-          }),
-        ).unwrap();
-        console.info("Assignments fetched successfully", response);
-      } catch (err) {
-        console.error("Failed to fetch assignments:", err);
-      }
-    };
-
     fetchAssignmentsData();
-  }, [dispatch, page, pageSize, orderBy]);
+  }, [fetchAssignmentsData]);
 
   const filteredAssigments = assignments;
 
@@ -158,6 +179,21 @@ export default function OwnAssignmentPage() {
           }}
           assignment={dialogAssignment}
           actionType={dialogActionType}
+          onReplySuccess={handleReplySuccess}
+        />
+      )}
+
+      {dialogReturnRequest && (
+        <UserReturnRequestDialog
+          open={isReturnRequestDialogOpen}
+          onOpenChange={(open) => {
+            setIsReturnRequestDialogOpen(open);
+            if (!open) {
+              setDialogReturnRequest(null);
+            }
+          }}
+          assignment={dialogReturnRequest}
+          onReturnRequest={handleReplySuccess}
         />
       )}
     </div>

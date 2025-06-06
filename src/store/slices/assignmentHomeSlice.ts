@@ -5,6 +5,7 @@ import type { Assignment } from "@/features/assignments/types/Assignment";
 import {
   fetchAssigmentsHome,
   replyAssignment,
+  userReturnRequest,
 } from "../thunks/assignmentHomeThunk";
 
 interface AssignmentState {
@@ -54,6 +55,18 @@ const assignmentHomeSlice = createSlice({
       .addCase(replyAssignment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to reply to assignment";
+      })
+      // Add return request thunk handling
+      .addCase(userReturnRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(userReturnRequest.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(userReturnRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to send return request";
       });
   },
 });

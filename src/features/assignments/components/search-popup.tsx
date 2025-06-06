@@ -20,6 +20,7 @@ export function SearchPopup<T>({
   onSave,
   onCancel,
   selectedRow,
+  initialSort,
 }: {
   title: string;
   columns: ColumnDef<T>[];
@@ -38,12 +39,13 @@ export function SearchPopup<T>({
   onSave: (row: T | undefined) => void;
   onCancel: () => void;
   selectedRow?: T;
+  initialSort: string;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [sort, setSort] = useState<{ id: string; desc: boolean } | null>({
-    id: "",
+    id: initialSort,
     desc: false,
   });
   const [localSelectedRow, setLocalSelectedRow] = useState<T | undefined>(

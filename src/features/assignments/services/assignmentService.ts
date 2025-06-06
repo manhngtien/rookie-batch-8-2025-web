@@ -121,4 +121,26 @@ export const assignmentService = {
 
     return response;
   },
+
+  returnSingleAssignment: async ({
+    id,
+  }: {
+    id: number;
+  }): Promise<{ status: number }> => {
+    const formData = new FormData();
+
+    formData.append("assignmentId", id.toString());
+
+    const response = await apiClient.post(
+      `${API_ROUTES.assignments.getAssignments}/${id}/return`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    return response;
+  },
 };

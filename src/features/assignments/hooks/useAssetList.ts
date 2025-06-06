@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import type { Asset } from "@/features/asset-management/types/Asset";
 import type { AppDispatch, RootState } from "@/store";
+import { addAsset } from "@/store/slices/assetSlice";
 import { fetchAssetsByParams } from "@/store/thunks/assetThunk";
 
 export function useAssetList(initialAsset: Asset | undefined) {
@@ -18,7 +19,7 @@ export function useAssetList(initialAsset: Asset | undefined) {
     id: string;
     desc: boolean;
   } | null>({
-    id: "",
+    id: "assetName",
     desc: false,
   });
   const [assetsSearchTerm, setAssetsSearchTerm] = useState<string>("");
@@ -27,7 +28,9 @@ export function useAssetList(initialAsset: Asset | undefined) {
 
   const assetsOrderBy = assetsSort
     ? `${assetsSort.id}${assetsSort.desc ? "desc" : "asc"}`.toLowerCase()
-    : "assetnameasc";
+    : "assetnameeasc";
+
+  console.log(assetsOrderBy);
 
   const isAssetInputOpened = assetInputOpened === true;
 
@@ -57,9 +60,16 @@ export function useAssetList(initialAsset: Asset | undefined) {
 
   useEffect(() => {
     if (isAssetInputOpened) {
-      fetchAssetData();
+      (async () => {
+        await fetchAssetData();
+
+        // Add the initial Asset to the list (used when editing)
+        if (initialAsset) {
+          dispatch(addAsset(initialAsset));
+        }
+      })();
     }
-  }, [fetchAssetData, isAssetInputOpened]);
+  }, [dispatch, fetchAssetData, initialAsset, isAssetInputOpened]);
 
   useEffect(() => {
     setSelectedAsset(initialAsset);

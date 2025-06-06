@@ -51,6 +51,14 @@ const assignmentService = {
 
     await apiClient.put(url, requestBody);
   },
+
+  userReturnRequest: async (assignmentId: number): Promise<void> => {
+    const url = `${API_ROUTES.requests.userReturnRequests}`;
+    const requestBody = {
+      assignmentId: assignmentId,
+    };
+    await apiClient.post(url, requestBody);
+  },
 };
 
 export default assignmentService;

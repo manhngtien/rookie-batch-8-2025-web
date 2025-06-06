@@ -30,6 +30,7 @@ export const assetSelectColumns: ColumnDef<Asset>[] = [
     ),
   },
   {
+    id: "category",
     accessorKey: "category.categoryName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />

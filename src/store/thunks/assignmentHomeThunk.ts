@@ -56,3 +56,22 @@ export const replyAssignment = createAsyncThunk<
     }
   },
 );
+
+export const userReturnRequest = createAsyncThunk<
+  void,
+  { assignmentId: number },
+  { rejectValue: string }
+>(
+  "assignmentsHome/userReturnRequest",
+  async ({ assignmentId }, { rejectWithValue }) => {
+    try {
+      await assignmentService.userReturnRequest(assignmentId);
+    } catch (error: unknown) {
+      console.error("Caught error while returning request:", error);
+      if (isAxiosError(error)) {
+        return rejectWithValue(error.message || "Failed to return request");
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
+  },
+);

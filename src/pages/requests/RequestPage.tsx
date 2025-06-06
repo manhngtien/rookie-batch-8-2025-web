@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -11,7 +10,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { requestColumns } from "@/features/requests/components/request_columns";
 import type Request from "@/features/requests/types/Request";
-import { LabelMap } from "@/features/requests/types/Request";
+import { RequestState } from "@/features/requests/types/Request";
 import { revertLabel } from "@/lib/utils";
 import type { AppDispatch, RootState } from "@/store";
 import {
@@ -52,7 +51,7 @@ export default function RequestPage() {
     id: "assetName",
     desc: false,
   });
-  const [selectedStates, setSelectedStates] = useState<string[]>([""]);
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [openDialogConfirm, setOpenDialogConfirm] = useState<boolean>(false);
   const [openDialogCancel, setOpenDialogCancel] = useState<boolean>(false);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
@@ -109,7 +108,9 @@ export default function RequestPage() {
           fetchRequests({
             pageNumber: page,
             pageSize,
-            state: selectedStates.map((label) => revertLabel(label, LabelMap)),
+            state: selectedStates.map((label) =>
+              revertLabel(label, RequestState),
+            ),
             searchTerm: debouncedSearchTerm,
             orderBy,
           }),
@@ -169,8 +170,6 @@ export default function RequestPage() {
               setPage(1);
             }}
           />
-
-          <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
         </div>
       </div>
 

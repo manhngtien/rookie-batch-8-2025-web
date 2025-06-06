@@ -10,8 +10,13 @@ import { APP_ROUTES } from "@/lib/appRoutes";
 import { formatDate } from "@/utils/helpers";
 
 import DisableUserDialog from "./disable-user-dialog";
+interface UserColumnsProps {
+  currentUserLocation?: string;
+}
 
-export const userColumns: ColumnDef<User>[] = [
+export const userColumns = ({
+  currentUserLocation,
+}: UserColumnsProps): ColumnDef<User>[] => [
   {
     accessorKey: "staffCode",
     header: ({ column }) => (
@@ -68,12 +73,17 @@ export const userColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const navigate = useNavigate();
       const user = row.original;
+      const isSameLocation = currentUserLocation
+        ? user.location === currentUserLocation
+        : true;
+
       const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       return (
         <div className="-my-4 flex">
           <ActionButton
             iconName="pencil"
+            disabled={!isSameLocation}
             onClick={(e) => {
               e.stopPropagation();
               navigate(
@@ -83,6 +93,7 @@ export const userColumns: ColumnDef<User>[] = [
           />
           <ActionButton
             iconName="circle-x"
+            disabled={!isSameLocation}
             className="text-foreground"
             onClick={(e) => {
               e.stopPropagation();

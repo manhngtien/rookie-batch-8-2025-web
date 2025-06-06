@@ -9,46 +9,42 @@ import {
   DialogChangePasswordHeader,
   DialogChangePasswordTitle,
 } from "@/components/ui/dialog-change-password";
+import type { Assignment } from "@/features/assignments/types/Assignment";
 import type { AppDispatch } from "@/store";
-import { replyAssignment } from "@/store/thunks/assignmentHomeThunk";
+import { userReturnRequest } from "@/store/thunks/assignmentHomeThunk";
 
-import type { Assignment } from "../types/Assignment";
-
-interface ReplyAssignmentDialogProps {
+interface UserReturnRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   assignment?: Assignment;
-  actionType: "accept" | "decline";
-  onReplySuccess?: () => void;
+  onReturnRequest?: () => void;
 }
 
-export default function ReplyAssignmentDialog({
+export default function UserReturnRequestDialog({
   open,
   onOpenChange,
   assignment,
-  actionType,
-  onReplySuccess,
-}: ReplyAssignmentDialogProps) {
+  onReturnRequest,
+}: UserReturnRequestDialogProps) {
   const [error, setError] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleReply = async () => {
+  const handleCreateRequest = async () => {
     if (!assignment) return;
     try {
       await dispatch(
-        replyAssignment({
+        userReturnRequest({
           assignmentId: assignment.id,
-          isAccepted: actionType === "accept",
         }),
       ).unwrap();
       onOpenChange(false);
-      onReplySuccess?.();
+      onReturnRequest?.();
       console.log(
-        `Assignment ${assignment.id} has been ${actionType}ed successfully.`,
+        `Request for assignment ${assignment.id} created successfully.`,
       );
     } catch (err) {
       setError(true);
-      console.error(`Failed to ${actionType} assignment:`, err);
+      console.error(`Failed to create request for assignment:`, err);
     }
   };
 
@@ -62,22 +58,22 @@ export default function ReplyAssignmentDialog({
         </DialogChangePasswordHeader>
 
         <DialogDescription className="text-primary px-4">
-          Do you want to {actionType} this assignment
+          Do you want to create a returning request for this asset?
         </DialogDescription>
         {error && (
           <p className="px-4 text-red-600">Failed to process the request.</p>
         )}
         <div className="m-4 flex justify-start space-x-4">
           <Button
-            id={`confirm-${actionType}-assignment`}
+            id={`confirm-return-request`}
             className="bg-foreground text-white hover:cursor-pointer"
             disabled={!assignment}
-            onClick={handleReply}
+            onClick={handleCreateRequest}
           >
-            {actionType === "accept" ? "Accept" : "Decline"}
+            Yes
           </Button>
           <Button
-            id="cancel-assignment-action"
+            id="cancel-return-request"
             variant="outline"
             className="hover:cursor-pointer"
             onClick={() => {
@@ -85,7 +81,7 @@ export default function ReplyAssignmentDialog({
               setError(false);
             }}
           >
-            Cancel
+            No
           </Button>
         </div>
       </DialogChangePasswordContent>

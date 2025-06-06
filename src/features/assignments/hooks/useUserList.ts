@@ -16,7 +16,7 @@ export function useUserList(initialUser: User | undefined) {
     id: string;
     desc: boolean;
   } | null>({
-    id: "",
+    id: "fullName",
     desc: false,
   });
   const [usersSearchTerm, setUsersSearchTerm] = useState<string>("");

@@ -172,6 +172,7 @@ interface DateSelectorProps {
   title: string;
   className?: string;
   disableFutureDates?: boolean;
+  disablePastDates?: boolean;
   defaultToToday?: boolean;
 }
 
@@ -181,26 +182,70 @@ function DateSelector({
   title,
   className,
   disableFutureDates = true,
+  disablePastDates = false,
   defaultToToday = false,
 }: DateSelectorProps) {
   const [open, setOpen] = useState(false);
   const currentYear = getYear(new Date());
   const currentMonth = getMonth(new Date());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const getToMonth = (selectedYear: number) => {
-    if (!disableFutureDates) return undefined;
-    if (selectedYear < currentYear) return undefined;
-    if (selectedYear === currentYear) return new Date();
+    // If only future dates are disabled, restrict selectable months for the current year.
+    if (disableFutureDates) {
+      if (selectedYear < currentYear) return undefined;
+      if (selectedYear === currentYear) return new Date();
+      return undefined;
+    }
+
+    // If only past dates are disabled, we don't set an upper month boundary.
     return undefined;
+  };
+
+  const getDisabledDates = () => {
+    const disabled = [];
+    if (disableFutureDates) {
+      disabled.push({ after: new Date() });
+    }
+    if (disablePastDates) {
+      disabled.push({ before: today });
+    }
+    return disabled.length > 0 ? disabled : undefined;
   };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (disableFutureDates && date && date > new Date()) {
       return;
     }
+    if (disablePastDates && date && date < today) {
+      return;
+    }
     setSelectedDate(date ?? null);
-
     setOpen(false);
+  };
+
+  const handleMonthChange = (newMonth: Date) => {
+    const isCurrentMonth =
+      getYear(newMonth) === currentYear && getMonth(newMonth) === currentMonth;
+
+    if (
+      (disableFutureDates &&
+        getYear(newMonth) === currentYear &&
+        getMonth(newMonth) > currentMonth) ||
+      (disablePastDates &&
+        getYear(newMonth) === currentYear &&
+        getMonth(newMonth) < currentMonth)
+    ) {
+      return;
+    }
+
+    if (disablePastDates && isCurrentMonth) {
+      setSelectedDate(today);
+      return;
+    }
+
+    setSelectedDate(newMonth);
   };
 
   React.useEffect(() => {
@@ -240,24 +285,17 @@ function DateSelector({
             selected={selectedDate || undefined}
             initialFocus
             month={selectedDate || new Date()}
-            onMonthChange={(newMonth) => {
-              if (
-                disableFutureDates &&
-                getYear(newMonth) === currentYear &&
-                getMonth(newMonth) > currentMonth
-              ) {
-                return;
-              }
-              setSelectedDate(newMonth);
-            }}
+            onMonthChange={handleMonthChange}
             toDate={disableFutureDates ? new Date() : undefined}
+            fromDate={disablePastDates ? today : undefined}
             captionLayout="dropdown-buttons"
+            fromMonth={disablePastDates ? today : undefined}
             toMonth={getToMonth(
               selectedDate ? getYear(selectedDate) : currentYear,
             )}
-            fromYear={currentYear - 100}
+            fromYear={disablePastDates ? currentYear : currentYear - 100}
             toYear={disableFutureDates ? currentYear : currentYear + 20}
-            disabled={disableFutureDates ? [{ after: new Date() }] : undefined}
+            disabled={getDisabledDates()}
             components={{
               Dropdown: ({ className, ...props }) => (
                 <div className="relative w-full flex-1">

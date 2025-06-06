@@ -13,10 +13,12 @@ interface OwnAssignmentColumnsProps {
     assignment: Assignment,
     actionType: "accept" | "decline",
   ) => void;
+  onOpenReturnRequestDialog: (assignment: Assignment) => void;
 }
 
 export const ownAssignmentColumns = ({
   onOpenReplyDialog,
+  onOpenReturnRequestDialog,
 }: OwnAssignmentColumnsProps): ColumnDef<Assignment>[] => [
   {
     id: "number",
@@ -95,9 +97,9 @@ export const ownAssignmentColumns = ({
           <ActionButton
             iconName="undo-2"
             className="text-blue-500"
-            disabled={!isAccepted}
-            onClick={(e) => {
-              e.stopPropagation();
+            disabled={!isAccepted || assignment.isReturned}
+            onClick={() => {
+              onOpenReturnRequestDialog(assignment);
             }}
           />
         </div>
