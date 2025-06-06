@@ -24,7 +24,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
       title="Detailed Asset Information"
     >
       {selectedAsset && (
-        <div className="space-y-4 px-8 py-2">
+        <div className="w-full space-y-4 break-words">
           <div className="grid grid-cols-2 gap-4 text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAsset.assetCode}</p>
@@ -67,11 +67,27 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
                         <td className="p-2 text-gray-500">
                           {assignment.assignedDate}
                         </td>
-                        <td className="p-2 text-gray-500">
-                          {assignment.assignedToUser.userName}
+                        <td className="max-w-3xs p-2 break-words text-gray-500">
+                          {(() => {
+                            const userName: string =
+                              assignment.assignedToUser.userName;
+                            const maxLength = 10;
+                            if (userName.length > maxLength) {
+                              return `${userName.substring(0, maxLength)}...`;
+                            }
+                            return userName;
+                          })()}
                         </td>
-                        <td className="p-2 text-gray-500">
-                          {assignment.assignedByUser.userName}
+                        <td className="max-w-3xs p-2 break-words text-gray-500">
+                          {(() => {
+                            const userName: string =
+                              assignment.assignedByUser.userName;
+                            const maxLength = 10;
+                            if (userName.length > maxLength) {
+                              return `${userName.substring(0, maxLength)}...`;
+                            }
+                            return userName;
+                          })()}
                         </td>
                         <td className="p-2 text-gray-500">
                           {assignment.assignedDate
