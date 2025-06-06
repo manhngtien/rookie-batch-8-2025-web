@@ -33,7 +33,7 @@ export default function CancelRequestDialog({
           </DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-primary px-4">
-          Do you want to cancle this returning request?
+          Do you want to cancel this returning request?
         </DialogDescription>
         <div className="m-4 flex justify-start space-x-4">
           <Button
@@ -43,7 +43,7 @@ export default function CancelRequestDialog({
             Yes
           </Button>
           <Button
-            id="deny-cancle-request"
+            id="deny-cancel-request"
             variant="outline"
             onClick={async () => {
               onOpenChange(false);
