@@ -51,7 +51,7 @@ export default function UserReturnRequestDialog({
   return (
     <DialogChangePassword open={open} onOpenChange={onOpenChange}>
       <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
-        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-black bg-gray-200 p-4">
+        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-b-gray-400 bg-gray-100 p-4">
           <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
             Are you sure?
           </DialogChangePasswordTitle>
@@ -63,7 +63,7 @@ export default function UserReturnRequestDialog({
         {error && (
           <p className="px-4 text-red-600">Failed to process the request.</p>
         )}
-        <div className="m-4 flex justify-start space-x-4">
+        <div className="m-4 flex justify-end space-x-4">
           <Button
             id={`confirm-return-request`}
             className="bg-foreground text-white hover:cursor-pointer"

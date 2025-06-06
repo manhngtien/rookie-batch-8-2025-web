@@ -46,7 +46,7 @@ export default function AssetDeleteDialog({
   return (
     <DialogChangePassword open={open} onOpenChange={onOpenChange}>
       <DialogChangePasswordContent className="max-w-2xl p-0 text-black">
-        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-black bg-gray-200 p-4">
+        <DialogChangePasswordHeader className="w-full rounded-t-lg border-b border-b-gray-400 bg-gray-100 p-4">
           <DialogChangePasswordTitle className="text-foreground my-2 ml-2">
             {error ? "Cannot delete asset" : "Are you sure?"}
           </DialogChangePasswordTitle>
@@ -71,7 +71,7 @@ export default function AssetDeleteDialog({
             "Do you want to delete this asset?"
           )}
         </DialogDescription>
-        <div className="m-4 flex justify-start space-x-4">
+        <div className="m-4 flex justify-end space-x-4">
           <Button
             id="confirm-delete-asset"
             className="bg-red-600 text-white hover:bg-red-700"

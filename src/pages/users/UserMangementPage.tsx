@@ -1,13 +1,12 @@
-import { Funnel, Search } from "lucide-react";
+import { Funnel } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PageTitle } from "@/components/ui/dashboard-elements";
+import { PageTitle, SearchInput } from "@/components/ui/dashboard-elements";
 import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -245,16 +244,11 @@ function UserManagementPage() {
           </PopoverContent>
         </Popover>
         <div className="flex gap-2">
-          <div className="relative w-50">
-            <Input
-              id="users-search-bar"
-              className=""
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => handleSearchChange(e.target.value)}
-            />
-            <Search className="pointer-events-none absolute top-2.5 right-2.5 h-4 w-4 opacity-50" />
-          </div>
+          <SearchInput
+            id="users-search-bar"
+            value={searchTerm}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
           <Button
             id="create-new-user-button"
             onClick={handleNavigateToCreate}

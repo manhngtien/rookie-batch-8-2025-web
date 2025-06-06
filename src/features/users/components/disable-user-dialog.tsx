@@ -73,7 +73,7 @@ function DisableUserDialog({
             {error != null ? error : "Do you want to disable this user?"}
           </p>
           {error == null && (
-            <div className="flex justify-start gap-2">
+            <div className="flex justify-end gap-2">
               <Button
                 id="confirm-disable-button"
                 type="button"
