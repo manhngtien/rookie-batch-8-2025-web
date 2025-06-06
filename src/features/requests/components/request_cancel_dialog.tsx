@@ -7,16 +7,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-interface CancleRequestDialogProps {
+interface CancelRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   returningRequestId: number;
 }
 
-export default function CancleRequestDialog({
+export default function CancelRequestDialog({
   open,
   onOpenChange,
-}: CancleRequestDialogProps) {
+}: CancelRequestDialogProps) {
   const handleConfirmCancelRequest = async () => {
     try {
       onOpenChange(false);
