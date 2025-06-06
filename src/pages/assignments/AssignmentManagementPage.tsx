@@ -189,13 +189,11 @@ function AssignmentManagementPage() {
           closeModal={handleCloseDetailDialog}
           title="Detailed Assignment Information"
         >
-          <div className="grid grid-cols-2 gap-4 text-gray-500">
+          <div className="grid grid-cols-2 gap-4 break-words text-gray-500">
             <p className="font-medium">Asset Code:</p>
             <p className="text-left">{selectedAssignment.assetCode}</p>
             <p className="font-medium">Asset Name:</p>
-            <p className="text-left break-words">
-              {selectedAssignment.assetName}
-            </p>
+            <p className="text-left">{selectedAssignment.assetName}</p>
             <p className="font-medium">Assigned To:</p>
             <p className="text-left">
               {selectedAssignment.assignedToUser.userName}
