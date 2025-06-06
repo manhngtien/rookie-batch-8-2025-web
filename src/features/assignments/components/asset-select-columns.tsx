@@ -28,6 +28,14 @@ export const assetSelectColumns: ColumnDef<Asset>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Asset Name" />
     ),
+    cell: ({ row }) => {
+      const assetName: string = row.getValue("assetName");
+      const maxLength = 30;
+      if (assetName.length > maxLength) {
+        return `${assetName.substring(0, maxLength)}...`;
+      }
+      return assetName;
+    },
   },
   {
     id: "category",
@@ -35,5 +43,13 @@ export const assetSelectColumns: ColumnDef<Asset>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
+    cell: ({ row }) => {
+      const category: string = row.getValue("category");
+      const maxLength = 30;
+      if (category.length > maxLength) {
+        return `${category.substring(0, maxLength)}...`;
+      }
+      return category;
+    },
   },
 ];
