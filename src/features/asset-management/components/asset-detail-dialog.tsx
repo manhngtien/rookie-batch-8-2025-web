@@ -6,6 +6,7 @@ import {
   type ELocation,
   LocationLabelMap,
 } from "@/features/asset-management/types/Asset";
+import { formatStateLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
 interface AssetDetailDialogProps {
@@ -37,7 +38,7 @@ const AssetDetailDialog: React.FC<AssetDetailDialogProps> = ({
               {formatDate(selectedAsset.installedDate)}
             </p>
             <p className="font-medium">State:</p>
-            <p className="text-left">{selectedAsset.state}</p>
+            <p className="text-left">{formatStateLabel(selectedAsset.state)}</p>
             <p className="font-medium">Location:</p>
             <p className="text-left">
               {LocationLabelMap[selectedAsset.location as ELocation] ??
