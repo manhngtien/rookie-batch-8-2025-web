@@ -70,6 +70,10 @@ function FilterButton({
   label = "Filter",
   options,
   defaultSelected = [],
+  /**
+   * onChange should be memoized with useCallback in the parent component
+   * to prevent unnecessary re-renders.
+   */
   onChange,
   className,
 }: React.ComponentProps<typeof Popover> & {
