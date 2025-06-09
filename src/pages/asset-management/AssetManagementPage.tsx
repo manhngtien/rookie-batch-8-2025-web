@@ -91,7 +91,7 @@ function AssetManagementPage() {
     const fetchAssetsData = async () => {
       try {
         if (shouldRefetch) {
-          await dispatch(
+          const response = await dispatch(
             fetchAssetsByParams({
               orderBy,
               searchTerm: debouncedSearchTerm,
@@ -108,6 +108,9 @@ function AssetManagementPage() {
               pageSize,
             }),
           ).unwrap();
+          console.log(
+            "Fetch assets by params successfully" + response.assets.toString(),
+          );
         }
       } catch (err) {
         console.error("Failed to fetch users:", err);
