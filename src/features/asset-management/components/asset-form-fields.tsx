@@ -114,6 +114,7 @@ export const AssetFormFields: React.FC<AssetFormFieldsProps> = ({
                 ))}
                 {!isAddingCategory && (
                   <DropdownMenuItem
+                    id="add-category-selection"
                     onSelect={(e) => {
                       e.preventDefault();
                       setIsAddingCategory(true);
