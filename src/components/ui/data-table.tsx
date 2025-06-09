@@ -232,9 +232,11 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
 
-      <div className="py-2">
-        <DataTablePagination table={table} total={total} />
-      </div>
+      {onPageChange && (
+        <div className="py-2">
+          <DataTablePagination table={table} total={total} />
+        </div>
+      )}
     </div>
   );
 }

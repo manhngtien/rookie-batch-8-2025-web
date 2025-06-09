@@ -1,24 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import type { Asset } from "@/features/asset-management/types/Asset";
+import type { Report } from "@/features/report/types/Report";
 
-export const reportColumns: ColumnDef<Asset>[] = [
-  // {
-  //   id: "select",
-  //   cell: ({ row }) => (
-  //     <input
-  //       id=""
-  //       type="radio"
-  //       checked={row.getIsSelected()}
-  //       value={row.original.assetCode}
-  //       disabled={!row.getCanSelect()}
-  //       onChange={row.getToggleSelectedHandler()}
-  //     />
-  //   ),
-  // },
+export const reportColumns: ColumnDef<Report>[] = [
   {
-    accessorKey: "category",
+    accessorKey: "categoryName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
@@ -30,31 +17,31 @@ export const reportColumns: ColumnDef<Asset>[] = [
     ),
   },
   {
-    accessorKey: "assigned",
+    accessorKey: "totalAssigned",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned" />
     ),
   },
   {
-    accessorKey: "available",
+    accessorKey: "totalAvailable",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Available" />
     ),
   },
   {
-    accessorKey: "not_available",
+    accessorKey: "totalNotAvailable",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Not available" />
     ),
   },
   {
-    accessorKey: "waiting_for_recycling",
+    accessorKey: "totalWaitingForRecycling",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Waiting for recycling" />
     ),
   },
   {
-    accessorKey: "recycled",
+    accessorKey: "totalRecycled",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Recycled" />
     ),

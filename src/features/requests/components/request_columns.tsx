@@ -7,7 +7,7 @@ import { formatStateLabel } from "@/lib/utils";
 import type Request from "../types/Request";
 
 const formatDate = (dateValue: string | Date | null | undefined): string => {
-  if (!dateValue) return "-";
+  if (!dateValue) return "";
   const date = new Date(dateValue);
   if (isNaN(date.getTime())) return "-"; // Handle invalid dates
   const day = String(date.getDate()).padStart(2, "0");
