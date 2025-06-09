@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import GeneralDialog from "@/components/general-dialog";
@@ -68,10 +68,11 @@ export default function RequestPage() {
     },
   };
 
-  const handleFilterChange = (selected: string[]) => {
+  const handleFilterChange = useCallback((selected: string[]) => {
     setSelectedStates(selected);
     setPage(1);
-  };
+  }, []);
+
   const confirmComplete = async () => {
     if (selectedRequest === null) return;
     try {
@@ -175,9 +176,8 @@ export default function RequestPage() {
         </div>
       </div>
 
-      {loading && <p>Loading assets...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
-      {!loading && !error && (
+      {!error && (
         <DataTable
           onPageChange={(pageIndex) => setPage(pageIndex + 1)}
           onSortingChange={(sort) => {

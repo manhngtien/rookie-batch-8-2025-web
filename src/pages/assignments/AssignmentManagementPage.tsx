@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 import GeneralDialog from "@/components/general-dialog";
@@ -91,9 +91,13 @@ function AssignmentManagementPage() {
     setOpenReturnDialog(false);
   };
 
-  const handleFilterChange = (selected: string[]) => {
-    setSelectedStates(selected);
-  };
+  const handleFilterChange = useCallback(
+    (selected: string[]) => {
+      setSelectedStates(selected);
+      setPage(1);
+    },
+    [setPage, setSelectedStates],
+  );
 
   useEffect(() => {
     if (newAssignmentCreated && !hasHandledNewAssignment.current) {
