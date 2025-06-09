@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router"; // Add useLocation
 
 import UserForm from "@/features/users/components/user-form";
 import type { CreateUserRequest } from "@/features/users/types/User";
@@ -9,6 +9,7 @@ import { createUser } from "@/store/thunks/userThunk";
 const CreateUserPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation(); // Add useLocation to access previous state
   const { error } = useSelector((state: RootState) => state.users);
 
   const handleCreateUser = async (data: {
@@ -32,7 +33,12 @@ const CreateUserPage = () => {
     try {
       const action = await dispatch(createUser(requestData));
       if (createUser.fulfilled.match(action)) {
-        navigate("/users", { state: { newUserCreated: true } });
+        navigate("/users", {
+          state: {
+            ...location.state,
+            newUserCreated: true,
+          },
+        });
       }
     } catch (error) {
       console.error("Failed to create user:", error);
@@ -47,7 +53,7 @@ const CreateUserPage = () => {
       <UserForm
         onSubmit={handleCreateUser}
         onCancel={() => {
-          navigate("/users");
+          navigate("/users", { state: location.state });
         }}
       />
     </div>
