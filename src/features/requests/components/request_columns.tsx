@@ -6,6 +6,16 @@ import { formatStateLabel } from "@/lib/utils";
 
 import type Request from "../types/Request";
 
+const formatDate = (dateValue: string | Date | null | undefined): string => {
+  if (!dateValue) return "-";
+  const date = new Date(dateValue);
+  if (isNaN(date.getTime())) return "-"; // Handle invalid dates
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export const requestColumns = (
   onCheckClick: (request: Request) => void,
   onCancelClick: (request: Request) => void,
@@ -48,6 +58,14 @@ export const requestColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Assigned Date" />
     ),
+    cell: ({ row }) => {
+      const date = row.getValue("assignedDate") as
+        | string
+        | Date
+        | null
+        | undefined;
+      return formatDate(date);
+    },
   },
   {
     accessorKey: "acceptedBy",
@@ -60,6 +78,14 @@ export const requestColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Returned Date" />
     ),
+    cell: ({ row }) => {
+      const date = row.getValue("returnedDate") as
+        | string
+        | Date
+        | null
+        | undefined;
+      return formatDate(date);
+    },
   },
   {
     accessorKey: "state",
