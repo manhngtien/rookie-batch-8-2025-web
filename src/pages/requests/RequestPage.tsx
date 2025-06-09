@@ -176,9 +176,8 @@ export default function RequestPage() {
         </div>
       </div>
 
-      {loading && <p>Loading assets...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
-      {!loading && !error && (
+      {!error && (
         <DataTable
           onPageChange={(pageIndex) => setPage(pageIndex + 1)}
           onSortingChange={(sort) => {
