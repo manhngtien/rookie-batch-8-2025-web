@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { formatLabel } from "@/lib/utils";
+import { calculateNumberPosition, formatLabel } from "@/lib/utils";
 import { formatDate } from "@/utils/helpers";
 
 import { type Assignment, assignmentStateMap } from "../types/Assignment";
@@ -24,7 +24,7 @@ export const assignmentColumns = ({
     cell: ({ row, table }) => {
       const pageIndex = table.options.state.pagination?.pageIndex || 0;
       const pageSize = table.options.state.pagination?.pageSize || 20;
-      return pageIndex * pageSize + row.index + 1;
+      return calculateNumberPosition(pageIndex, pageSize, row.index);
     },
   },
   {

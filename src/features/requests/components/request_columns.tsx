@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { ActionButton } from "@/components/ui/dashboard-elements";
 import { DataTableColumnHeader } from "@/components/ui/data-table-col-header";
-import { formatStateLabel } from "@/lib/utils";
+import { calculateNumberPosition, formatStateLabel } from "@/lib/utils";
 
 import type Request from "../types/Request";
 
@@ -25,7 +25,11 @@ export const requestColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="No." />
     ),
-    cell: ({ row }) => row.index + 1,
+    cell: ({ row, table }) => {
+      const pageIndex = table.options.state.pagination?.pageIndex || 0;
+      const pageSize = table.options.state.pagination?.pageSize || 20;
+      return calculateNumberPosition(pageIndex, pageSize, row.index);
+    },
   },
   {
     accessorKey: "assetCode",
