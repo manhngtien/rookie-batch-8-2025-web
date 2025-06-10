@@ -41,6 +41,7 @@ function CreateButton({
 }
 
 function ActionButton({
+  id,
   className,
   iconName,
   ...props
@@ -50,7 +51,7 @@ function ActionButton({
   return (
     <Button
       {...props}
-      id="edit-assignment-button"
+      id={id}
       className="group/button hover:cursor-pointer"
       variant="ghost"
       size="icon"

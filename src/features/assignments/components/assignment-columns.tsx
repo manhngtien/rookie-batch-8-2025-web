@@ -104,11 +104,13 @@ export const assignmentColumns = ({
       return (
         <div className="-my-4 flex">
           <ActionButton
+            id="edit-assignment-button"
             iconName="pencil"
             disabled={assignment.state !== "Waiting_For_Acceptance"}
             onClick={() => onEdit(assignment)}
           />
           <ActionButton
+            id="delete-assignment-button"
             iconName="circle-x"
             className="text-foreground"
             disabled={
@@ -118,6 +120,7 @@ export const assignmentColumns = ({
             onClick={() => onDelete(assignment)}
           />
           <ActionButton
+            id="return-assignment-button"
             iconName="undo-2"
             className="text-blue-500"
             disabled={

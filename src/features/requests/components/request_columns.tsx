@@ -104,6 +104,7 @@ export const requestColumns = (
       return (
         <div className="-my-4 flex">
           <ActionButton
+            id="complete-request-button"
             disabled={request.state === "Completed"}
             iconName="check"
             className="text-red-500"
@@ -112,6 +113,7 @@ export const requestColumns = (
             }}
           />
           <ActionButton
+            id="decline-request-button"
             disabled={request.state === "Completed"}
             iconName="circle-x"
             onClick={() => {

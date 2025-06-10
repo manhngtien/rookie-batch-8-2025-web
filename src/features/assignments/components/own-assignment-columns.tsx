@@ -80,6 +80,7 @@ export const ownAssignmentColumns = ({
       return (
         <div className="-my-4 flex">
           <ActionButton
+            id="accept-assignment-button"
             iconName="check"
             disabled={!isWaiting}
             onClick={() => {
@@ -87,6 +88,7 @@ export const ownAssignmentColumns = ({
             }}
           />
           <ActionButton
+            id="decline-assignment-button"
             iconName="circle-x"
             disabled={!isWaiting}
             className="text-foreground"
@@ -95,6 +97,7 @@ export const ownAssignmentColumns = ({
             }}
           />
           <ActionButton
+            id="return-assignment-button"
             iconName="undo-2"
             className="text-blue-500"
             disabled={!isAccepted || assignment.isReturned}

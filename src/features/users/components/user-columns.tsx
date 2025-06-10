@@ -82,6 +82,7 @@ export const userColumns = ({
       return (
         <div className="-my-4 flex">
           <ActionButton
+            id="edit-user-button"
             iconName="pencil"
             disabled={!isSameLocation}
             onClick={(e) => {
@@ -92,6 +93,7 @@ export const userColumns = ({
             }}
           />
           <ActionButton
+            id="disable-user-button"
             iconName="circle-x"
             disabled={!isSameLocation}
             className="text-foreground"

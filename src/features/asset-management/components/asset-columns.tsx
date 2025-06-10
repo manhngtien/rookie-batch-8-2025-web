@@ -74,6 +74,7 @@ export const assetColumns: ColumnDef<Asset>[] = [
       return (
         <div className="-my-4 flex">
           <ActionButton
+            id="edit-asset-button"
             iconName="pencil"
             disabled={isAssigned}
             onClick={(e) => {
@@ -83,6 +84,7 @@ export const assetColumns: ColumnDef<Asset>[] = [
             }}
           />
           <ActionButton
+            id="delete-asset-button"
             iconName="circle-x"
             className="text-foreground"
             disabled={isAssigned}
