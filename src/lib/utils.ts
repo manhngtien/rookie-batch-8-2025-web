@@ -80,3 +80,11 @@ export function toLocalISOString(date: Date) {
     pad(date.getSeconds())
   );
 }
+
+export function calculateNumberPosition(
+  pageIndex: number,
+  pageSize: number,
+  rowIndex: number,
+) {
+  return pageIndex * pageSize + rowIndex + 1;
+}

@@ -21,7 +21,10 @@ function ReportPage() {
 
       <div className="flex justify-end">
         <CreateButton onClick={handleReportDownload} disabled={exportLoading}>
-          {exportLoading && <Loader2Icon className="animate-spin" />}
+          {/* Workaround because the component uses the children to create the id
+          This prevents the component from passing "false" to the parent component
+          Only passing an empty string now  */}
+          {exportLoading ? <Loader2Icon className="animate-spin" /> : ""}
           Export
         </CreateButton>
       </div>
