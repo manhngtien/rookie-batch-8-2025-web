@@ -39,7 +39,7 @@ function mapToAssetState(input: string): AssetState {
 }
 
 export const editFormSchema = z.object({
-  name: z.string().min(1, "Name is required").max(20, "Name is too long"),
+  name: z.string().min(1, "Name is required").max(50, "Name is too long"),
   category: z.string().min(1, "Category is required"),
   category_id: z.number().optional().nullable(),
   specification: z
